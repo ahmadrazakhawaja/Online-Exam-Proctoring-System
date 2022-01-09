@@ -18,15 +18,14 @@ on windows: `py -3 -m venv venv`
 on mac: `python3 -m venv venv`
 
 4. **Activate Python virtual Environment**:<br>
-run this command to activate virtual environment make sure you are in the root directory
+run this command to activate virtual environment
 on windows: `venv\Scripts\activate`
 on mac: `source venv/bin/activate`
 
 5. **install dependencies**:<br>
 go to project folder
 `cd project`
-now run the command below to install python dependencies
-`pip install -r requirements.txt`
+now run the command `pip install -r requirements.txt` to install python dependencies
 
 6. **Activate flask backend**:<br>
 go to project directory 
