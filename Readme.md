@@ -12,25 +12,33 @@ Make sure you have installed:
 1. **Clone the repository**:<br>
 `git clone https://github.com/ahmadrazakhawaja/fyp_project.git`
 
-2. **Activate Python virtual Environment**:<br>
+2. **Create python virtual environment**:<br>
+go to project root folder and run the command
+on windows: `py -3 -m venv venv`
+on mac: `python3 -m venv venv`
+
+4. **Activate Python virtual Environment**:<br>
 run this command to activate virtual environment make sure you are in the root directory
-on windows: `venv\Scripts\activate.bat`
+on windows: `venv\Scripts\activate`
 on mac: `source venv/bin/activate`
 
-3. **install python packages**:<br>
-go to project directory 
+5. **install dependencies**:<br>
+go to project folder
 `cd project`
-and run the command to install python dependencies
+now run the command below to install python dependencies
 `pip install -r requirements.txt`
 
-4. **Activate flask backend**:<br>
+6. **Activate flask backend**:<br>
+go to project directory 
+`cd project`
 In the project directory run the command
-`set FLASK_APP=app`
+on windows:`set FLASK_APP=app`
+on mac:`export FLASK_APP=app`
 Then run the command
 `flask run`
 to activate the backend flask server
 
-5. **Activate react frontend**:<br>
+7. **Activate react frontend**:<br>
 From the project directory go to frontend/ my-app / folder and run the command
 `npm run`
 to activate react frontend
