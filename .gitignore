@@ -4,3 +4,4 @@ project/user/__pycache__
 venv
 .DS_Store
 project/.DS_Store
+project/frontend/my-app/node_modules
