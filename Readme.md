@@ -68,5 +68,10 @@ Add to online repo
 If remote origin already exists just add files
 `git add --all`
 
+Always pull before pushing to github repositiory
+`git pull`
+
 Push to online repo
 `git push -u origin master`
+
+
