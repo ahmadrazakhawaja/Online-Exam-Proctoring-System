@@ -1,3 +1,4 @@
+# git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
 from os import name
 from flask import Flask
 from markupsafe import escape
