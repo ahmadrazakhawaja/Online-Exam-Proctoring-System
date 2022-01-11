@@ -7,6 +7,7 @@ from flask import render_template
 from user.db import get_db
 
 # hello
+#idk y
 app = Flask(__name__)
 
 # get database connection object
