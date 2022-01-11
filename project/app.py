@@ -8,6 +8,7 @@ from user.db import get_db
 
 app = Flask(__name__)
 
+# hello
 # get database connection object
 db = get_db()
 
