@@ -1,0 +1,6 @@
+__pycache__
+project/__pycache__
+project/user/__pycache__
+venv
+.DS_Store
+project/.DS_Store
