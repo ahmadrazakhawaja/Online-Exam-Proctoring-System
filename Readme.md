@@ -47,7 +47,7 @@ Make sure you have installed:
    `npm run`
    to activate react frontend
 
-## How to push
+## How to push ##
 
 Make an empty git repo
 `git init`
