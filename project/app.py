@@ -60,6 +60,37 @@ def List_All():
     return jsonify(studentList)
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    try:
+        data = request.get_json()
+        checkuser = student.objects(email=data["email"]).first()
+        enteredpassword = data["password"]
+
+        if not checkuser or not pbkdf2_sha256.verify(
+            enteredpassword, checkuser["password"]
+        ):
+            print("login working")
+            return "User Sign in Failed, please enter all fields correctly"
+    except Exception as e:
+        print("\n", e, "User doesn't exist exists\n ")
+        return "User doesn't exist"
+    checks = {
+        "ID:": (str)(checkuser["id"]),
+        "Name:": checkuser["name"],
+        "ERP:": checkuser["erp"],
+        "userName:": checkuser["username"],
+        "Email:": checkuser["email"],
+        "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+        "Profile pic:": checkuser["profileUrl"],
+    }
+    print(checks)
+    # ret = jsonify(header={"message": "User Sign up Successful"})
+    # ret = jsonify(data2,ret.json)
+    return jsonify(header={"message": "User login Successful"}, data=checks)
+
+
 @app.route("/add", methods=["GET", "POST"])
 def add_user():
 

@@ -40,6 +40,8 @@ Make sure you have installed:
    on mac:`export FLASK_APP=app`
    Then run the command
    `flask run`
+   Set dev environment
+   `set FLASK_ENV=development`
    to activate the backend flask server
 
 6. **Activate react frontend**:<br>
