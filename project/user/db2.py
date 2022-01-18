@@ -1,25 +1,56 @@
+from datetime import datetime
 from mongoengine import *
 
-conn_str = "mongodb+srv://admin:admin@cluster0.orqkl.mongodb.net/TestFYP?retryWrites=true&w=majority"
-works = connect(db="TestFYP", host=conn_str)
-# works = connect(conn_str)
-if works:
-    print("works ig", works)
-else:
-    print("MongoEngine Failed")
+
+
+# dbs = works.list_database_names()
+# for db in dbs:
+#     print("dbname", db)
+
+# collections = works["TestFYP"].list_collection_names()
+# for collection in collections:
+#     print("CollectionName", collection)
 
 
 class student(Document):
     # id = ObjectIdField()
+    erp = IntField(required=True)
     name = StringField(required=True)
-    age = IntField(min_value=16, max_value=25)
+    username = StringField(required=True, max_length=30)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
+    profileUrl = StringField(required=True)
+    dateCreated = DateTimeField(default=datetime.now())
 
 
-s1 = student()
-s1.name = "Mohan Lal32"
-s1.age = 20
-# s1.email = "mohanlal@gmail.com"
-s1.password = "123"
-s1.save()
+# .strftime("%d/%m/%Y %H:%M:%S")
+
+# How to do get stuff
+# for product in student.objects:
+# print("ID:", product.id, "Name:", product.name, "Price:", product.email).fields(id=0, name=1, email=1)
+# for product in student.objects:
+#     # print(product.to_json())
+#     print(
+#         "ID:",
+#         product.id,
+#         "Name:",
+#         product.name,
+#         "ERP:",
+#         product.erp,
+#         "userName:",
+#         product.username,
+#         "Email:",
+#         product.email,
+#         "DateCreated:",
+#         product.dateCreated.strftime("%d/%m/%Y %H:%M:%S"),
+#         "Profile pic:",
+#         product.profileUrl,
+#     )
+
+# user = student.objects(email="mohanlal@gmail.com").exclude("password")
+# for user1 in user:
+# updateduser = user.modify(name="New_name2")
+
+# print("old user", updateduser.to_json(), "\n")
+# print("user updated to", user.to_json(), "\n")
+# print("user updates",user.to_json(),"\n")
