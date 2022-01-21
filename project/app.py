@@ -1,17 +1,23 @@
 # git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
 from asyncio.windows_events import NULL
+from importlib import resources
 import json
 
 # from os import name
-
 import copy
 from mongoengine import *
-from flask import Flask, jsonify
-from flask import render_template, url_for, request
+from flask_cors import CORS
+from flask import Flask, jsonify, render_template, url_for, request
 from user.db2 import student
 from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
+# Only login route allowed for all users
+# cors = CORS(app, resources={r"/login": {"origins": "*"}})
+
+# Only accessible by local host 3000
+# cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 conn_str = "mongodb+srv://admin:admin@cluster0.orqkl.mongodb.net/TestFYP?retryWrites=true&w=majority"
 works = connect(db="TestFYP", host=conn_str)

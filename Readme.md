@@ -38,11 +38,13 @@ Make sure you have installed:
    In the project directory run the command
    on windows:`set FLASK_APP=app`
    on mac:`export FLASK_APP=app`
-   Then run the command
-   `flask run`
-   Set dev environment
+   
+   Set dev environment and to automatically refresh the backend flask server
    `set FLASK_ENV=development`
-   to activate the backend flask server
+   Then run the command to start server
+   `flask run` 
+   Show all dependencies
+   `pip freeze`
 
 6. **Activate react frontend**:<br>
    From the project directory go to frontend/ my-app / folder and run the command
