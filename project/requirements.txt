@@ -7,3 +7,4 @@ MarkupSafe==2.0.1
 Werkzeug==2.0.2
 mongoengine==0.23.1
 passlib==1.7.4
+Flask-Cors==3.0.10

@@ -54,3 +54,17 @@ class student(Document):
 # print("old user", updateduser.to_json(), "\n")
 # print("user updated to", user.to_json(), "\n")
 # print("user updates",user.to_json(),"\n")
+
+
+
+    # erp=s1.erp,
+    # username=s1.username,
+    # email=s1.email,
+    # dateCreated=s1.dateCreated,
+    # profileUrl=s1.profileUrl,
+
+
+#  name = checkuser.modify(name=s1.name),
+#         erp = checkuser.modify(erp=s1.erp),
+#         username= checkuser.modify(username=s1.username),
+#         profileUrl = checkuser.modify(profileUrl=s1.profileUrl),

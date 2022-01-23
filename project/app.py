@@ -1,16 +1,14 @@
 # git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
-#from asyncio.windows_events import NULL
-# secret access key: /hcZguRaCTYscxicd51I85RKO0mnkTwPShvhQJLV
-# access key id: AKIAX5H7BEGKNPK2SKLT
 
-import json
+#from asyncio.windows_events import NULL
+
 
 # from os import name
 import os
 import copy
+import json
 from mongoengine import *
-from flask import Flask, jsonify, make_response
-from flask import render_template, url_for, request
+from flask import Flask,render_template, url_for,jsonify,make_response, request
 from user.db2 import student
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
@@ -19,7 +17,11 @@ from user.aws_access import get_aws
 
 get_aws()
 app = Flask(__name__)
+# Only login route allowed for all users
+# cors = CORS(app, resources={r"/login": {"origins": "*"}})
 
+# Only accessible by local host 3000
+# cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 CORS(app)
 
 s3 = boto3.resource(
@@ -51,31 +53,46 @@ else:
 def hello_world():
 
     name = "ahmad"
-    return render_template("hello.html", name=name)
+    return render_template("hello.html", name=name), 200
 
 
 @app.route("/printDB", methods=["GET"])
 def List_All():
     counter = 1
     studentList = []
-    for product in student.objects:
-        # print(product.to_json())
-        lister = {}
-        lister = {
-            "Num"
-            + (str)(counter): {
-                "ID:": (str)(product.id),
-                "Name:": product.name,
-                "ERP:": product.erp,
-                "userName:": product.username,
-                "Email:": product.email,
-                "DateCreated:": product.dateCreated.strftime("%d/%m/%Y %H:%M:%S"),
-                "Profile pic:": product.profileUrl,
+
+    try:
+        for product in student.objects:
+            # print(product.to_json())
+            lister = {}
+            lister = {
+                "Num"
+                + (str)(counter): {
+                    "ID:": (str)(product.id),
+                    "Name:": product.name,
+                    "ERP:": product.erp,
+                    "userName:": product.username,
+                    "Email:": product.email,
+                    "DateCreated:": product.dateCreated.strftime("%d/%m/%Y %H:%M:%S"),
+                    "Profile pic:": product.profileUrl,
+                }
             }
-        }
-        counter += 1
-        studentList.append(lister)
-    return jsonify(studentList)
+            counter += 1
+            studentList.append(lister)
+
+    except Exception as e:
+        print("\n", e, "Lisint error\n ")
+        return (
+            jsonify(header={"message": "User List Failed to retreive"}),
+            400,
+        )
+    return (
+        jsonify(
+            header={"message": "User List Retreived Successfully"},
+            data=studentList,
+        ),
+        200,
+    )
 
 
 @app.route("/login", methods=["POST","OPTIONS"])
@@ -90,10 +107,15 @@ def login():
             enteredpassword, checkuser["password"]
         ):
             print("login working")
-            return "User Sign in Failed, please enter all fields correctly"
+            return (
+                jsonify(
+                    header={"User Sign in Failed, please enter all fields correctly"}
+                ),
+                400,
+            )
     except Exception as e:
         print("\n", e, "User doesn't exist exists\n ")
-        return "User doesn't exist"
+        return jsonify(header={"User doesn't exist"}), 400
     checks = {
         "ID:": (str)(checkuser["id"]),
         "Name:": checkuser["name"],
@@ -130,8 +152,87 @@ def add_user():
         s1.save()
     except Exception as e:
         print("\n", e, "email already exists\n ")
-        return "User Sign up Failed, please enter all fields correctly"
+        return (
+            jsonify(
+                header={
+                    "message": "User Sign up Failed, please enter all fields correctly"
+                }
+            ),
+            400,
+        )
 
     # ret = jsonify(header={"message": "User Sign up Successful"})
     # ret = jsonify(data2,ret.json)
-    return jsonify(header={"message": "User Sign up Successful"}, data=data2)
+    return (jsonify(header={"message": "User Sign up Successful"}, data=data2), 200)
+
+
+# user = student.objects(email="mohanlal@gmail.com").exclude("password")
+# for user1 in user:
+# updateduser = user.modify(name="New_name2")
+@app.route("/update/<_id>", methods=["GET", "POST"])
+def update_user(_id):
+
+    checkuser = student.objects(id=_id).first()
+    if not checkuser:
+        return jsonify(header={"message": "User Doesn't Exist"}), 400
+    try:
+        data = request.get_json()
+        print("working so far 1")
+        s1 = student()
+        s1.erp = data["erp"] if (data["erp"]) else checkuser["erp"]
+        s1.name = data["name"] if (data["name"]) else checkuser["name"]
+        s1.username = data["username"] if (data["username"]) else checkuser["username"]
+        # s1.dateCreated = (datetime)(checkuser["dataCreated"])
+        # s1.email = data["email"]
+        s1.profileUrl = (
+            data["profileUrl"] if (data["profileUrl"]) else checkuser["profileUrl"]
+        )
+        print("working so far 2")
+
+        if data["password"]:
+            # encrypting password
+            data["password"] = pbkdf2_sha256.hash(data["password"])
+            print("working so far in password check")
+
+        olduser = {
+            "ID:": (str)(checkuser["id"]),
+            "Name:": checkuser["name"],
+            "ERP:": checkuser["erp"],
+            "userName:": checkuser["username"],
+            "Email:": checkuser["email"],
+            "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+            "Profile pic:": checkuser["profileUrl"],
+        }
+
+        updateduser = checkuser.modify(**data)  # Apparently a shortcut :/
+        # Updating statements
+        # name = checkuser.modify(name=s1.name)
+        # erp = checkuser.modify(erp=s1.erp)
+        # username = checkuser.modify(username=s1.username)
+        # profileUrl = checkuser.modify(profileUrl=s1.profileUrl)
+
+        updateduser = {
+            "ID:": (str)(checkuser["id"]),
+            "Name:": checkuser["name"],
+            "ERP:": checkuser["erp"],
+            "userName:": checkuser["username"],
+            "Email:": checkuser["email"],
+            "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+            "Profile pic:": checkuser["profileUrl"],
+        }
+        # checkuser.modify(dateCreated=s1.dateCreated),
+    except:
+        return (
+            jsonify(header={"message": "update error, enter all fileds correctly out"}),
+            400,
+        )
+
+    return (
+        jsonify(
+            header={"message": "update checks out"},
+            data=s1.to_json(),
+            updateuser=updateduser,
+            olduser=olduser,
+        ),
+        200,
+    )
