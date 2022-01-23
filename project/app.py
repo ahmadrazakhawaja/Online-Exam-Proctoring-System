@@ -1,17 +1,35 @@
 # git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
-from asyncio.windows_events import NULL
+#from asyncio.windows_events import NULL
+# secret access key: /hcZguRaCTYscxicd51I85RKO0mnkTwPShvhQJLV
+# access key id: AKIAX5H7BEGKNPK2SKLT
+
 import json
 
 # from os import name
-
+import os
 import copy
 from mongoengine import *
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 from flask import render_template, url_for, request
 from user.db2 import student
 from passlib.hash import pbkdf2_sha256
+from flask_cors import CORS
+import boto3
+from user.aws_access import get_aws
 
+get_aws()
 app = Flask(__name__)
+
+CORS(app)
+
+s3 = boto3.resource(
+    service_name='s3',
+    region_name=os.getenv('AWS_DEFAULT_REGION'),
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+)
+for bucket in s3.buckets.all():
+    print(bucket.name)
 
 conn_str = "mongodb+srv://admin:admin@cluster0.orqkl.mongodb.net/TestFYP?retryWrites=true&w=majority"
 works = connect(db="TestFYP", host=conn_str)
@@ -60,11 +78,11 @@ def List_All():
     return jsonify(studentList)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST","OPTIONS"])
 def login():
 
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         checkuser = student.objects(email=data["email"]).first()
         enteredpassword = data["password"]
 
@@ -88,14 +106,14 @@ def login():
     print(checks)
     # ret = jsonify(header={"message": "User Sign up Successful"})
     # ret = jsonify(data2,ret.json)
+
     return jsonify(header={"message": "User login Successful"}, data=checks)
 
 
 @app.route("/add", methods=["GET", "POST"])
 def add_user():
-
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         s1 = student()
         s1.erp = data["erp"]
         s1.name = data["name"]
@@ -108,7 +126,7 @@ def add_user():
         data2 = copy.deepcopy(data)
         s1.password = data["password"]
         # data2.pop("password")
-
+        s3.Bucket('fyp-project-iba').upload_file(Filename='foo.csv', Key='foo.csv')
         s1.save()
     except Exception as e:
         print("\n", e, "email already exists\n ")
