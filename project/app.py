@@ -109,13 +109,15 @@ def login():
             print("login working")
             return (
                 jsonify(
-                    header={"User Sign in Failed, please enter all fields correctly"}
+                    header={
+                        "message": "User Sign in Failed, please enter all fields correctly"
+                    }
                 ),
                 400,
             )
     except Exception as e:
         print("\n", e, "User doesn't exist exists\n ")
-        return jsonify(header={"User doesn't exist"}), 400
+        return jsonify(header={"message":"User doesn't exist"}), 400
     checks = {
         "ID": (str)(checkuser["id"]),
         "Name": checkuser["name"],
