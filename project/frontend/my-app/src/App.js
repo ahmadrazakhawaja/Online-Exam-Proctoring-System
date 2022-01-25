@@ -14,10 +14,10 @@ function App() {
     <Router>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/login" element={<LogIn />}></Route>
-        <Route path="/userpage" element={<UserPage />}></Route>
+        <Route element={<Home />} exact path="/" />
+        <Route element={<SignUp />} path="/signup" />
+        <Route element={<LogIn />} path="/login" />
+        <Route element={<UserPage />} path="/userpage" />
       </Routes>
       <Footer />
     </Router>

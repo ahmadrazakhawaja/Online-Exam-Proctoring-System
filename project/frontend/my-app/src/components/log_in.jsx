@@ -1,42 +1,48 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "./form";
+import { useNavigate } from "react-router-dom";
 
-class LogIn extends Component {
-  state = {
-    elements: [
-      {
-        id: 1,
-        type: "email",
-        text: "Email",
-        placeholder: "Enter Email",
-        value: "",
-      },
-      {
-        id: 2,
-        type: "password",
-        text: "Password",
-        placeholder: "Enter Password",
-        value: "",
-      },
-    ],
+export default function LogIn() {
+  const navigate = useNavigate();
+  const [elements, setelements] = useState([
+    {
+      id: 1,
+      type: "email",
+      text: "Email",
+      placeholder: "Enter Email",
+      value: "",
+    },
+    {
+      id: 2,
+      type: "password",
+      text: "Password",
+      placeholder: "Enter Password",
+      value: "",
+    },
+  ]);
+
+  useEffect(() => {
+    if (localStorage.getItem("user-info")) {
+      navigate("/userpage");
+    }
+  }, []);
+
+  const handlechange = (element, event) => {
+    const elements2 = [...elements];
+    const index = elements2.indexOf(element);
+    elements2[index] = { ...element };
+    elements2[index].value = event.target.value;
+    setelements(elements2);
   };
 
-  handlechange = (element, event) => {
-    const elements = [...this.state.elements];
-    const index = elements.indexOf(element);
-    elements[index] = { ...element };
-    elements[index].value = event.target.value;
-    this.setState({ elements });
-  };
-
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     fetch("http://127.0.0.1:5000/login", {
       method: "POST",
-      headers: new Headers({ "content-Type": "application/json" }),
+      headers: new Headers({ "Content-Type": "application/json" }),
       mode: "cors",
       body: JSON.stringify({
-        email: this.state.elements[1].value,
-        password: this.state.elements[2].value,
+        email: elements[0].value,
+        password: elements[1].value,
       }),
     })
       .then((res) => {
@@ -45,20 +51,20 @@ class LogIn extends Component {
       })
       .then((json) => {
         console.log(json.header.message);
+        if (json.header.message === "User login Successful") {
+          localStorage.setItem("user-info", JSON.stringify(json.data));
+          navigate("/userpage");
+        }
       });
     event.preventDefault();
   };
 
-  render() {
-    return (
-      <Form
-        elements={this.state.elements}
-        onChange={this.handlechange}
-        onSubmit={this.handleSubmit}
-        value="Log In"
-      />
-    );
-  }
+  return (
+    <Form
+      elements={elements}
+      onChange={handlechange}
+      onSubmit={handleSubmit}
+      value="Log In"
+    />
+  );
 }
-
-export default LogIn;

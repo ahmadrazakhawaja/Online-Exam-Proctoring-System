@@ -1,10 +1,14 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-class UserPage extends Component {
-  state = {};
-  render() {
-    return <h1>Welcome Ahmed</h1>;
-  }
+export default function UserPage() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem("user-info")) {
+      navigate("/login");
+    }
+  }, []);
+  const data = JSON.parse(localStorage.getItem("user-info"));
+
+  return <h1 style={{ textAlign: "center" }}>Welcome {data.userName}</h1>;
 }
-
-export default UserPage;
