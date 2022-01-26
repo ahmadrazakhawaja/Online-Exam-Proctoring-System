@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import NavItem from "./navitem";
 
-export default function NavBar() {
+export default function NavBar(props) {
   const [items, setitems] = useState([
     {
       id: 1,
@@ -17,6 +17,8 @@ export default function NavBar() {
       active: false,
     },
   ]);
+
+  const [navstate, navsetstate] = useState(false);
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -47,6 +49,60 @@ export default function NavBar() {
     });
     setitems(items2);
   };
+  const clickstate = () => {};
+
+  const navdata = () => {
+    // const data = JSON.parse(localStorage.getItem("user-info"));
+    if (props.status) {
+      const data = JSON.parse(props.status);
+      return (
+        <ul className="navbar-nav ms-auto">
+          <li
+            onClick={() => navsetstate(!navstate)}
+            className="nav-item dropdown"
+          >
+            <Link
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDarkDropdownMenuLink"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {data.userName}
+            </Link>
+            <ul
+              className={
+                navstate
+                  ? "dropdown-menu dropdown-menu-dark show"
+                  : "dropdown-menu dropdown-menu-dark"
+              }
+              aria-labelledby="navbarDarkDropdownMenuLink"
+            >
+              <li>
+                <Link className="dropdown-item" to="/userpage/setting">
+                  Settings
+                </Link>
+              </li>
+              <li>
+                <Link className="dropdown-item" to="/">
+                  Log Out
+                </Link>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      );
+    } else {
+      return (
+        <ul className="navbar-nav">
+          {items.map((item) => (
+            <NavItem key={item.id} item={item} OnClick={OnClick} />
+          ))}
+        </ul>
+      );
+    }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -63,35 +119,7 @@ export default function NavBar() {
         Exam Proctor
       </Link>
       <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav">
-          {items.map((item) => (
-            <NavItem key={item.id} item={item} OnClick={OnClick} />
-          ))}
-        </ul>
-        <ul className="navbar-nav ms-auto">
-          <li class="nav-item dropdown">
-            <Link
-              className="nav-link dropdown-toggle"
-              to="#"
-              id="navbarDarkDropdownMenuLink"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Dropdown
-            </Link>
-            <ul
-              className="dropdown-menu dropdown-menu-dark"
-              aria-labelledby="navbarDarkDropdownMenuLink"
-            >
-              <li>
-                <Link className="dropdown-item" to="/">
-                  Action
-                </Link>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        {navdata()}
       </div>
     </nav>
   );

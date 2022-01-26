@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Form from "./form";
 import { useNavigate } from "react-router-dom";
 
-export default function SignUp() {
+export default function SignUp(props) {
   const navigate = useNavigate();
 
   const [elements, setelements] = useState([
@@ -50,11 +50,13 @@ export default function SignUp() {
     },
   ]);
 
-  useEffect(() => {
-    if (localStorage.getItem("user-info")) {
-      navigate("/userpage");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("user-info")) {
+  //     navigate("/userpage");
+  //   } else {
+  //     props.setLogIn(null);
+  //   }
+  // }, []);
 
   const handlechange = (element, event) => {
     const elements2 = [...elements];

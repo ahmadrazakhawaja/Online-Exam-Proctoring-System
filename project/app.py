@@ -146,6 +146,7 @@ def add_user():
         s1.profileUrl = data["profileUrl"]
 
         # encrypting password
+        print(s1.profileUrl)
         data["password"] = pbkdf2_sha256.hash(data["password"])
         data2 = copy.deepcopy(data)
         s1.password = data["password"]

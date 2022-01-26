@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Form from "./form";
 import { useNavigate } from "react-router-dom";
 
-export default function LogIn() {
+export default function LogIn(props) {
   const navigate = useNavigate();
   const [elements, setelements] = useState([
     {
@@ -21,11 +21,13 @@ export default function LogIn() {
     },
   ]);
 
-  useEffect(() => {
-    if (localStorage.getItem("user-info")) {
-      navigate("/userpage");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("user-info")) {
+  //     navigate("/userpage");
+  //   } else {
+  //     props.setLogIn(null);
+  //   }
+  // }, []);
 
   const handlechange = (element, event) => {
     const elements2 = [...elements];
@@ -53,6 +55,7 @@ export default function LogIn() {
         console.log(json.header.message);
         if (json.header.message === "User login Successful") {
           localStorage.setItem("user-info", JSON.stringify(json.data));
+          props.setLogIn(localStorage.getItem("user-info"));
           navigate("/userpage");
         }
       });
