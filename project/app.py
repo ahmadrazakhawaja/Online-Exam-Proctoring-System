@@ -173,7 +173,7 @@ def add_user():
 # updateduser = user.modify(name="New_name2")
 @app.route("/update/<_id>", methods=["GET", "POST"])
 def update_user(_id):
-
+    works.upda
     checkuser = student.objects(id=_id).first()
     if not checkuser:
         return jsonify(header={"message": "User Doesn't Exist"}), 400
@@ -206,12 +206,12 @@ def update_user(_id):
             "Profile pic:": checkuser["profileUrl"],
         }
 
-        updateduser = checkuser.modify(**data)  # Apparently a shortcut :/
+        # updateduser = checkuser.modify(**data)  # Apparently a shortcut :/
         # Updating statements
-        # name = checkuser.modify(name=s1.name)
-        # erp = checkuser.modify(erp=s1.erp)
-        # username = checkuser.modify(username=s1.username)
-        # profileUrl = checkuser.modify(profileUrl=s1.profileUrl)
+        name = checkuser.modify(name=s1.name)
+        erp = checkuser.modify(erp=s1.erp)
+        username = checkuser.modify(username=s1.username)
+        profileUrl = checkuser.modify(profileUrl=s1.profileUrl)
 
         updateduser = {
             "ID:": (str)(checkuser["id"]),
