@@ -48,7 +48,7 @@ Make sure you have installed:
 
 6. **Activate react frontend**:<br>
    From the project directory go to frontend/ my-app / folder and run the command
-   `npm run`
+   `npm start`
    to activate react frontend
 
 ## How to push ##
@@ -66,11 +66,8 @@ Commit files to repo
 Create branch to put files online
 `git branch -M master`
 
-Add to online repo
+Add remote origin
 `git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git`
-
-If remote origin already exists just add files
-`git add --all`
 
 Always pull before pushing to github repositiory
 `git pull`

@@ -1,29 +1,18 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-class NavItem extends Component {
-  constructor(props) {
-    super(props);
-  }
+const setclass = (active) => {
+  let classname = "nav-link";
+  classname += active === true ? " active" : "";
+  return classname;
+};
 
-  render() {
-    return (
-      <li
-        onClick={() => this.props.OnClick(this.props.item)}
-        className="nav-item"
-      >
-        <Link className={this.setclass()} to={this.props.item.link}>
-          {this.props.item.name}
-        </Link>
-      </li>
-    );
-  }
-
-  setclass = () => {
-    let classname = "nav-link";
-    classname += this.props.item.active === true ? " active" : "";
-    return classname;
-  };
+export default function NavItem(props) {
+  return (
+    <li onClick={() => props.OnClick(props.item)} className="nav-item">
+      <Link className={setclass(props.item.active)} to={props.item.link}>
+        {props.item.name}
+      </Link>
+    </li>
+  );
 }
-
-export default NavItem;

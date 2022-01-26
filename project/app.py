@@ -95,7 +95,7 @@ def List_All():
     )
 
 
-@app.route("/login", methods=["POST","OPTIONS"])
+@app.route("/login", methods=["POST"])
 def login():
 
     try:
@@ -119,13 +119,13 @@ def login():
         print("\n", e, "User doesn't exist exists\n ")
         return jsonify(header={"message":"User doesn't exist"}), 400
     checks = {
-        "ID:": (str)(checkuser["id"]),
-        "Name:": checkuser["name"],
-        "ERP:": checkuser["erp"],
-        "userName:": checkuser["username"],
-        "Email:": checkuser["email"],
-        "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
-        "Profile pic:": checkuser["profileUrl"],
+        "ID": (str)(checkuser["id"]),
+        "Name": checkuser["name"],
+        "ERP": checkuser["erp"],
+        "userName": checkuser["username"],
+        "Email": checkuser["email"],
+        "DateCreated": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+        "Profile pic": checkuser["profileUrl"],
     }
     print(checks)
     # ret = jsonify(header={"message": "User Sign up Successful"})
@@ -146,11 +146,12 @@ def add_user():
         s1.profileUrl = data["profileUrl"]
 
         # encrypting password
+        print(s1.profileUrl)
         data["password"] = pbkdf2_sha256.hash(data["password"])
         data2 = copy.deepcopy(data)
         s1.password = data["password"]
         # data2.pop("password")
-        s3.Bucket('fyp-project-iba').upload_file(Filename='foo.csv', Key='foo.csv')
+        # s3.Bucket('fyp-project-iba').upload_file(Filename='foo.csv', Key='foo.csv')
         s1.save()
     except Exception as e:
         print("\n", e, "email already exists\n ")
