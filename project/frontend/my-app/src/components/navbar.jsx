@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import NavItem from "./navitem";
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar(props) {
+  const navigate = useNavigate();
   const [items, setitems] = useState([
     {
       id: 1,
@@ -49,7 +51,10 @@ export default function NavBar(props) {
     });
     setitems(items2);
   };
-  const clickstate = () => {};
+  const logout = () => {
+    localStorage.removeItem("user-info");
+    props.setLogIn(null);
+  };
 
   const navdata = () => {
     // const data = JSON.parse(localStorage.getItem("user-info"));
@@ -69,7 +74,7 @@ export default function NavBar(props) {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {data.userName}
+              {data.username}
             </Link>
             <ul
               className={
@@ -85,7 +90,7 @@ export default function NavBar(props) {
                 </Link>
               </li>
               <li>
-                <Link className="dropdown-item" to="/">
+                <Link onClick={logout} className="dropdown-item" to="/">
                   Log Out
                 </Link>
               </li>

@@ -10,5 +10,5 @@ export default function UserPage(props) {
   // }, []);
   const data = JSON.parse(localStorage.getItem("user-info"));
 
-  return <h1 style={{ textAlign: "center" }}>Welcome {data.userName}</h1>;
+  return <h1 style={{ textAlign: "center" }}>Welcome {data.username}</h1>;
 }

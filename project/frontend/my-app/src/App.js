@@ -17,7 +17,7 @@ function App() {
 
   return (
     <Router>
-      <NavBar status={loggedIn} />
+      <NavBar status={loggedIn} setLogIn={setLoggedIn} />
       <Routes>
         <Route element={<PublicRoute setLogIn={setLoggedIn} />}>
           <Route element={<Home setLogIn={setLoggedIn} />} exact path="/" />
@@ -26,7 +26,10 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute setLogIn={setLoggedIn} />}>
           <Route element={<UserPage />} path="/userpage" />
-          <Route element={<Setting />} path="/userpage/setting" />
+          <Route
+            element={<Setting setLogIn={setLoggedIn} />}
+            path="/userpage/setting"
+          />
         </Route>
       </Routes>
       <Footer />

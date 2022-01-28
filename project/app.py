@@ -122,7 +122,7 @@ def login():
         "ID": (str)(checkuser["id"]),
         "Name": checkuser["name"],
         "ERP": checkuser["erp"],
-        "userName": checkuser["username"],
+        "username": checkuser["username"],
         "Email": checkuser["email"],
         "DateCreated": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
         "Profile pic": checkuser["profileUrl"],
@@ -191,20 +191,21 @@ def update_user(_id):
             data["profileUrl"] if (data["profileUrl"]) else checkuser["profileUrl"]
         )
         print("working so far 2")
-
-        if data["password"]:
+        if 'password' in data:
             # encrypting password
             data["password"] = pbkdf2_sha256.hash(data["password"])
             print("working so far in password check")
+        
+        print("working so far 3")
 
         olduser = {
-            "ID:": (str)(checkuser["id"]),
-            "Name:": checkuser["name"],
-            "ERP:": checkuser["erp"],
-            "userName:": checkuser["username"],
-            "Email:": checkuser["email"],
-            "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
-            "Profile pic:": checkuser["profileUrl"],
+            "ID": (str)(checkuser["id"]),
+            "Name": checkuser["name"],
+            "ERP": checkuser["erp"],
+            "username": checkuser["username"],
+            "Email": checkuser["email"],
+            "DateCreated": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+            "Profile pic": checkuser["profileUrl"],
         }
 
         updateduser = checkuser.modify(**data)  # Apparently a shortcut :/
@@ -215,13 +216,13 @@ def update_user(_id):
         # profileUrl = checkuser.modify(profileUrl=s1.profileUrl)
 
         updateduser = {
-            "ID:": (str)(checkuser["id"]),
-            "Name:": checkuser["name"],
-            "ERP:": checkuser["erp"],
-            "userName:": checkuser["username"],
-            "Email:": checkuser["email"],
-            "DateCreated:": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
-            "Profile pic:": checkuser["profileUrl"],
+            "ID": (str)(checkuser["id"]),
+            "Name": checkuser["name"],
+            "ERP": checkuser["erp"],
+            "username": checkuser["username"],
+            "Email": checkuser["email"],
+            "DateCreated": checkuser["dateCreated"].strftime("%d/%m/%Y %H:%M:%S"),
+            "Profile pic": checkuser["profileUrl"],
         }
         # checkuser.modify(dateCreated=s1.dateCreated),
     except:
