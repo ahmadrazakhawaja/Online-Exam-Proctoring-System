@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router";
 import { Navigate } from "react-router";
 
@@ -12,11 +12,15 @@ const useAuth = () => {
 const ProtectedRoute = (props) => {
   //   const navigate = useNavigate();
   const isAuth = useAuth();
+
+  useEffect(() => {
+    const set = isAuth ? localStorage.getItem("user-info") : null;
+    props.setLogIn(set);
+  }, []);
+
   if (isAuth) {
-    props.setLogIn(localStorage.getItem("user-info"));
     return <Outlet {...props} />;
   }
-  props.setLogIn(null);
   return <Navigate to="/" />;
 };
 
