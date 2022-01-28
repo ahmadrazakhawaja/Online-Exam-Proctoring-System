@@ -46,7 +46,21 @@ Make sure you have installed:
    Show all dependencies
    `pip freeze`
 
-6. **Activate react frontend**:<br>
+6. **Activate Node backend**:<br>
+   go to Node_backend folder (Need to have Node.js installed on device)
+   `cd project/Node_backend`
+
+   Install Dependencies
+   `npm install`
+
+   To List dependencies
+   `npm list --depth=0`
+
+   Run Backend development server
+   `npm run dev`
+
+
+7. **Activate react frontend**:<br>
    From the project directory go to frontend/ my-app / folder and run the command
    `npm start`
    to activate react frontend

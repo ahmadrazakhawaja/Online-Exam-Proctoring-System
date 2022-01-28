@@ -5,3 +5,5 @@ venv
 .DS_Store
 project/.DS_Store
 project/frontend/my-app/node_modules
+project/Node_backend/node_modules
+.env
