@@ -382,6 +382,24 @@ router.get('/blog/:id', protect,
     });
 
 
+
+router.get('/ListInstitutes',
+    async (req, res) => {
+        const InstList = await Institute.find({})
+        if (!InstList)
+            return res.status(400).json({
+                header: { message: "Error geting Institute List", code: 0 },
+            })
+        else {
+            return res.status(200).json({
+                header: { message: "User list retrieved successfully", code: 0 },
+                data: {
+                    Institute: { listlength: InstList.length, InstList }
+                }
+            })
+        }
+    });
+
 // Find all users
 // list of all users without password
 router.get('/SuperAdmin/allUsers/:lim/:pg', protect, checkAdmin,
