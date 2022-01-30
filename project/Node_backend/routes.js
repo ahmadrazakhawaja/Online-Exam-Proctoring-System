@@ -100,7 +100,7 @@ router.post('/addInstitute',
 
             });
 
-            TestInst.save().then(console.log('Institue')).catch(err => res.status(400).json({
+            await TestInst.save().then(console.log('Institue')).catch(err => res.status(400).json({
                 header: {
                     message: "User cannot be saved",
                     err,
@@ -167,31 +167,31 @@ router.post('/adduser',
             profileUrl: req.body.profileUrl
         });
 
-        if (TestUser) {
+        if (!TestUser) {
+            res.status(400).json({
+                header: {
+                    message: "User is invalid", err,
+                    code: 1
+                }
+            });
+        } else {
+            await TestUser.save().then(console.log('works?')).catch(err => res.status(400).json({
+                header: {
+                    message: "User cannot be saved",
+                    code: 1,
+                    err
+                }
+            }));
+
             res.status(200).json({
                 header: {
                     message: "User Made", code: 0
                 },
                 data: {
                     id: TestUser.id, name: TestUser.name, email: TestUser.email,
-                    profileUrl: TestUser.profileUrl, InstituteName: instExist.instituteName,
-                    rollNum: TestUser.rollNum, date: TestUser.date
+                    InstituteName: instExist.instituteName, rollNum: TestUser.rollNum,
+                    profileUrl: TestUser.profileUrl, date: TestUser.date
                 },
-            });
-
-            TestUser.save().then(console.log('works?')).catch(err => res.status(400).json({
-                header: {
-                    message: "User cannot be saved",
-                    err,
-                    code: 1
-                }
-            }));
-        } else {
-            res.status(400).json({
-                header: {
-                    message: "User is invalid", err,
-                    code: 1
-                }
             });
         }
     });

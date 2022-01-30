@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 require("./InstituteModel");
 //creating schema
+function arrayLimit(val) {
+  return val.length == 3;
+}
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -28,7 +32,7 @@ const UserSchema = new Schema({
       type: String,
       required: true,
     }],
-    validate: [(val) => { val.length == 3 }, 'Need to give 3 different images']
+    validate: [arrayLimit, 'Need to give 3 different images']
   },
   isAdmin: {
     type: Boolean,
