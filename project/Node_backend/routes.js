@@ -394,7 +394,7 @@ router.get('/ListInstitutes',
             return res.status(200).json({
                 header: { message: "User list retrieved successfully", code: 0 },
                 data: {
-                    Institute: { listlength: InstList.length, InstList }
+                    listlength: InstList.length, InstituteList: InstList
                 }
             })
         }
