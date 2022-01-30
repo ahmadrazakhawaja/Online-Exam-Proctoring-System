@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function LogIn(props) {
   const navigate = useNavigate();
-  const [elements, setelements] = useState([
+  const elements = [
     {
       id: 1,
       type: "email",
@@ -21,7 +21,25 @@ export default function LogIn(props) {
       value: "",
       verification: {},
     },
-  ]);
+  ];
+  // const [elements, setelements] = useState([
+  //   {
+  //     id: 1,
+  //     type: "email",
+  //     text: "Email",
+  //     placeholder: "Enter Email",
+  //     value: "",
+  //     verification: {},
+  //   },
+  //   {
+  //     id: 2,
+  //     type: "password",
+  //     text: "Password",
+  //     placeholder: "Enter Password",
+  //     value: "",
+  //     verification: {},
+  //   },
+  // ]);
 
   const [alert, setalert] = useState(null);
 
@@ -79,7 +97,7 @@ export default function LogIn(props) {
 
   const handleSubmit = (data, event) => {
     console.log(data);
-    fetch("http://127.0.0.1:5000/login", {
+    fetch("http://localhost:5000/routes/login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       mode: "cors",

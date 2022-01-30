@@ -5,26 +5,30 @@ import { useNavigate } from "react-router-dom";
 export default function SignUp(props) {
   const navigate = useNavigate();
 
-  const [elements, setelements] = useState([
+  const elements = [
+    // {
+    //   id: 1,
+    //   type: "text",
+    //   text: "Username",
+    //   placeholder: "Enter Username",
+    //   // value: "",
+    //   verification: {
+    //     required: {
+    //       value: true,
+    //       message: "Username is Required",
+    //     },
+    //     minLength: {
+    //       value: 4,
+    //       message: "Username should have minimum length of 4",
+    //     },
+    //     maxLength: {
+    //       value: 30,
+    //       message: "Username should have maximum length of 30",
+    //     },
+    //   },
+    // },
     {
       id: 1,
-      type: "text",
-      text: "Username",
-      placeholder: "Enter Username",
-      // value: "",
-      verification: {
-        required: {
-          value: true,
-          message: "Username is Required",
-        },
-        maxLength: {
-          value: 30,
-          message: "Username should have maximum length of 30",
-        },
-      },
-    },
-    {
-      id: 2,
       type: "email",
       text: "Email Address",
       placeholder: "Enter Email",
@@ -41,7 +45,7 @@ export default function SignUp(props) {
       },
     },
     {
-      id: 3,
+      id: 2,
       type: "password",
       text: "Password",
       placeholder: "Enter Password",
@@ -58,42 +62,204 @@ export default function SignUp(props) {
       },
     },
     {
+      id: 3,
+      type: "password",
+      text: "Retype Password",
+      placeholder: "Retype Password",
+      // value: "",
+      verification: {
+        required: {
+          value: true,
+          message: "Password is Required",
+        },
+        minLength: {
+          value: 5,
+          message: "Password should have minimum length of 5",
+        },
+      },
+    },
+    {
       id: 4,
+      id2: 5,
       type: "text",
-      text: "Name",
+      text: "First Name",
+      text2: "Last Name",
+      placeholder: "Enter First Name",
+      placeholder2: "Enter Last Name",
+      // value: "",
+      verification: {
+        minLength: {
+          value: 3,
+          message: "First Name should have minimum length of 3",
+        },
+        required: {
+          value: true,
+          message: "First Name is Required",
+        },
+      },
+      verification2: {
+        minLength: {
+          value: 1,
+          message: "Last Name should have minimum length of 1",
+        },
+        required: {
+          value: true,
+          message: "Last Name is Required",
+        },
+      },
+    },
+    // {
+    //   id: 5,
+    //   type: "text",
+    //   text: "Last Name",
+    //   placeholder: "Enter Last Name",
+    //   // value: "",
+    //   verification: {
+    //     minLength: {
+    //       value: 1,
+    //       message: "Last Name should have minimum length of 1",
+    //     },
+    //     required: {
+    //       value: true,
+    //       message: "Last Name is Required",
+    //     },
+    //   },
+    // },
+    // {
+    //   id: 5,
+    //   type: "number",
+    //   text: "Roll No",
+    //   placeholder: "Enter Roll No",
+    //   // value: "",
+    //   verification: {
+    //     minLength: {
+    //       value: 2,
+    //       message: "Roll No should have minimum length of 2",
+    //     },
+    //     required: {
+    //       value: true,
+    //       message: "Roll number is Required",
+    //     },
+    //   },
+    // },
+    {
+      id: 6,
+      type: "form-select",
+      text: "Institution",
       placeholder: "Enter Full Name",
       // value: "",
       verification: {
         required: {
           value: true,
-          message: "Full Name is Required",
+          message: "Institution is Required",
         },
       },
     },
-    {
-      id: 5,
-      type: "number",
-      text: "Roll No",
-      placeholder: "Enter Roll No",
-      // value: "",
-      verification: {
-        required: {
-          value: true,
-          message: "Roll number is Required",
-        },
-      },
-    },
-    {
-      id: 6,
-      type: "file",
-      text: "Picture",
-      placeholder: "Upload Picture",
-      // value: "",
-      verification: {
-        required: true,
-      },
-    },
-  ]);
+  ];
+  // const [elements, setelements] = useState([
+  //   {
+  //     id: 1,
+  //     type: "text",
+  //     text: "Username",
+  //     placeholder: "Enter Username",
+  //     // value: "",
+  //     verification: {
+  //       required: {
+  //         value: true,
+  //         message: "Username is Required",
+  //       },
+  //       minLength: {
+  //         value: 4,
+  //         message: "Username should have minimum length of 4",
+  //       },
+  //       maxLength: {
+  //         value: 30,
+  //         message: "Username should have maximum length of 30",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 2,
+  //     type: "email",
+  //     text: "Email Address",
+  //     placeholder: "Enter Email",
+  //     // value: "",
+  //     verification: {
+  //       required: {
+  //         value: true,
+  //         message: "Email is Required",
+  //       },
+  //       pattern: {
+  //         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}$/i,
+  //         message: "Email not Valid",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 3,
+  //     type: "password",
+  //     text: "Password",
+  //     placeholder: "Enter Password",
+  //     // value: "",
+  //     verification: {
+  //       required: {
+  //         value: true,
+  //         message: "Password is Required",
+  //       },
+  //       minLength: {
+  //         value: 5,
+  //         message: "Password should have minimum length of 5",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 4,
+  //     type: "text",
+  //     text: "Name",
+  //     placeholder: "Enter Full Name",
+  //     // value: "",
+  //     verification: {
+  //       minLength: {
+  //         value: 3,
+  //         message: "Nname should have minimum length of 3",
+  //       },
+  //       required: {
+  //         value: true,
+  //         message: "Full Name is Required",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 5,
+  //     type: "number",
+  //     text: "Roll No",
+  //     placeholder: "Enter Roll No",
+  //     // value: "",
+  //     verification: {
+  //       minLength: {
+  //         value: 2,
+  //         message: "Roll No should have minimum length of 2",
+  //       },
+  //       required: {
+  //         value: true,
+  //         message: "Roll number is Required",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 6,
+  //     type: "form-select",
+  //     text: "Institution",
+  //     placeholder: "Enter Full Name",
+  //     // value: "",
+  //     verification: {
+  //       required: {
+  //         value: true,
+  //         message: "Institution is Required",
+  //       },
+  //     },
+  //   },
+  // ]);
 
   const [alert, setalert] = useState(null);
 

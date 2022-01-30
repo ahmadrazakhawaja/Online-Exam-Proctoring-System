@@ -3,6 +3,7 @@ import TextBox from "./text_box";
 import { useForm } from "react-hook-form";
 
 export default function Form(props) {
+  let fileObj = [];
   const {
     register,
     handleSubmit,
@@ -10,6 +11,10 @@ export default function Form(props) {
   } = useForm(props.default_values ? props.default_values : {});
   // const handlechange = props.onChange;
   const onSubmit = props.onSubmit;
+
+  const onFileUpload = (event) => {
+    fileObj.push(event.target.files);
+  };
 
   if (!props.default_values) {
     return (

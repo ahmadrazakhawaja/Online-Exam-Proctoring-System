@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function Setting(props) {
   const navigate = useNavigate();
-  const [elements, setelements] = useState([
+
+  const elements = [
     {
       id: 1,
       type: "text",
@@ -15,6 +16,10 @@ export default function Setting(props) {
         required: {
           value: true,
           message: "Username is Required",
+        },
+        minLength: {
+          value: 4,
+          message: "Username should have minimum length of 4",
         },
         maxLength: {
           value: 30,
@@ -42,6 +47,10 @@ export default function Setting(props) {
       placeholder: "Enter Full Name",
       // value: "",
       verification: {
+        minLength: {
+          value: 3,
+          message: "Nname should have minimum length of 3",
+        },
         required: {
           value: true,
           message: "Username is Required",
@@ -56,6 +65,10 @@ export default function Setting(props) {
       // value: "",
       description: "Roll No is needed if you want to take an exam.",
       verification: {
+        minLength: {
+          value: 2,
+          message: "Roll No should have minimum length of 2",
+        },
         required: {
           value: true,
           message: "Username is Required",
@@ -69,8 +82,92 @@ export default function Setting(props) {
       placeholder: "Upload Picture",
       // value: "",
       verification: {},
+      description:
+        "Upload multiple images. 1 from front and other from left and right angle.",
     },
-  ]);
+  ];
+
+  // const [elements, setelements] = useState([
+  //   {
+  //     id: 1,
+  //     type: "text",
+  //     text: "Username",
+  //     placeholder: "Enter Username",
+  //     // value: "",
+  //     verification: {
+  //       required: {
+  //         value: true,
+  //         message: "Username is Required",
+  //       },
+  //       minLength: {
+  //         value: 4,
+  //         message: "Username should have minimum length of 4",
+  //       },
+  //       maxLength: {
+  //         value: 30,
+  //         message: "Username should have maximum length of 30",
+  //       },
+  //     },
+  //   },
+  //   // {
+  //   //   id: 3,
+  //   //   type: "password",
+  //   //   text: "Password",
+  //   //   placeholder: "Enter Password",
+  //   //   // value: "",
+  //   //   verification: {
+  //   //     minLength: {
+  //   //       value: 5,
+  //   //       message: "Password should have minimum length of 5",
+  //   //     },
+  //   //   },
+  //   // },
+  //   {
+  //     id: 2,
+  //     type: "text",
+  //     text: "Name",
+  //     placeholder: "Enter Full Name",
+  //     // value: "",
+  //     verification: {
+  //       minLength: {
+  //         value: 3,
+  //         message: "Nname should have minimum length of 3",
+  //       },
+  //       required: {
+  //         value: true,
+  //         message: "Username is Required",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 3,
+  //     type: "number",
+  //     text: "Erp",
+  //     placeholder: "Enter Roll No",
+  //     // value: "",
+  //     description: "Roll No is needed if you want to take an exam.",
+  //     verification: {
+  //       minLength: {
+  //         value: 2,
+  //         message: "Roll No should have minimum length of 2",
+  //       },
+  //       required: {
+  //         value: true,
+  //         message: "Username is Required",
+  //       },
+  //     },
+  //   },
+  //   {
+  //     id: 4,
+  //     type: "file",
+  //     text: "Picture",
+  //     placeholder: "Upload Picture",
+  //     // value: "",
+  //     verification: {},
+  //     description:
+  //       "Upload multiple images. 1 from front and other from left and right angle.",
+  //   },
+  // ]);
 
   const data2 = JSON.parse(localStorage.getItem("user-info"));
 
@@ -137,17 +234,24 @@ export default function Setting(props) {
 
   const handleUpdate = (data, event) => {
     console.log(data);
+    const formData = new FormData();
+    if (data["Picture"]) {
+      formData.append("picture", data["Picture"]);
+    }
+    formData.append(
+      "data",
+      JSON.stringify({
+        username: data.Username,
+        name: data.Name,
+        erp: data.Erp,
+      })
+    );
     console.log(data["Email Address"]);
     fetch(`http://127.0.0.1:5000/update/${data2.ID}`, {
       method: "POST",
       headers: new Headers({ "content-Type": "application/json" }),
       mode: "cors",
-      body: JSON.stringify({
-        username: data.Username,
-        name: data.Name,
-        erp: data.Erp,
-        profileUrl: "hello",
-      }),
+      body: formData,
     })
       .then((res) => {
         console.log(res);
