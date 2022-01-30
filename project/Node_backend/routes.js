@@ -10,6 +10,8 @@ require("./models/UserModel.js");
 const User = mongoose.model('users');
 require("./models/BlogModel.js");
 const Blog = mongoose.model('blogs');
+require("./models/InstituteModel.js");
+const Institute = mongoose.model('Institute');
 
 
 dotenv.config();
@@ -19,25 +21,7 @@ const { checkAdmin } = require("./middleware/isAdmin");
 
 // router.use(bodyParser.urlencoded({ extended: false }));
 // router.use(bodyParser.json());
-
-
-
-//
-router.get('/getProgramBase/:pg',
-    async (req, res) => {
-        var nums = parseInt(req.params.pg);
-        var numslimit = 1;
-        const ProgramFilter = await Program.find(req.query).limit(numslimit).skip(numslimit * nums);
-        console.log(numslimit);
-        console.log(ProgramFilter);
-        console.log(req.query);
-        res.status(200).json({
-            header: { message: "Program Filter found", code: 1 },
-            data: ProgramFilter,
-        });
-
-    });
-
+// req.query for query params
 
 //Gets all blog for a certain user.
 router.get('/getblogs/:id/:lim/:pg', protect,
@@ -83,14 +67,70 @@ router.get('/getblogs/:id/:lim/:pg', protect,
         }
     });
 
+router.post('/addInstitute',
+    async (req, res) => {
+
+        const { instituteName } = req.body
+        const instExist =
+            await Institute.findOne({ instituteName });
+
+        if (instExist) {
+            return res
+                .status(400)
+                .json({
+                    header: {
+                        message: "Institute already exist with this Name",
+                        code: 1
+                    }
+                });
+        }
+
+        const TestInst = new Institute({
+            instituteName: req.body.instituteName
+        })
+
+        if (TestInst) {
+            res.status(200).json({
+                header: {
+                    message: "Institute Created", code: 0
+                },
+                data: {
+                    TestInst
+                },
+
+            });
+
+            TestInst.save().then(console.log('Institue')).catch(err => res.status(400).json({
+                header: {
+                    message: "User cannot be saved",
+                    err,
+                    code: 1
+                }
+            }));
+
+        } else {
+            return res.status(400).json({
+                header: {
+                    message: "Institute is invalid",
+                    code: 1
+                }
+            });
+        }
+    })
+
+
 // creates a user
 router.post('/adduser',
     async (req, res) => {
         // console.log("checks");
         // console.log("check", req.body);
         const { email } = req.body;
+        const { instituteName } = req.body;
         const userExist =
             await User.findOne({ email });
+
+        const instExist =
+            await Institute.findOne({ instituteName });
 
         if (userExist) {
             return res
@@ -102,13 +142,29 @@ router.post('/adduser',
                     }
                 });
         }
-
+        if (!instExist) {
+            return res
+                .status(400)
+                .json({
+                    header: {
+                        message: "Institute doesnt exist with this Name",
+                        code: 1
+                    }
+                });
+        }
+        console.log(instExist, 'checks')
+        console.log(typeof (instExist.id))
+        const instID = (mongoose.Types.ObjectId)(instExist.id)
+        console.log(typeof (instID))
         const TestUser = new User({
             name: req.body.name,
+            institute_id: instExist.id,
             email: req.body.email,
             profileUrl: req.body.profileUrl,
+            rollNum: req.body.rollNum,
             password: bcrypt.hashSync(req.body.password, 10),
-            isAdmin: req.body.isAdmin
+            isAdmin: req.body.isAdmin,
+            profileUrl: req.body.profileUrl
         });
 
         if (TestUser) {
@@ -117,8 +173,10 @@ router.post('/adduser',
                     message: "User Made", code: 0
                 },
                 data: {
-                    name: TestUser.name, email: TestUser.email, id: TestUser.id
-                }
+                    id: TestUser.id, name: TestUser.name, email: TestUser.email,
+                    profileUrl: TestUser.profileUrl, InstituteName: instExist.instituteName,
+                    rollNum: TestUser.rollNum, date: TestUser.date
+                },
             });
 
             TestUser.save().then(console.log('works?')).catch(err => res.status(400).json({
