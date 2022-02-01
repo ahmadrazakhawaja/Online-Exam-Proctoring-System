@@ -12,6 +12,9 @@ require("./models/BlogModel.js");
 const Blog = mongoose.model("blogs");
 require("./models/InstituteModel.js");
 const Institute = mongoose.model("Institute");
+const nodemailer = require("nodemailer");
+const mail = require("./mail");
+// import { sendConfirmationEmail } from "./mail";
 
 dotenv.config();
 connectDB();
@@ -145,16 +148,23 @@ router.post("/adduser", async (req, res) => {
   console.log(typeof instExist.id);
   const instID = mongoose.Types.ObjectId(instExist.id);
   console.log(typeof instID);
+  const token = jwt.sign({ email: req.body.email }, process.env.JWT_Secret);
   const TestUser = new User({
-    name: req.body.name,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
     institute_id: instExist.id,
     email: req.body.email,
-    profileUrl: req.body.profileUrl,
-    rollNum: req.body.rollNum,
+    confirmationCode: token,
+    // profileUrl: req.body.profileUrl,
     password: bcrypt.hashSync(req.body.password, 10),
-    isAdmin: req.body.isAdmin,
-    profileUrl: req.body.profileUrl,
+    // isAdmin: req.body.isAdmin,
+    // profileUrl: req.body.profileUrl,
   });
+  mail.sendConfirmationEmail(
+    TestUser.first_name,
+    TestUser.email,
+    TestUser.confirmationCode
+  );
 
   if (!TestUser) {
     res.status(400).json({
@@ -179,7 +189,7 @@ router.post("/adduser", async (req, res) => {
 
     res.status(200).json({
       header: {
-        message: "User Made",
+        message: "Please check your email",
         code: 0,
       },
       data: {
@@ -413,23 +423,22 @@ router.get("/blog/:id", protect, async (req, res) => {
   }
 });
 
-
-router.get('/ListInstitutes',
-    async (req, res) => {
-        const InstList = await Institute.find({})
-        if (!InstList)
-            return res.status(400).json({
-                header: { message: "Error geting Institute List", code: 0 },
-            })
-        else {
-            return res.status(200).json({
-                header: { message: "User list retrieved successfully", code: 0 },
-                data: {
-                    listlength: InstList.length, InstituteList: InstList
-                }
-            })
-        }
+router.get("/ListInstitutes", async (req, res) => {
+  const InstList = await Institute.find({});
+  if (!InstList)
+    return res.status(400).json({
+      header: { message: "Error geting Institute List", code: 0 },
     });
+  else {
+    return res.status(200).json({
+      header: { message: "User list retrieved successfully", code: 0 },
+      data: {
+        listlength: InstList.length,
+        InstituteList: InstList,
+      },
+    });
+  }
+});
 
 // Find all users
 // list of all users without password
@@ -527,11 +536,16 @@ router.post("/login", async (req, res) => {
       (bcrypt.compareSync(req.body.password, user.password) ||
         (user && req.body.password === user.password))
     ) {
+      if (user.isVerified === false) {
+        return res.status(401).send({
+          header: { message: "user not verified", code: 1 },
+        });
+      }
       console.log("here in paswd check");
       return res.status(200).json({
         header: { message: "User Logged In successfully!", code: 0 },
         data: {
-          name: user.name,
+          name: user.first_name,
           user: user.email,
           user_id: user.id,
           token: jwt.sign(
@@ -713,6 +727,46 @@ router.get("/blogcount", protect, async (req, res) => {
   } else {
     res.status(400).json({
       header: { message: "No documents found in Blog collection", code: 1 },
+    });
+  }
+});
+
+router.get("/api/auth/confirm/:confirmationCode", async (req, res) => {
+  const user = await User.findOne({
+    confirmationCode: req.params.confirmationCode,
+  });
+  if (!user) {
+    return res.status(400).json({
+      header: {
+        message: "User does not exist",
+        code: 1,
+      },
+    });
+  } else {
+    if (user.isVerified === true) {
+      return res.status(400).json({
+        header: {
+          message: "User already verified",
+          code: 1,
+        },
+      });
+    }
+    user.isVerified = true;
+    user.save((err) => {
+      if (err) {
+        return res.status(400).json({
+          header: {
+            message: "there is some error on the server.",
+            code: 1,
+          },
+        });
+      }
+    });
+    return res.status(200).json({
+      header: {
+        message: "User is verified successfully",
+        code: 1,
+      },
     });
   }
 });

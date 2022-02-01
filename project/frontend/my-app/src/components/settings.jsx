@@ -7,23 +7,32 @@ export default function Setting(props) {
 
   const elements = [
     {
-      id: 1,
+      id: 4,
+      id2: 5,
       type: "text",
-      text: "Username",
-      placeholder: "Enter Username",
+      text: "First Name",
+      text2: "Last Name",
+      placeholder: "Enter First Name",
+      placeholder2: "Enter Last Name",
       // value: "",
       verification: {
+        minLength: {
+          value: 3,
+          message: "First Name should have minimum length of 3",
+        },
         required: {
           value: true,
-          message: "Username is Required",
+          message: "First Name is Required",
         },
+      },
+      verification2: {
         minLength: {
-          value: 4,
-          message: "Username should have minimum length of 4",
+          value: 1,
+          message: "Last Name should have minimum length of 1",
         },
-        maxLength: {
-          value: 30,
-          message: "Username should have maximum length of 30",
+        required: {
+          value: true,
+          message: "Last Name is Required",
         },
       },
     },
@@ -40,23 +49,6 @@ export default function Setting(props) {
     //     },
     //   },
     // },
-    {
-      id: 2,
-      type: "text",
-      text: "Name",
-      placeholder: "Enter Full Name",
-      // value: "",
-      verification: {
-        minLength: {
-          value: 3,
-          message: "Nname should have minimum length of 3",
-        },
-        required: {
-          value: true,
-          message: "Username is Required",
-        },
-      },
-    },
     {
       id: 3,
       type: "number",

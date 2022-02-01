@@ -7,7 +7,11 @@ function arrayLimit(val) {
 }
 
 const UserSchema = new Schema({
-  name: {
+  first_name: {
+    type: String,
+    required: true,
+  },
+  last_name: {
     type: String,
     required: true,
   },
@@ -17,7 +21,8 @@ const UserSchema = new Schema({
   },
   rollNum: {
     type: String,
-    required: true,
+    required: false,
+    default: null,
   },
   email: {
     type: String,
@@ -28,26 +33,38 @@ const UserSchema = new Schema({
     required: true,
   },
   profileUrl: {
-    type: [{
-      type: String,
-      required: true,
-    }],
-    validate: [arrayLimit, 'Need to give 3 different images']
+    type: [
+      {
+        type: String,
+        required: false,
+        default: null,
+      },
+    ],
+    // validate: [arrayLimit, "Need to give 3 different images"],
   },
   isAdmin: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
+  },
+  isVerified: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   isActive: {
     type: Boolean,
     required: false,
-    default: true
+    default: true,
   },
   isDeleted: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
+  },
+  confirmationCode: {
+    type: String,
+    unique: true,
   },
 
   date: {

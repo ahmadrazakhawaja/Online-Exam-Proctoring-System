@@ -9,6 +9,7 @@ import Footer from "./components/footer";
 import UserPage from "./components/user_page";
 import ProtectedRoute from "./components/protected_route";
 import PublicRoute from "./components/public_route";
+import Welcome from "./components/verifyUser";
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -23,6 +24,7 @@ function App() {
           <Route element={<Home setLogIn={setLoggedIn} />} exact path="/" />
           <Route element={<SignUp setLogIn={setLoggedIn} />} path="/signup" />
           <Route element={<LogIn setLogIn={setLoggedIn} />} path="/login" />
+          <Route path="/confirm/:confirmationCode" element={<Welcome />} />
         </Route>
         <Route element={<ProtectedRoute setLogIn={setLoggedIn} />}>
           <Route element={<UserPage />} path="/userpage" />

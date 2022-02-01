@@ -4,7 +4,42 @@ import { useNavigate } from "react-router-dom";
 
 export default function SignUp(props) {
   const navigate = useNavigate();
+  const [institutes, setinstitutes] = useState(null);
+  const [formsubmit, setsubmit] = useState(false);
 
+  const getInstitutes = () => {
+    fetch("http://127.0.0.1:5000/routes/ListInstitutes", {
+      method: "GET",
+      mode: "cors",
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((json) => {
+        console.log(json.header.message);
+        if (json.header.message === "User list retrieved successfully") {
+          setinstitutes(json.data.InstituteList);
+          // institutes = json.data.InstituteList;
+          // institutes;
+          // console.log(institutes);
+        }
+        // else {
+        //   setalert(json.header.message);
+        // }
+      });
+    // event.preventDefault();
+  };
+  // console.log(institutes);
+  useEffect(() => {
+    getInstitutes();
+    // Promise.all([getInstitutes()]).then(() => {
+    //   console.log(institutes);
+    // });
+  }, []);
+
+  // setInterval(() => console.log(institutes), 5000);
+  // console.log("hello", institutes);
   const elements = [
     // {
     //   id: 1,
@@ -51,6 +86,11 @@ export default function SignUp(props) {
       placeholder: "Enter Password",
       // value: "",
       verification: {
+        // pattern: {
+        //   value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]$/,
+        //   message:
+        //     "Password should include at least one uppercase, one numeric value.",
+        // },
         required: {
           value: true,
           message: "Password is Required",
@@ -72,10 +112,10 @@ export default function SignUp(props) {
           value: true,
           message: "Password is Required",
         },
-        minLength: {
-          value: 5,
-          message: "Password should have minimum length of 5",
-        },
+        // minLength: {
+        //   value: 5,
+        //   message: "Password should have minimum length of 5",
+        // },
       },
     },
     {
@@ -143,11 +183,12 @@ export default function SignUp(props) {
     //   },
     // },
     {
-      id: 6,
+      id: 5,
       type: "form-select",
       text: "Institution",
       placeholder: "Enter Full Name",
       // value: "",
+      institutes: institutes,
       verification: {
         required: {
           value: true,
@@ -318,7 +359,7 @@ export default function SignUp(props) {
   const handleSubmit = (data, event) => {
     console.log(data);
     console.log(data["Email Address"]);
-    fetch("http://127.0.0.1:5000/add", {
+    fetch("http://127.0.0.1:5000/routes/adduser", {
       method: "POST",
       headers: new Headers({ "content-Type": "application/json" }),
       mode: "cors",
@@ -326,9 +367,9 @@ export default function SignUp(props) {
         username: data.Username,
         email: data["Email Address"],
         password: data.Password,
-        name: data.Name,
-        erp: data["Roll No"],
-        profileUrl: "hello",
+        first_name: data["First Name"],
+        last_name: data["Last Name"],
+        instituteName: data.Institution,
       }),
     })
       .then((res) => {
@@ -337,11 +378,16 @@ export default function SignUp(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        if (json.header.message === "User Sign up Successful") {
-          localStorage.setItem("user-info", JSON.stringify(json.data));
-          props.setLogIn(localStorage.getItem("user-info"));
-          navigate("/userpage");
+        if (json.header.message === "User Made") {
+          // localStorage.setItem("user-info", JSON.stringify(json.data));
+          // props.setLogIn(localStorage.getItem("user-info"));
+          // navigate("/login");
+          setsubmit(true);
         } else {
+          // setsubmit({
+          //   submit: true,
+          //   redirect: false,
+          // });
           setalert(json.header.message);
         }
       });
@@ -355,7 +401,10 @@ export default function SignUp(props) {
         elements={elements}
         // onChange={handlechange}
         onSubmit={handleSubmit}
+        formSubmit={formsubmit}
+        setformSubmit={setsubmit}
         value="Sign Up"
+        navigate={navigate}
       />
     </React.Fragment>
   );

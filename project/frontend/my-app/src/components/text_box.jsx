@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { appendErrors } from "react-hook-form";
+import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 export default function TextBox(props) {
   const getinput = () => {
@@ -41,9 +42,12 @@ export default function TextBox(props) {
               {text}
               {props.element.verification.required ? "*" : null}
             </option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            {props.element.institutes &&
+              props.element.institutes.map((institute) => (
+                <option key={institute.__v} value={institute.instituteName}>
+                  {institute.instituteName}
+                </option>
+              ))}
           </select>
           {props.errors[text] && props.errors[text].message}
         </React.Fragment>
@@ -90,6 +94,102 @@ export default function TextBox(props) {
             {props.element.description2}
           </div>
         </div>
+      );
+    }
+    if (text === "Retype Password") {
+      return (
+        <React.Fragment>
+          <label htmlFor={id}>
+            {text}
+            {props.element.verification.required ? "*" : null}
+          </label>
+          <div className="input-group">
+            <input
+              onPaste={(e) => {
+                e.preventDefault();
+                return false;
+              }}
+              type={!props.passwordEye ? type : "text"}
+              className="form-control"
+              id={id}
+              // value={value}
+              // onChange={(event) => onChange(props.element, event)}
+              aria-describedby={id}
+              placeholder={placeholder}
+              {...register(text, {
+                ...props.element.verification,
+                validate: (value) =>
+                  value === props.password || "The passwords do not match",
+              })}
+            />
+            <span
+              style={{
+                position: "absolute",
+                left: "95%",
+                marginRight: "10%",
+                zIndex: "100",
+              }}
+              className="mt-1"
+            >
+              {props.passwordEye === false ? (
+                <AiFillEyeInvisible
+                  onClick={() => props.setpasswordEye(!props.passwordEye)}
+                />
+              ) : (
+                <AiFillEye
+                  onClick={() => props.setpasswordEye(!props.passwordEye)}
+                />
+              )}
+            </span>
+          </div>
+          {/* {(props.checkPassword) => (props.checkPassword === props.repassword ? '')} */}
+          {props.errors[text] && props.errors[text].message}
+          {props.element.description}
+        </React.Fragment>
+      );
+    }
+    if (text === "Password") {
+      return (
+        <React.Fragment>
+          <label htmlFor={id}>
+            {text}
+            {props.element.verification.required ? "*" : null}
+          </label>
+          <div className="input-group">
+            <input
+              type={!props.passwordEye ? type : "text"}
+              className="form-control"
+              id={id}
+              // value={value}
+              // onChange={(event) => onChange(props.element, event)}
+              aria-describedby={id}
+              placeholder={placeholder}
+              {...register(text, props.element.verification)}
+            />
+            <span
+              style={{
+                position: "absolute",
+                left: "95%",
+                marginRight: "10%",
+                zIndex: "100",
+              }}
+              className="mt-1"
+            >
+              {props.passwordEye === false ? (
+                <AiFillEyeInvisible
+                  onClick={() => props.setpasswordEye(!props.passwordEye)}
+                />
+              ) : (
+                <AiFillEye
+                  onClick={() => props.setpasswordEye(!props.passwordEye)}
+                />
+              )}
+            </span>
+          </div>
+          {/* {(props.checkPassword) => (props.checkPassword === props.repassword ? '')} */}
+          {props.errors[text] && props.errors[text].message}
+          {props.element.description}
+        </React.Fragment>
       );
     }
     return (

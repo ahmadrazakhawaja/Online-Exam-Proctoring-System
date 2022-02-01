@@ -112,7 +112,7 @@ export default function LogIn(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        if (json.header.message === "User login Successful") {
+        if (json.header.message === "User Logged In successfully!") {
           localStorage.setItem("user-info", JSON.stringify(json.data));
           props.setLogIn(localStorage.getItem("user-info"));
           navigate("/userpage");
