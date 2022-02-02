@@ -529,7 +529,9 @@ router.put('/profile/:id', protect,
         if (req.User.isAdmin || req.User.id === foundUser.id) {
             if (foundUser) {
                 foundUser.name = req.body.name || foundUser.name;
-                foundUser.email = req.body.email || foundUser.email;
+                foundUser.email = foundUser.email;
+                foundUser.rollNum = req.body.rollNum || foundUser.rollNum;
+                foundUser.profileUrl = req.body.profileUrl || foundUser.profileUrl;
 
                 if (req.body.password) {
                     foundUser.password = bcrypt.hashSync(req.body.password, 10)
