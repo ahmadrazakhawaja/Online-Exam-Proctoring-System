@@ -21,6 +21,7 @@ export default function NavBar(props) {
   ]);
 
   const [navstate, navsetstate] = useState(false);
+  const [navstate2, navsetstate2] = useState(false);
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -74,7 +75,7 @@ export default function NavBar(props) {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {data.username}
+              {data.name}
             </Link>
             <ul
               className={
@@ -111,20 +112,41 @@ export default function NavBar(props) {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <Link
-        style={{
-          fontWeight: "bold",
-          fontFamily: "sans-serif",
-          marginLeft: "20px",
-        }}
-        onClick={OnClickHome}
-        className="navbar-brand"
-        to="/"
-      >
-        Exam Proctor
-      </Link>
-      <div className="collapse navbar-collapse" id="navbarNav">
-        {navdata()}
+      <div className="container-fluid">
+        <Link
+          style={{
+            fontWeight: "bold",
+            fontFamily: "sans-serif",
+            marginLeft: "20px",
+          }}
+          onClick={OnClickHome}
+          className="navbar-brand"
+          to="/"
+        >
+          Exam Proctor
+        </Link>
+        <button
+          className={navstate2 ? "navbar-toggler collapsed" : "navbar-toggler"}
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded={navstate2 ? "true" : "false"}
+          aria-label="Toggle navigation"
+          onClick={() => navsetstate2(!navstate2)}
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div
+          className={
+            navstate2
+              ? "collapse navbar-collapse show"
+              : "collapse navbar-collapse"
+          }
+          id="navbarNav"
+        >
+          {navdata()}
+        </div>
       </div>
     </nav>
   );
