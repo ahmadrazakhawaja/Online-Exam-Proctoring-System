@@ -64,7 +64,7 @@ const UserSchema = new Schema({
   },
   confirmationCode: {
     type: String,
-    unique: true,
+    unique: false,
   },
   date: {
     type: Date,

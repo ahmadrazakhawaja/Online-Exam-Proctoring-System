@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Form from "./form";
-import { useNavigate } from "react-router-dom";
 
-export default function LogIn(props) {
-  const navigate = useNavigate();
+const EnterEmail = (props) => {
   const elements = [
     {
       id: 1,
@@ -13,52 +11,9 @@ export default function LogIn(props) {
       value: "",
       verification: {},
     },
-    {
-      id: 2,
-      type: "password",
-      text: "Password",
-      placeholder: "Enter Password",
-      value: "",
-      verification: {},
-      link: "Forgot Password",
-    },
   ];
-  // const [elements, setelements] = useState([
-  //   {
-  //     id: 1,
-  //     type: "email",
-  //     text: "Email",
-  //     placeholder: "Enter Email",
-  //     value: "",
-  //     verification: {},
-  //   },
-  //   {
-  //     id: 2,
-  //     type: "password",
-  //     text: "Password",
-  //     placeholder: "Enter Password",
-  //     value: "",
-  //     verification: {},
-  //   },
-  // ]);
 
   const [alert, setalert] = useState(null);
-
-  // useEffect(() => {
-  //   if (localStorage.getItem("user-info")) {
-  //     navigate("/userpage");
-  //   } else {
-  //     props.setLogIn(null);
-  //   }
-  // }, []);
-
-  // const handlechange = (element, event) => {
-  //   const elements2 = [...elements];
-  //   const index = elements2.indexOf(element);
-  //   elements2[index] = { ...element };
-  //   elements2[index].value = event.target.value;
-  //   setelements(elements2);
-  // };
 
   const alerting = () => {
     setalert(null);
@@ -97,14 +52,12 @@ export default function LogIn(props) {
   };
 
   const handleSubmit = (data, event) => {
-    console.log(data);
-    fetch("http://localhost:5000/routes/login", {
+    fetch(`http://127.0.0.1:5000/routes/change-password`, {
       method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
+      headers: new Headers({ "content-Type": "application/json" }),
       mode: "cors",
       body: JSON.stringify({
         email: data.Email,
-        password: data.Password,
       }),
     })
       .then((res) => {
@@ -113,16 +66,25 @@ export default function LogIn(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        if (json.header.message === "User Logged In successfully!") {
-          localStorage.setItem("user-info", JSON.stringify(json.data));
-          props.setLogIn(localStorage.getItem("user-info"));
-          navigate("/userpage");
-        } else {
-          setalert(json.header.message);
-        }
+        // if (json.header.message === "User Made") {
+        //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+        //   // props.setLogIn(localStorage.getItem("user-info"));
+        //   // navigate("/login");
+        //   setsubmit(true);
+        // } else {
+        // setsubmit({
+        //   submit: true,
+        //   redirect: false,
+        // });
+        setalert(json.header.message);
+        // }
       });
     event.preventDefault();
   };
+
+  //   if (matchPath("/confirm/:confirmationCode", pathname)) {
+  //     verifyuser(confirmationCode);
+  //   }
 
   return (
     <React.Fragment>
@@ -131,8 +93,13 @@ export default function LogIn(props) {
         elements={elements}
         // onChange={handlechange}
         onSubmit={handleSubmit}
-        value="Log In"
+        // formSubmit={formsubmit}
+        // setformSubmit={setsubmit}
+        value="Change Password"
+        // navigate={navigate}
       />
     </React.Fragment>
   );
-}
+};
+
+export default EnterEmail;
