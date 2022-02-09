@@ -7,4 +7,4 @@ project/.DS_Store
 project/frontend/my-app/node_modules
 project/Node_backend/node_modules
 .env
-project/Node_backend/image_files
+project/Node_backend/image_files/
