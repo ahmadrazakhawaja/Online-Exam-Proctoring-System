@@ -75,7 +75,7 @@ export default function NavBar(props) {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {data.name}
+              {data.first_name}
             </Link>
             <ul
               className={
