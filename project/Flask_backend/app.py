@@ -1,6 +1,6 @@
 # git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
 
-#from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 
 
 # from os import name
@@ -8,7 +8,7 @@ import os
 import copy
 import json
 from mongoengine import *
-from flask import Flask,render_template, url_for,jsonify,make_response, request
+from flask import Flask, render_template, url_for, jsonify, make_response, request
 from user.db2 import student
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
@@ -25,10 +25,10 @@ app = Flask(__name__)
 CORS(app)
 
 s3 = boto3.resource(
-    service_name='s3',
-    region_name=os.getenv('AWS_DEFAULT_REGION'),
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+    service_name="s3",
+    region_name=os.getenv("AWS_DEFAULT_REGION"),
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
 )
 for bucket in s3.buckets.all():
     print(bucket.name)
@@ -47,14 +47,26 @@ else:
 
 # print out all the database names
 # print(db.list_database_names())
+# 3
 
-
-@app.route("/", methods=["GET", "POST"])
+@app.route("/Pycheck", methods=["GET", "POST"])
 def hello_world():
-
+    print("chk1")
+    file = request.get_data()
+    print(request._get_file_stream, "works?")
     name = "ahmad"
-    return render_template("hello.html", name=name), 200
+    # return render_template("hello.html", name=name), 200
+    return "MicroServices", 200
 
+
+@app.route("/PyImg", methods=["GET", "POST"])
+def hello_world():
+    print("chk1")
+    file = request.get_data()
+    print(request._get_file_stream, "works?")
+    name = "ahmad"
+    # return render_template("hello.html", name=name), 200
+    return "MicroServices", 200
 
 @app.route("/printDB", methods=["GET"])
 def List_All():
@@ -117,7 +129,7 @@ def login():
             )
     except Exception as e:
         print("\n", e, "User doesn't exist exists\n ")
-        return jsonify(header={"message":"User doesn't exist"}), 400
+        return jsonify(header={"message": "User doesn't exist"}), 400
     checks = {
         "ID": (str)(checkuser["id"]),
         "Name": checkuser["name"],
@@ -191,11 +203,11 @@ def update_user(_id):
             data["profileUrl"] if (data["profileUrl"]) else checkuser["profileUrl"]
         )
         print("working so far 2")
-        if 'password' in data:
+        if "password" in data:
             # encrypting password
             data["password"] = pbkdf2_sha256.hash(data["password"])
             print("working so far in password check")
-        
+
         print("working so far 3")
 
         olduser = {
