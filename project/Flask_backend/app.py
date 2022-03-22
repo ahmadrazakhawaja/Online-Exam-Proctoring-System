@@ -1,6 +1,6 @@
 # git remote add origin https://github.com/ahmadrazakhawaja/fyp_project.git
 
-#from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 
 
 
@@ -10,7 +10,7 @@ import copy
 import json
 from pyexpat import model
 from mongoengine import *
-from flask import Flask,render_template, url_for,jsonify,make_response, request
+from flask import Flask, render_template, url_for, jsonify, make_response, request
 from user.db2 import student
 from user.model import getmodel,predict_image
 from passlib.hash import pbkdf2_sha256
@@ -51,6 +51,16 @@ CORS(app)
 
 # print out all the database names
 # print(db.list_database_names())
+# 3
+
+@app.route("/Pycheck", methods=["GET", "POST"])
+def hello_world():
+    print("chk1")
+    file = request.get_data()
+    print(request._get_file_stream, "works?")
+    name = "ahmad"
+    # return render_template("hello.html", name=name), 200
+    return "MicroServices", 200
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -59,6 +69,14 @@ def get_image():
     # predict_image()
     return render_template("hello.html", name=name), 200
 
+@app.route("/PyImg", methods=["GET", "POST"])
+def hello_world():
+    print("chk1")
+    file = request.get_data()
+    print(request._get_file_stream, "works?")
+    name = "ahmad"
+    # return render_template("hello.html", name=name), 200
+    return "MicroServices", 200
 
 # @app.route("/printDB", methods=["GET"])
 # def List_All():
