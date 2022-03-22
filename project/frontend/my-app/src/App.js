@@ -14,6 +14,9 @@ import ChangePassword from "./components/change_password";
 import ChangePassword2 from "./components/change_password2";
 import EnterEmail from "./components/enter_email";
 import UploadImage from "./components/upload_image";
+import ExamSettings from "./components/exam_settings";
+import Socket from "./components/socket";
+import Panel from "./components/admin_panel";
 
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -50,6 +53,16 @@ function App() {
             path="/userpage/setting/upload-image"
             element={<UploadImage setLogIn={setLoggedIn} />}
           />
+          <Route
+            path="/userpage/exam-settings"
+            element={<ExamSettings setLogIn={setLoggedIn} />}
+          />
+          <Route element={<Socket setLogIn={setLoggedIn} />}>
+            <Route
+              path="/userpage/exam-room/:id"
+              element={<Panel setLogIn={setLoggedIn} />}
+            />
+          </Route>
         </Route>
       </Routes>
       <Footer />

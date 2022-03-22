@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ExamSettings from "./exam_settings";
 
 export default function UserPage(props) {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // useEffect(() => {
   //   if (!localStorage.getItem("user-info")) {
   //     navigate("/login");
@@ -10,12 +11,18 @@ export default function UserPage(props) {
   // }, []);
   const data = JSON.parse(localStorage.getItem("user-info"));
 
+  const examset = () => {
+    navigate("/userpage/socket");
+  };
+
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>Welcome {data.first_name}</h1>
       <div className="row mt-5" style={{ width: "100%" }}>
         <div className="col text-center">
-          <button className="btn btn-primary">Create Exam</button>
+          <button onClick={examset} className="btn btn-primary">
+            Create Exam
+          </button>
         </div>
 
         <div className="col text-center">
@@ -34,7 +41,7 @@ export default function UserPage(props) {
             <input
               type="submit"
               className="btn btn-primary mt-3"
-              style={{ margin: "0 auto" }}
+              style={{ margin: "0 auto", marginBottom: "100px" }}
               value="Join Exam"
             />
           </form>
