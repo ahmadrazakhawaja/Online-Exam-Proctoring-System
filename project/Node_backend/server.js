@@ -23,9 +23,12 @@ const cors = require("cors");
 app.use(cors());
 
 const Routes = require("./routes");
+const roomRoutes = require("./roomRoutes");
+
 
 app.use("/routes", Routes);
 // app.use("/routes", Flask);
+app.use("/roomRoutes", roomRoutes);
 
 app.get("/test1", async (req, res) => {
   console.log("Pycheck Checks out")

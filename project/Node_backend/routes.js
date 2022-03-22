@@ -6,7 +6,6 @@ const S3 = require("./AWS.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-// const bodyParser = require('body-parser')
 require("./models/UserModel.js");
 const User = mongoose.model("users");
 require("./models/BlogModel.js");
@@ -17,7 +16,6 @@ const nodemailer = require("nodemailer");
 const mail = require("./mail");
 const multer = require("multer");
 const fs = require("fs");
-
 const bodyParser = require("body-parser");
 const path = require("path");
 // import { sendConfirmationEmail } from "./mail";
