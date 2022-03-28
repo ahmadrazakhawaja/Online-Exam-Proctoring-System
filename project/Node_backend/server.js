@@ -172,27 +172,27 @@ io.on("connection", (socket) => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
 
-  socket.on("disconnect", () => {
-    // socket.broadcast.emit("callEnded");
-    content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-      user.last_name
-    } disconnected the room.\n`;
+  // socket.on("disconnect", () => {
+  //   // socket.broadcast.emit("callEnded");
+  //   content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+  //     user.last_name
+  //   } disconnected the room.\n`;
 
-    fs.writeFile(
-      `log_files/${room._id.toString()}`,
-      content,
-      { flag: "a" },
-      (err) => {}
-    );
-    if (user._id.toString() === room.adminID.toString()) {
-      connectedUser[datax].socket_id = null;
-    } else {
-      io.to(connectedUser[datax].socket_id).emit(
-        "disconnectx",
-        user._id.toString()
-      );
-    }
-  });
+  //   fs.writeFile(
+  //     `log_files/${room._id.toString()}`,
+  //     content,
+  //     { flag: "a" },
+  //     (err) => {}
+  //   );
+  //   if (user._id.toString() === room.adminID.toString()) {
+  //     connectedUser[datax].socket_id = null;
+  //   } else {
+  //     io.to(connectedUser[datax].socket_id).emit(
+  //       "disconnectx",
+  //       user._id.toString()
+  //     );
+  //   }
+  // });
 
   // console.log(io.sockets.adapter.rooms.get(room._id.toString()).size);
   // Handle chat event
