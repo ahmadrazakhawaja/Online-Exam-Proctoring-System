@@ -14,7 +14,7 @@ exports.protect = async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
-  console.log("this is token ", token);
+  // console.log("this is token ", token);
 
   if (!token) {
     return res.status(401).json({
@@ -27,9 +27,9 @@ exports.protect = async (req, res, next) => {
   }
   try {
     const decode = jwt.verify(token, process.env.JWT_Secret);
-    console.log("Decoded", decode);
+    // console.log("Decoded", decode);
     req.User = await User.findById(decode.id);
-    console.log("User", req.User);
+    // console.log("User", req.User);
     if (req.User.isDeleted === true) {
       return res.status(401).json({
         header: {
@@ -40,7 +40,7 @@ exports.protect = async (req, res, next) => {
     }
     next();
   } catch (err) {
-    console.log("err", err);
+    // console.log("err", err);
     return res.status(401).json({
       header: {
         message: "User Not Authorized. Token expired or invalid",

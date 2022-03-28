@@ -49,18 +49,21 @@ export default function ExamSettings(props) {
   };
 
   const onSubmit = (data, event) => {
+    const data2 = JSON.parse(localStorage.getItem("user-info"));
+    const myHeaders = new Headers();
+    myHeaders.append("content-Type", "application/json");
+    myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    navigate("/userpage/socket");
-    fetch("http://127.0.0.1:5000/routes/createroom", {
+    fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
       method: "POST",
-      headers: new Headers({ "content-Type": "application/json" }),
+      headers: myHeaders,
       mode: "cors",
       body: JSON.stringify({
-        facial_detection: data["facial-detection"],
-        audio_detection: data["audio-detection"],
-        browser_tracking: data["browser"],
-        candidate_limit: data["candidate-limit"],
-        time_limit: data["time-limit"],
+        facialDetection: data["facial-detection"],
+        audioDetection: data["audio-detection"],
+        browserTracking: data["browser"],
+        candidateLimit: data["candidate-limit"],
+        timeLimit: data["time-limit"],
       }),
     })
       .then((res) => {
@@ -69,23 +72,30 @@ export default function ExamSettings(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        // if (json.header.message === "User Made") {
-        //   // localStorage.setItem("user-info", JSON.stringify(json.data));
-        //   // props.setLogIn(localStorage.getItem("user-info"));
-        //   // navigate("/login");
-        //   setsubmit(true);
-        // } else {
-        // setsubmit({
-        //   submit: true,
-        //   redirect: false,
-        // });
-        setalert(json.header.message);
+        if (json.header.message === "Room Created") {
+          localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+          const room = JSON.parse(localStorage.getItem("room-info"));
+          navigate(`/userpage/exam-room/${room._id}`);
+        } else {
+          // if (json.header.message === "User Made") {
+          //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+          //   // props.setLogIn(localStorage.getItem("user-info"));
+          //   // navigate("/login");
+          //   setsubmit(true);
+          // } else {
+          // setsubmit({
+          //   submit: true,
+          //   redirect: false,
+          // });
+          setalert(json.header.message);
+        }
         // }
       });
   };
 
   return (
     <div>
+      {alert2()}
       <div className="mt-3">
         <h1 style={{ textAlign: "center" }}>Exam Settings</h1>
       </div>
@@ -137,8 +147,17 @@ export default function ExamSettings(props) {
           </div>
 
           <div className="row mt-5">
-            <div className="col-6 text-center">
-              <div className="mx-auto" style={{ width: "50%" }}>
+            <div className="col-6 text-center" style={{ position: "relative" }}>
+              <div
+                className="mx-auto mt-auto"
+                style={{
+                  width: "50%",
+                  position: "absolute",
+                  left: "0",
+                  right: "0",
+                  bottom: "0",
+                }}
+              >
                 <input
                   type="number"
                   className="form-control"

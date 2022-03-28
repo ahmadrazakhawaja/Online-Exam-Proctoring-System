@@ -1,8 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ExamSettings from "./exam_settings";
+import Alert from "./alert";
+import { useForm } from "react-hook-form";
 
 export default function UserPage(props) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const [alert, setalert] = useState(null);
   const navigate = useNavigate();
   // useEffect(() => {
   //   if (!localStorage.getItem("user-info")) {
@@ -12,7 +21,12 @@ export default function UserPage(props) {
   const data = JSON.parse(localStorage.getItem("user-info"));
 
   const examset = () => {
-    navigate("/userpage/socket");
+    navigate("/userpage/exam-settings");
+  };
+
+  const onSubmit = (data, event) => {
+    localStorage.setItem("room-info", JSON.stringify({ _id: data["room-id"] }));
+    navigate(`/userpage/exam-room/${data["room-id"]}/candidate`);
   };
 
   return (
@@ -26,7 +40,10 @@ export default function UserPage(props) {
         </div>
 
         <div className="col text-center">
-          <form style={{ width: "50%", marginLeft: "20%" }}>
+          <form
+            onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
+            style={{ width: "50%", marginLeft: "20%" }}
+          >
             <div>
               <input
                 type="text"
@@ -36,7 +53,22 @@ export default function UserPage(props) {
                 // onChange={(event) => onChange(props.element, event)}
                 aria-describedby="Room-id"
                 placeholder="Enter Room-id"
+                {...register("room-id", {
+                  required: {
+                    value: true,
+                    message: "Room ID is required",
+                  },
+                  minLength: {
+                    value: 24,
+                    message: "Length should be of 24 digits",
+                  },
+                  maxLength: {
+                    value: 24,
+                    message: "Length should be of 24 digits",
+                  },
+                })}
               />
+              {errors["room-id"] && errors["room-id"].message}
             </div>
             <input
               type="submit"
