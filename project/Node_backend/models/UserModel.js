@@ -22,6 +22,7 @@ const UserSchema = new Schema({
   rollNum: {
     type: String,
     required: false,
+    unique: true,
     default: null,
   },
   email: {
@@ -64,7 +65,7 @@ const UserSchema = new Schema({
   },
   confirmationCode: {
     type: String,
-    unique: true,
+    unique: false,
   },
   date: {
     type: Date,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { appendErrors } from "react-hook-form";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 export default function TextBox(props) {
   const getinput = () => {
@@ -11,23 +12,117 @@ export default function TextBox(props) {
     if (type === "file") {
       return (
         <React.Fragment>
+          {props.element.description && <div>{props.element.description}</div>}
+          <div className="row">
+            <div className="col">
+              <div>
+                <label htmlFor={id}>{text}</label>
+              </div>
+              <input
+                type={type}
+                className="form-control-file btn btn-primary btn-sm mb-2"
+                id={id}
+                // onChange={props.uploadfile()}
+                // value={value}
+                // onChange={(event) => onChange(props.element, event)}
+                aria-describedby={id}
+                placeholder={placeholder}
+                accept="image/*"
+                // onChange={(e) => props.submitx(e)}
+                {...register(props.element.text, {
+                  ...props.element.verification,
+                  onChange: (e) => props.submitx(e, props.element.text),
+                  validate: (value) => {
+                    console.log(value[0].size);
+                    if (value[0].size > 2000000) {
+                      return "File size should be less than 2MB.";
+                    }
+                    if (
+                      value[0].type === "image/jpeg" ||
+                      value[0].type === "image/png"
+                    ) {
+                    } else {
+                      return "File is not of image file jpeg or png.";
+                    }
+                  },
+                })}
+              />
+
+              {props.errors[text] && props.errors[text].message}
+            </div>
+            <div className="col">
+              <div>
+                <label htmlFor={id}>{props.element.text2}</label>
+              </div>
+              <input
+                type={type}
+                className="form-control-file btn btn-primary btn-sm mb-2"
+                id={props.element.id2}
+                // onChange={props.uploadfile()}
+                // value={value}
+                // onChange={(event) => onChange(props.element, event)}
+                aria-describedby={props.element.id2}
+                placeholder={placeholder}
+                accept="image/*"
+                // onChange={(e) => props.submitx(e)}
+                {...register(props.element.text2, {
+                  ...props.element.verification,
+                  onChange: (e) => props.submitx(e, props.element.text2),
+                  validate: (value) => {
+                    console.log(value[0].size);
+                    if (value[0].size > 2000000) {
+                      return "File size should be less than 2MB.";
+                    }
+                    if (
+                      value[0].type === "image/jpeg" ||
+                      value[0].type === "image/png"
+                    ) {
+                    } else {
+                      return "File is not of image file jpeg or png.";
+                    }
+                  },
+                })}
+              />
+
+              {props.errors[props.element.text2] &&
+                props.errors[props.element.text2].message}
+            </div>
+          </div>
           <div>
-            <label htmlFor={id}>{text}</label>
+            <label htmlFor={id}>{props.element.text3}</label>
           </div>
           <input
             type={type}
             className="form-control-file btn btn-primary btn-sm mb-2"
-            id={id}
+            id={props.element.id3}
             // onChange={props.uploadfile()}
             // value={value}
             // onChange={(event) => onChange(props.element, event)}
-            aria-describedby={id}
+            aria-describedby={props.element.id3}
             placeholder={placeholder}
             accept="image/*"
-            {...register(text, props.element.verification)}
+            // onChange={(e) => props.submitx(e)}
+            {...register(props.element.text3, {
+              ...props.element.verification,
+              onChange: (e) => props.submitx(e, props.element.text3),
+              validate: (value) => {
+                console.log(value[0].size);
+                if (value[0].size > 2000000) {
+                  return "File size should be less than 2MB.";
+                }
+                if (
+                  value[0].type === "image/jpeg" ||
+                  value[0].type === "image/png"
+                ) {
+                } else {
+                  return "File is not of image file jpeg or png.";
+                }
+              },
+            })}
           />
-          {props.element.description && <div>{props.element.description}</div>}
-          {/* {props.errors?.text === "Required" && `${text} is required`} */}
+
+          {props.errors[props.element.text3] &&
+            props.errors[props.element.text3].message}
         </React.Fragment>
       );
     } else if (type === "form-select") {
@@ -186,9 +281,12 @@ export default function TextBox(props) {
               )}
             </span>
           </div>
+          {props.element.link && (
+            <Link to="/change-password">Forgot Password</Link>
+          )}
+
           {/* {(props.checkPassword) => (props.checkPassword === props.repassword ? '')} */}
           {props.errors[text] && props.errors[text].message}
-          {props.element.description}
         </React.Fragment>
       );
     }
@@ -199,6 +297,7 @@ export default function TextBox(props) {
           {props.element.verification.required ? "*" : null}
         </label>
         <input
+          disabled={props.element.disabled ? true : false}
           type={type}
           className="form-control"
           id={id}

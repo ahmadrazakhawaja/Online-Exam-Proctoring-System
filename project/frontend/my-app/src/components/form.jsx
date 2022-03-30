@@ -1,19 +1,30 @@
 import React, { useState } from "react";
 import TextBox from "./text_box";
+import Modal from "./modal";
 import { useForm } from "react-hook-form";
 
 export default function Form(props) {
   let fileObj = [];
   const [passwordEye, setPasswordEye] = useState(false);
+
   const [confirmPasswordEye, setConfirmPasswordEye] = useState(false);
   const {
     register,
     watch,
+    setValue,
     reset,
     handleSubmit,
     formState: { errors },
   } = useForm(props.default_values ? props.default_values : {});
   const password = watch("Password");
+  // const picture1 = watch("Picture1");
+  // const picture2 = watch("Picture2");
+  // const picture3 = watch("Picture3");
+  // console.log(picture);
+  const [imagesubmit, setimagesubmit] = useState(false);
+  // const [pic, setpic] = useState(null);
+  // const [pic, setpic] = useState(undefined);
+
   // const password = useRef({});
   // const password = watch("Password");
   // const repassword = watch("Retype Password");
@@ -22,14 +33,55 @@ export default function Form(props) {
   // const handlechange = props.onChange;
   const onSubmit = props.onSubmit;
 
-  const onFileUpload = (event) => {
-    fileObj.push(event.target.files);
+  // if (picture != undefined) {
+  //   setimagesubmit(true);
+  // }
+
+  // const onFileUpload = (event) => {
+  //   fileObj.push(event.target.files);
+  // };
+
+  const setImage = (e, element) => {
+    console.log(e);
+    console.log(element);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setimagesubmit({ image: reader.result, element: e });
+      }
+    };
+    console.log(e.target.files[0]);
+    reader.readAsDataURL(e.target.files[0]);
   };
 
-  const closemodel = () => {
-    reset();
-    props.setformSubmit(false);
-  };
+  // console.log(picture);
+  // if (picture1 != undefined) {
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     if (reader.readyState === 2) {
+  //       setimagesubmit(reader.result);
+  //     }
+  //   };
+  //   setpic("picture1");
+  //   console.log(picture1);
+  //   reader.readAsDataURL(picture1[0]);
+  // setpic(picture);
+
+  //   fileObj.push(e.target.files[0]);
+  //   console.log("hello");
+  //   setimagesubmit(URL.createObjectURL(e.target.files[0]));
+
+  // if (picture2 != undefined) {
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     if (reader.readyState === 2) {
+  //       setimagesubmit(reader.result);
+  //     }
+  //   };
+  //   setpic("picture2");
+  //   console.log(picture1);
+  //   reader.readAsDataURL(picture2[0]);
+  // }
 
  
 
@@ -38,241 +90,299 @@ export default function Form(props) {
   // } else {
   //   document.body.style.opacity = "1";
   // }
+  let i = 0;
+  const setopacity = () => {
+    if (props.opacity) {
+      return props.opacity;
+    } else if (imagesubmit) {
+      return "0.2";
+    } else {
+      return "1";
+    }
+  };
 
+  const findimage = (url) => {
+    return (
+      <div className="col">
+        <img
+          style={{
+            // objectFit: "contain",
+            width: "100%",
+          }}
+          src={url}
+        ></img>
+      </div>
+    );
+  };
+  const data2 = JSON.parse(localStorage.getItem("user-info"));
   if (!props.default_values) {
     return (
-      <div>
-        <div
-          style={{
-            width: "50%",
-            margin: "0 auto",
-            overflowY: "auto",
-            marginBottom: "100px",
-            opacity: props.formSubmit ? "0.2" : "1",
-          }}
-        >
-          <h1 style={{ textAlign: "center" }}>{props.value}</h1>
-          <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
-            {props.elements.map((element) => {
-              if (element.text === "Password") {
+      <React.Fragment>
+        <div>
+          <div
+            style={{
+              width: "50%",
+              margin: "0 auto",
+              overflowY: "auto",
+              marginBottom: "100px",
+              opacity: setopacity(),
+            }}
+            // style={imagesubmit ? { opacity: "0.2" } : { opacity: "1" }}
+          >
+            <h1 style={{ textAlign: "center" }}>{props.value}</h1>
+            <form
+              onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
+            >
+              {props.elements.map((element) => {
+                if (element.text === "Password") {
+                  return (
+                    <TextBox
+                      key={element.id}
+                      register={register}
+                      errors={errors}
+                      element={element}
+                      passwordEye={passwordEye}
+                      setpasswordEye={setPasswordEye}
+                      // checkPassword={password}
+                      // password={repassword}
+                      // onChange={handlechange}
+                    />
+                  );
+                }
+                if (element.text === "Retype Password") {
+                  return (
+                    <TextBox
+                      key={element.id}
+                      register={register}
+                      errors={errors}
+                      element={element}
+                      passwordEye={confirmPasswordEye}
+                      setpasswordEye={setConfirmPasswordEye}
+                      password={password}
+                      // checkPassword={password}
+                      // password={repassword}
+                      // onChange={handlechange}
+                    />
+                  );
+                }
+                if (element.type === "file") {
+                  return (
+                    <TextBox
+                      key={element.id}
+                      register={register}
+                      errors={errors}
+                      element={element}
+                      submitx={setImage}
+                      // checkPassword={password}
+                      // password={repassword}
+                      // onChange={handlechange}
+                    />
+                  );
+                }
                 return (
                   <TextBox
                     key={element.id}
                     register={register}
                     errors={errors}
                     element={element}
-                    passwordEye={passwordEye}
-                    setpasswordEye={setPasswordEye}
                     // checkPassword={password}
                     // password={repassword}
                     // onChange={handlechange}
                   />
                 );
-              }
-              if (element.text === "Retype Password") {
-                return (
-                  <TextBox
-                    key={element.id}
-                    register={register}
-                    errors={errors}
-                    element={element}
-                    passwordEye={confirmPasswordEye}
-                    setpasswordEye={setConfirmPasswordEye}
-                    password={password}
-                    // checkPassword={password}
-                    // password={repassword}
-                    // onChange={handlechange}
-                  />
-                );
-              }
-              return (
-                <TextBox
-                  key={element.id}
-                  register={register}
-                  errors={errors}
-                  element={element}
-                  // checkPassword={password}
-                  // password={repassword}
-                  // onChange={handlechange}
+              })}
+              <div
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                <input
+                  className="btn btn-danger btn-md m-2"
+                  type="submit"
+                  value={props.value === "Change Password" ? "OK" : props.value}
                 />
-              );
-            })}
+              </div>
+              {/* {props.image && (
+                <img
+                  style={{
+                    objectFit: "contain",
+                    width: "100%",
+                  }}
+                  src={data2.profileUrl[0] ? data2.profileUrl[0] : ""}
+                ></img>
+              )} */}
+            </form>
+          </div>
+          {props.image && (
             <div
+              className="row"
               style={{
-                textAlign: "center",
+                width: "80%",
+                margin: "0 auto",
+                overflowY: "auto",
+                marginBottom: "100px",
               }}
             >
-              <input
-                className="btn btn-danger btn-md m-2"
-                type="submit"
-                value={props.value}
-              />
+              <h2>uploaded images</h2>
+              {data2.profileUrl.map((url) => {
+                i = i + 1;
+                return (
+                  <div key={i} className="col">
+                    <img
+                      style={{
+                        // objectFit: "contain",
+                        width: "100%",
+                      }}
+                      src={url}
+                    ></img>
+                  </div>
+                );
+              })}
             </div>
-          </form>
+          )}
         </div>
-        {props.formSubmit && (
-          <div
-            className="modal fade show"
-            id="exampleModal"
-            tabIndex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-            model="true"
-            role="dialog"
-            style={{ display: "block" }}
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLabel">
-                    User Sign Up
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={closemodel}
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  User Sign Up successful. Please Log In to your account
-                </div>
-                <div className="modal-footer">
-                  {/* <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button> */}
-                  <button
-                    onClick={() => props.navigate("/login")}
-                    type="button"
-                    className="btn btn-primary"
-                  >
-                    Log In
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        {imagesubmit && (
+          <Modal
+            setimage={setimagesubmit}
+            image={imagesubmit}
+            name="hello"
+            reset={reset}
+          />
         )}
-      </div>
+      </React.Fragment>
     );
   } else {
     return (
-      <div
-        style={{
-          overflowY: "auto",
-          marginBottom: "100px",
-        }}
-      >
-        <h1>Settings</h1>
-        <hr style={{ width: "100%" }}></hr>
-        <form
-          style={{ width: "50%" }}
-          onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
-        >
-          {props.elements.map((element) => {
-            if (element.text === "Password") {
-              return (
-                <TextBox
-                  key={element.id}
-                  register={register}
-                  errors={errors}
-                  element={element}
-                  passwordEye={passwordEye}
-                  setpasswordEye={setPasswordEye}
-                  // checkPassword={password}
-                  // password={repassword}
-                  // onChange={handlechange}
-                />
-              );
-            }
-            if (element.text === "Retype Password") {
-              return (
-                <TextBox
-                  key={element.id}
-                  register={register}
-                  errors={errors}
-                  element={element}
-                  passwordEye={confirmPasswordEye}
-                  setpasswordEye={setConfirmPasswordEye}
-                  password={password}
-                  // checkPassword={password}
-                  // password={repassword}
-                  // onChange={handlechange}
-                />
-              );
-            }
-            return (
-              <TextBox
-                key={element.id}
-                register={register}
-                errors={errors}
-                element={element}
-                // checkPassword={password}
-                // password={repassword}
-                // onChange={handlechange}
-              />
-            );
-          })}
-          <div
-            style={{
-              textAlign: "center",
-            }}
-          >
-            <input
-              className="btn btn-danger btn-md m-2"
-              type="submit"
-              value={props.value}
-            />
-          </div>
-        </form>
-        {props.formSubmit && props.formSubmit.submit === true && (
-          <div
-            class="modal fade"
-            id="exampleModal"
-            tabindex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLabel">
-                    Modal title
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body">...</div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
+      <React.Fragment>
+        <div style={imagesubmit ? { opacity: "0.2" } : { opacity: "1" }}>
+          <h1 style={{ marginLeft: "5%" }}>Settings</h1>
+          <hr style={{ width: "90%", margin: "0 auto" }}></hr>
+          <div className="row">
+            <div className="col" style={{ width: "100%" }}>
+              <div
+                style={{
+                  // width: "50%",
+                  marginLeft: "10%",
+                  overflowY: "auto",
+                  marginBottom: "100px",
+                  opacity: props.opacity ? props.opacity : 1,
+                }}
+              >
+                <form
+                  // style={{ width: "50%" }}
+                  onSubmit={handleSubmit((data, event) =>
+                    onSubmit(data, event)
+                  )}
+                >
+                  {props.elements.map((element) => {
+                    if (element.text === "Password") {
+                      return (
+                        <TextBox
+                          key={element.id}
+                          register={register}
+                          errors={errors}
+                          element={element}
+                          passwordEye={passwordEye}
+                          setpasswordEye={setPasswordEye}
+                          // checkPassword={password}
+                          // password={repassword}
+                          // onChange={handlechange}
+                        />
+                      );
+                    }
+                    if (element.text === "Retype Password") {
+                      return (
+                        <TextBox
+                          key={element.id}
+                          register={register}
+                          errors={errors}
+                          element={element}
+                          passwordEye={confirmPasswordEye}
+                          setpasswordEye={setConfirmPasswordEye}
+                          password={password}
+                          // checkPassword={password}
+                          // password={repassword}
+                          // onChange={handlechange}
+                        />
+                      );
+                    }
+                    if (element.type === "file") {
+                      return (
+                        <TextBox
+                          key={element.id}
+                          register={register}
+                          errors={errors}
+                          element={element}
+                          submitx={setImage}
+                          // checkPassword={password}
+                          // password={repassword}
+                          // onChange={handlechange}
+                        />
+                      );
+                    }
+                    return (
+                      <TextBox
+                        key={element.id}
+                        register={register}
+                        errors={errors}
+                        element={element}
+                        // checkPassword={password}
+                        // password={repassword}
+                        // onChange={handlechange}
+                      />
+                    );
+                  })}
+                  <div
+                    style={{
+                      textAlign: "center",
+                    }}
                   >
-                    Close
-                  </button>
-                  <button
-                    onClick={props.navigate("login")}
-                    type="button"
-                    className="btn btn-primary"
-                  >
-                    Save changes
-                  </button>
-                </div>
+                    <input
+                      className="btn btn-danger btn-md m-2"
+                      type="submit"
+                      value={props.value}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div className="col">
+              <div className="text-center mt-5">
+                <button
+                  onClick={props.changePassword}
+                  className="btn btn-danger btn-lg m-2"
+                >
+                  Change Password
+                </button>
+              </div>
+              <div className="text-center mt-5">
+                <button
+                  onClick={(e) => props.delete(true)}
+                  className="btn btn-danger btn-lg m-2"
+                >
+                  Delete Account
+                </button>
+              </div>
+              <div className="text-center mt-5">
+                <button
+                  onClick={props.uploadimage}
+                  className="btn btn-danger btn-lg m-2"
+                >
+                  Upload Images
+                </button>
               </div>
             </div>
           </div>
+        </div>
+        {imagesubmit && (
+          <Modal
+            setimage={setimagesubmit}
+            image={imagesubmit}
+            name="hello"
+            reset={reset}
+          />
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }

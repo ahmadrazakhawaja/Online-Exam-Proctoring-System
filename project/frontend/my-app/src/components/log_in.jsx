@@ -20,6 +20,7 @@ export default function LogIn(props) {
       placeholder: "Enter Password",
       value: "",
       verification: {},
+      link: "Forgot Password",
     },
   ];
   // const [elements, setelements] = useState([

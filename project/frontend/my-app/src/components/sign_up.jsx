@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function SignUp(props) {
   const navigate = useNavigate();
   const [institutes, setinstitutes] = useState(null);
-  const [formsubmit, setsubmit] = useState(false);
+  // const [formsubmit, setsubmit] = useState(false);
 
   const getInstitutes = () => {
     fetch("http://127.0.0.1:5000/routes/ListInstitutes", {
@@ -378,18 +378,18 @@ export default function SignUp(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        if (json.header.message === "User Made") {
-          // localStorage.setItem("user-info", JSON.stringify(json.data));
-          // props.setLogIn(localStorage.getItem("user-info"));
-          // navigate("/login");
-          setsubmit(true);
-        } else {
-          // setsubmit({
-          //   submit: true,
-          //   redirect: false,
-          // });
-          setalert(json.header.message);
-        }
+        // if (json.header.message === "User Made") {
+        //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+        //   // props.setLogIn(localStorage.getItem("user-info"));
+        //   // navigate("/login");
+        //   setsubmit(true);
+        // } else {
+        // setsubmit({
+        //   submit: true,
+        //   redirect: false,
+        // });
+        setalert(json.header.message);
+        // }
       });
     event.preventDefault();
   };
@@ -401,8 +401,8 @@ export default function SignUp(props) {
         elements={elements}
         // onChange={handlechange}
         onSubmit={handleSubmit}
-        formSubmit={formsubmit}
-        setformSubmit={setsubmit}
+        // formSubmit={formsubmit}
+        // setformSubmit={setsubmit}
         value="Sign Up"
         navigate={navigate}
       />

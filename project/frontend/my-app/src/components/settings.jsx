@@ -7,8 +7,25 @@ export default function Setting(props) {
 
   const elements = [
     {
-      id: 4,
-      id2: 5,
+      id: 1,
+      type: "email",
+      text: "Email Address",
+      placeholder: "Enter Email",
+      // value: "",
+      disabled: true,
+      verification: {},
+    },
+    {
+      id: 2,
+      type: "text",
+      text: "Institute",
+      // value: "",
+      disabled: true,
+      verification: {},
+    },
+    {
+      id: 3,
+      id2: 4,
       type: "text",
       text: "First Name",
       text2: "Last Name",
@@ -50,7 +67,7 @@ export default function Setting(props) {
     //   },
     // },
     {
-      id: 3,
+      id: 5,
       type: "number",
       text: "Erp",
       placeholder: "Enter Roll No",
@@ -66,16 +83,6 @@ export default function Setting(props) {
           message: "Username is Required",
         },
       },
-    },
-    {
-      id: 4,
-      type: "file",
-      text: "Picture",
-      placeholder: "Upload Picture",
-      // value: "",
-      verification: {},
-      description:
-        "Upload multiple images. 1 from front and other from left and right angle.",
     },
   ];
 
@@ -161,15 +168,127 @@ export default function Setting(props) {
   //   },
   // ]);
 
-  const data2 = JSON.parse(localStorage.getItem("user-info"));
+  const [modal, setmodal] = useState(null);
 
-  const default_value = {
-    defaultValues: {
-      Username: data2.username,
-      Erp: data2.ERP,
-      Name: data2.Name,
-    },
+  const logout = () => {
+    localStorage.removeItem("user-info");
+    props.setLogIn(null);
   };
+
+  const displayModal = () => {
+    if (modal) {
+      return (
+        <div
+          className="modal fade show"
+          id="exampleModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          model="true"
+          role="dialog"
+          style={{ display: "block", opacity: "1 !important" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Delete Account
+                </h5>
+                {/* <button
+              type="button"
+              className="btn-close"
+              onClick={() => {
+                props.image.element.target.value = null;
+                // props.reset({ pic: "" });
+                props.setimage(false);
+                return false;
+              }}
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button> */}
+              </div>
+              <div className="modal-body">
+                Are you sure you want to Delete your Account?
+                {/* <img
+              style={{
+                objectFit: "contain",
+                width: "100%",
+              }}
+              src={props.image.image}
+            ></img> */}
+              </div>
+              <div className="modal-footer">
+                <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setmodal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={deleteUser}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const changePassword = () => {
+    navigate("/userpage/setting/change-password");
+  };
+
+  const uploadimage = () => {
+    navigate("/userpage/setting/upload-image");
+  };
+
+  const deleteUser = () => {
+    const myHeaders = new Headers();
+    myHeaders.append("authorization", `Bearer ${data2.token}`);
+    fetch(`http://127.0.0.1:5000/routes/delete-user`, {
+      method: "DELETE",
+      headers: myHeaders,
+      mode: "cors",
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((json) => {
+        console.log(json.header.message);
+        if (json.header.message === "User Deleted Successfully") {
+          logout();
+          // setmodal(true);
+        } else {
+          setalert(json.header.message);
+        }
+      });
+    // event.preventDefault();
+  };
+
+  const data2 = JSON.parse(localStorage.getItem("user-info"));
+  let default_value = null;
+  if (data2) {
+    default_value = {
+      defaultValues: {
+        "Email Address": data2.user,
+        Institute: data2.institute,
+        Erp: data2.erp,
+        "First Name": data2.first_name,
+        "Last Name": data2.last_name,
+      },
+    };
+  }
 
   const [alert, setalert] = useState(null);
 
@@ -225,25 +344,37 @@ export default function Setting(props) {
   // };
 
   const handleUpdate = (data, event) => {
-    console.log(data);
-    const formData = new FormData();
-    if (data["Picture"]) {
-      formData.append("picture", data["Picture"]);
-    }
-    formData.append(
-      "data",
-      JSON.stringify({
-        username: data.Username,
-        name: data.Name,
-        erp: data.Erp,
-      })
-    );
-    console.log(data["Email Address"]);
-    fetch(`http://127.0.0.1:5000/update/${data2.ID}`, {
-      method: "POST",
-      headers: new Headers({ "content-Type": "application/json" }),
+    const myHeaders = new Headers();
+    myHeaders.append("content-Type", "application/json");
+    myHeaders.append("authorization", `Bearer ${data2.token}`);
+
+    // console.log(data);
+    // const formData = new FormData();
+    // if (data["Picture 1"]) {
+    //   // console.log(data["Picture 1"][0]);
+    //   formData.append("Picture", data["Picture 1"][0]);
+    // }
+    // if (data["Picture 2"]) {
+    //   formData.append("Picture", data["Picture 2"][0], "Picture-2.jpg");
+    // }
+    // if (data["Picture 3"]) {
+    //   formData.append("Picture", data["Picture 3"][0], "Picture-3.jpg");
+    // }
+    // formData.append(
+    //   "data",
+
+    // );
+
+    // console.log(formData);
+    fetch(`http://127.0.0.1:5000/routes/profile`, {
+      method: "PUT",
+      headers: myHeaders,
       mode: "cors",
-      body: formData,
+      body: JSON.stringify({
+        first_name: data["First Name"],
+        last_name: data["Last Name"],
+        erp: data.Erp,
+      }),
     })
       .then((res) => {
         console.log(res);
@@ -251,9 +382,16 @@ export default function Setting(props) {
       })
       .then((json) => {
         console.log(json.header.message);
-        if (json.header.message === "update checks out") {
-          localStorage.setItem("user-info", JSON.stringify(json.updateuser));
+        console.log(json.data);
+        if (json.header.message === "User updated successfully") {
+          const data3 = {
+            ...json.data,
+            token: data2.token,
+          };
+          localStorage.setItem("user-info", JSON.stringify(data3));
           props.setLogIn(localStorage.getItem("user-info"));
+          // localStorage.setItem("user-info", JSON.stringify(json.updateuser));
+          // props.setLogIn(localStorage.getItem("user-info"));
           setalert(json.header.message);
         } else {
           setalert(json.header.message);
@@ -265,11 +403,16 @@ export default function Setting(props) {
   return (
     <React.Fragment>
       {alert2()}
+      {displayModal()}
       <Form
         elements={elements}
-        default_values={default_value}
+        default_values={default_value ? default_value : null}
         // onChange={handlechange}
         onSubmit={handleUpdate}
+        opacity={modal ? "0.2" : "1"}
+        changePassword={changePassword}
+        uploadimage={uploadimage}
+        delete={setmodal}
         value="Save"
       />
     </React.Fragment>

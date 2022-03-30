@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
 
-console.log(process.env.USER, process.env.Password);
+// console.log(process.env.user, process.env.password);
 const transport = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -11,19 +11,40 @@ const transport = nodemailer.createTransport({
   },
 });
 
-module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
+module.exports.sendConfirmationEmail = (
+  name,
+  email,
+  confirmationCode,
+  description
+) => {
   console.log("Check");
-  transport
-    .sendMail({
-      host: "smtp.gmail.com",
-      from: process.env.user,
-      to: email,
-      subject: "Please confirm your account",
-      html: `<h1>Email Confirmation</h1>
+  if (description === "confirmation") {
+    transport
+      .sendMail({
+        host: "smtp.gmail.com",
+        from: process.env.user,
+        to: email,
+        subject: "Please confirm your account",
+        html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
           <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
           <a href=http://localhost:3000/confirm/${confirmationCode}> Click here</a>
           </div>`,
-    })
-    .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+  } else {
+    transport
+      .sendMail({
+        host: "smtp.gmail.com",
+        from: process.env.user,
+        to: email,
+        subject: "Change Password",
+        html: `<h1>Change Password</h1>
+          <h2>Hello ${name}</h2>
+          <p>In order to change your password please click on the following link.</p>
+          <a href=http://localhost:3000/change-password/${confirmationCode}> Click here</a>
+          </div>`,
+      })
+      .catch((err) => console.log(err));
+  }
 };
