@@ -31,6 +31,8 @@ export default function Form(props) {
     props.setformSubmit(false);
   };
 
+ 
+
   // if (props.formSubmit === true) {
   //   document.body.style.opacity = "0.2";
   // } else {
