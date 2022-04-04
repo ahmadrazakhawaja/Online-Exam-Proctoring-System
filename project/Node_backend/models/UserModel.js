@@ -22,7 +22,6 @@ const UserSchema = new Schema({
   rollNum: {
     type: String,
     required: false,
-    unique: true,
     default: null,
   },
   email: {

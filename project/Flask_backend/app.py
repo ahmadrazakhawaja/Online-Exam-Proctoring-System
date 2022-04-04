@@ -12,15 +12,17 @@ from pyexpat import model
 from mongoengine import *
 from flask import Flask, render_template, url_for, jsonify, make_response, request
 from user.db2 import student
-from user.model import getmodel,predict_image
+from user.model import getmodel,predict_image,predict_image2
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
 import boto3
 from user.aws_access import get_aws
+import base64
 
 # get_aws()
 app = Flask(__name__)
 model = getmodel()
+# predict_image2('hello',model)
 # Only login route allowed for all users
 # cors = CORS(app, resources={r"/login": {"origins": "*"}})
 
@@ -69,14 +71,37 @@ def get_image():
     # predict_image()
     return render_template("hello.html", name=name), 200
 
+# @app.route("/PyImg", methods=["GET", "POST"])
+# def hello_world():
+#     print("chk1")
+#     file = request.get_data()
+#     print(request._get_file_stream, "works?")
+#     name = "ahmad"
+#     # return render_template("hello.html", name=name), 200
+#     return "MicroServices", 200
+
 @app.route("/PyImg", methods=["GET", "POST"])
-def hello_world():
+def hello_worldx():
     print("chk1")
-    file = request.get_data()
-    print(request._get_file_stream, "works?")
-    name = "ahmad"
-    # return render_template("hello.html", name=name), 200
-    return "MicroServices", 200
+    datax = request.get_json()
+    # print(datax)
+    image_data = datax['image_string']
+    id = datax['id'] + '.jpg'
+    # print(image_data)
+    converted_binary = base64.b64decode(image_data)
+    # print(converted_binary)
+    with open('user/images/'+id, "wb") as file:
+        file.write(converted_binary)
+
+    
+    
+    val = predict_image2(id,model)
+    print(val)
+    os.remove('user/images/'+id)
+    return str(val)
+    
+
+  
 
 # @app.route("/printDB", methods=["GET"])
 # def List_All():

@@ -196,18 +196,25 @@ router.post("/adduser", async (req, res) => {
       },
     });
   } else {
+    let error = false;
     TestUser.confirmationCode = token;
     await TestUser.save()
       .then(console.log("works?"))
-      .catch((err) =>
+      .catch((err) => {
+        error = true;
+        console.log(err);
         res.status(400).json({
           header: {
             message: "User cannot be saved",
             code: 1,
             err,
           },
-        })
-      );
+        });
+      });
+
+    if (error) {
+      return;
+    }
 
     mail.sendConfirmationEmail(
       TestUser.first_name,
@@ -683,6 +690,21 @@ router.put(
         header: { message: "User not found", code: 1 },
       });
     }
+    const checkroll = await User.find({ rollNum: foundUser.rollNum });
+    // console.log(checkroll, "check-1");
+    if (checkroll) {
+      for (var i = 0; i < checkroll.length; i++) {
+        var xyz = checkroll[i].institute_id;
+        // console.log(xyz, "check-2");
+        // var user2 = await Institute.findById(xyz.toString());
+        if (foundUser.institute_id.toString() === xyz.toString()) {
+          // console.log("check-3");
+          return res.status(404).json({
+            header: { message: "Roll No already exists", code: 1 },
+          });
+        }
+      }
+    }
 
     if (req.User.isAdmin || req.User.id === foundUser.id) {
       if (body) {
@@ -691,6 +713,7 @@ router.put(
 
         // make a check to ensure 2 users of same institution dont
         // have same roll number
+
         foundUser.rollNum = body.erp || foundUser.rollNum;
 
         // foundUser.profileUrl = files_link;

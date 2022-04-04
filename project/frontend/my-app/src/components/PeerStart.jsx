@@ -12,7 +12,7 @@ function PeerStart(props) {
     const peer = props.data.peer;
 
     console.log("recv-1");
-    console.log(props.data.CallerSignal);
+    // console.log(props.data.CallerSignal);
     peer.signal(props.data.CallerSignal);
 
     peer.on("signal", (data) => {
@@ -35,6 +35,7 @@ function PeerStart(props) {
         style={{ width: "300px" }}
         muted
       />
+      {props.data.facialresponse}
     </div>
   );
 }
