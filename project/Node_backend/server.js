@@ -1,7 +1,7 @@
 const express = require("express");
 
 const socket = require("socket.io");
-// const axios = require("axios");
+const axios = require("axios");
 const fs = require("fs");
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\Node_backend>
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\frontend\my-app>
@@ -104,9 +104,18 @@ let connectedUser = [];
 let connectUser = {};
 
 function checkroom(data, room) {
-  if (data.room_id === room) {
-    return true;
+  let tmp = null;
+  for (let i = 0; i < data.length; i++) {
+    tmp = data[i];
+    if (tmp.room_id === room) {
+      return i;
+    }
   }
+  return -1;
+}
+
+function writeFile(data, room) {
+  fs.writeFile(`log_files/${room}`, content, { flag: "a" }, (err) => {});
 }
 
 let io = socket(server, {
@@ -116,99 +125,169 @@ let io = socket(server, {
 });
 
 const { protect2 } = require("./middleware/auth_socket");
-io.use((socket, next) => protect2(socket, next));
-io.on("connection", (socket) => {
-  console.log("made socket connection", socket.id);
-  // console.log("room-data", room._id.toString());
-  // actualid : socket_id
-  let room2 = room._id.toString();
 
-  let datax = connectedUser.findIndex((data, room2) => checkroom(room2));
-  if (user._id.toString() === room.adminID.toString()) {
-    if (datax === -1) {
-      connectUser = {
-        user_id: user._id.toString(),
-        room_id: room._id.toString(),
-        socket_id: socket.id,
-      };
-      connectedUser.push(connectUser);
-    } else {
-      connectedUser[datax].socket_id = socket.id;
+// middleware
+io.use((socket, next) => protect2(socket, next)).on(
+  "connection",
+  async (socket) => {
+    console.log("made socket connection", socket.id);
+
+    const user = socket.user;
+    const room = socket.room;
+    // joined room
+    socket.join(room._id.toString());
+
+    // write into the log_file
+    let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+
+    content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+      user.last_name
+    } joined the room.\n`;
+
+    writeFile(content, room._id.toString());
+
+    // check whether the admin is already connected
+    let datax = checkroom(connectedUser, room._id.toString());
+
+    if (user._id.toString() === room.adminID.toString()) {
+      if (datax === -1) {
+        connectUser = {
+          user_id: user._id.toString(),
+          room_id: room._id.toString(),
+          socket_id: socket.id,
+        };
+        connectedUser.push(connectUser);
+
+        // emit admin socket_id to client
+        // socket.to(room._id.toString()).emit("get-id", socket.id);
+      } else {
+        connectedUser[datax].socket_id = socket.id;
+        // console.log(connectedUser);
+        // socket.to(room._id.toString()).emit("get-id", socket.id);
+      }
+      socket.to(room._id.toString()).emit("restart");
     }
-  }
+    // else {
+    //   // emit client socket id to itself
+    //   socket.emit("me", socket.id);
+    // }
 
-  // console.log(connectedUser);
-  socket.join(room._id.toString());
+    // calluser listener
+    // socket.on("callUser", (data) => {
+    //   console.log(data.from, data.user_id, data.name);
+    //   io.to(data.userToCall).emit("callUser", {
+    //     signal: data.signalData,
+    //     from: data.from,
+    //     user_id: data.user_id,
+    //     name: data.name,
+    //   });
+    // });
 
-  let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+    socket.on("callUser", (data) => {
+      // console.log(data.from, data.user_id, data.name);
+      console.log(
+        "call user",
+        socket.id,
+        user._id.toString(),
+        `${user.first_name} ${user.last_name}`
+      );
+      datax = checkroom(connectedUser, room._id.toString());
 
-  content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-    user.last_name
-  } joined the room.\n`;
-
-  fs.writeFile(
-    `log_files/${room._id.toString()}`,
-    content,
-    { flag: "a" },
-    (err) => {}
-  );
-  datax = connectedUser.find((data, room2) => checkroom(room2));
-  console.log(datax);
-
-  socket.emit("me", socket.id);
-  socket.emit("get-id", datax.socket_id);
-
-  socket.on("callUser", (data) => {
-    io.to(data.userToCall).emit("callUser", {
-      signal: data.signalData,
-      from: data.from,
-      user_id: user._id.toString(),
-      name: `${user.first_name} ${user.last_name}`,
+      if (datax !== -1) {
+        io.to(connectedUser[datax].socket_id).emit("callUser", {
+          signal: data.signalData,
+          from: socket.id,
+          user_id: user._id.toString(),
+          name: `${user.first_name} ${user.last_name}`,
+        });
+      }
     });
-  });
 
-  socket.on("answerCall", (data) => {
-    // console.log("call-answered", data.to);
-    io.to(data.to).emit("callAccepted", data.signal);
-  });
+    socket.on("answerCall", (data) => {
+      io.to(data.to).emit("callAccepted", data.signal);
+    });
 
-  // socket.on("disconnect", () => {
-  //   // socket.broadcast.emit("callEnded");
-  //   content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-  //     user.last_name
-  //   } disconnected the room.\n`;
+    socket.on("disconnect", (reason) => {
+      // console.log("disconnect");
+      // socket.broadcast.emit("callEnded");
+      content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+        user.last_name
+      } disconnected the room.\n`;
 
-  //   fs.writeFile(
-  //     `log_files/${room._id.toString()}`,
-  //     content,
-  //     { flag: "a" },
-  //     (err) => {}
-  //   );
-  //   if (user._id.toString() === room.adminID.toString()) {
-  //     connectedUser[datax].socket_id = null;
-  //   } else {
-  //     io.to(connectedUser[datax].socket_id).emit(
-  //       "disconnectx",
-  //       user._id.toString()
-  //     );
-  //   }
-  // });
+      writeFile(content, room._id.toString());
 
-  // console.log(io.sockets.adapter.rooms.get(room._id.toString()).size);
-  // Handle chat event
-  socket.on("chat", function (data) {
-    console.log(data);
-    io.sockets.emit("chat", data);
-  });
+      datax = checkroom(connectedUser, room._id.toString());
+      console.log(
+        "disconnect",
+        reason,
+        user._id.toString(),
+        room.adminID.toString(),
+        socket.id
+      );
+      if (user._id.toString() === room.adminID.toString()) {
+        console.log("enter null");
+        // console.log(connectedUser);
+        connectedUser.splice(datax, 1);
+        // console.log(connectedUser);
+      } else {
+        if (connectedUser[datax] && connectedUser[datax].socket_id !== null) {
+          io.to(connectedUser[datax].socket_id).emit(
+            "disconnectx",
+            user._id.toString()
+          );
+        }
+      }
+    });
 
-  socket.on("media-data", function (data) {
-    // console.log(data);
-    // console.log(connectedUser[0].socket_id, connectedUser[0].user_id);
-    socket.to(connectUser.socket_id).emit("recieve-data", data);
-  });
+    // console.log(io.sockets.adapter.rooms.get(room._id.toString()).size);
+    // Handle chat event
+    socket.on("chat", function (data) {
+      console.log(data);
+      io.sockets.emit("chat", data);
+    });
 
-  // Handle typing event
-  socket.on("typing", function (data) {
-    socket.broadcast.emit("typing", data);
-  });
-});
+    socket.on("media-data", async function (data) {
+      // console.log(data);
+      // console.log(connectedUser[0].socket_id, connectedUser[0].user_id);
+      // console.log(data);
+      // fs.writeFile(
+      //   `image_files/${user._id.toString()}.jpeg`,
+      //   data,
+      //   { flag: "w" },
+      //   (err) => {}
+      // );
+      let url = "http://127.0.0.1:4000/PyImg";
+      await axios({
+        method: "post",
+        url,
+        data: {
+          image_string: data,
+          id: user._id.toString(),
+        },
+      })
+        .then(function (response) {
+          // returners = response.data;
+          console.log("response", response.data);
+          datax = checkroom(connectedUser, room._id.toString());
+          if (datax !== -1) {
+            io.to(connectedUser[datax].socket_id).emit(
+              "facial-response",
+              response.data,
+              user._id.toString()
+            );
+          }
+          // res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+          console.log(error, "problem here");
+        });
+
+      // socket.to(connectUser.socket_id).emit("recieve-data", data);
+    });
+
+    // Handle typing event
+    socket.on("typing", function (data) {
+      socket.broadcast.emit("typing", data);
+    });
+  }
+);

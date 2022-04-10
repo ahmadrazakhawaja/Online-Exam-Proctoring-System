@@ -15,7 +15,8 @@ function Panel(props) {
   const userVideo = useRef();
   const connectionRef = useRef();
 
-  const [peers, setpeers] = useState([]);
+  const [peer, setpeer] = useState();
+  const [peerlist, setpeerlist] = useState([]);
 
   // function handleCanPlay() {
   //   videoRef.current.play();
@@ -50,19 +51,59 @@ function Panel(props) {
   //   });
   // }, [caller, callerSignal, callAccepted]);
   // };
+  // useEffect(() => {
+  //   console.log(peers);
+  // }, [peers]);
+
+  function checkuser(list, user) {
+    let tmp = null;
+    for (let i = 0; i < list.length; i++) {
+      tmp = list[i];
+      if (tmp.id === user) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   useEffect(() => {
-    // socket.on("disconnectx", (data) => {
+    socket.on("disconnectx", (data) => {
+      console.log("disconnectx", data);
+    });
 
-    // });
+    socket.on("facial-response", (data, id) => {
+      console.log("facial_response", data, id);
+      // const index = checkuser(peerlist, id);
+      // if (index !== -1) {
+      //   // peerlist[index].facialresponse = parseFloat(data);
+      //   const peer2 = peerlist[index];
+      //   if (peerlist.length === 0) {
+      //     peer2.key = peerlist.length;
+      //   } else {
+      //     peer2.key = peerlist[peerlist.length - 1].key + 1;
+      //   }
+      //   const peer3 = peerlist.filter((element) => {
+      //     if (element.id === peer2.id) {
+      //       return false;
+      //     }
+      //     return true;
+      //   });
+      //   // console.log("peer3", peer3);
+      //   setpeerlist(() => [...peer3, peer2]);
+      // }
+    });
     socket.on("callUser", (data) => {
       console.log("recv-calluser");
       // setCaller(data.from);
       // setCallerSignal(data.signal);
       // answerCall(data);
       // setCallAccepted(true);
-      const peer2 = {
-        key: peers.length,
+
+      // console.log(data);
+      // const index = checkuser(data.user_id);
+
+      setpeer({
+        key: peerlist.length,
         id: data.user_id,
         name: data.name,
         peer: new Peer({
@@ -71,10 +112,59 @@ function Panel(props) {
         }),
         caller: data.from,
         CallerSignal: data.signal,
-      };
-      setpeers([...peers, peer2]);
+        facialresponse: null,
+      });
+      // else {
+      //   console.log("edit element");
+      //   const peer2 = {
+      //     key: peers.length,
+      //     id: data.user_id,
+      //     name: data.name,
+      //     peer: new Peer({
+      //       initiator: false,
+      //       trickle: false,
+      //     }),
+      //     caller: data.from,
+      //     CallerSignal: data.signal,
+      //   };
+      //   let peer3 = peers.splice(index, 1);
+      //   peer3 = peer3.concat(peer2);
+      //   setpeers(peer3);
+      // }
     });
   }, []);
+
+  useEffect(() => {
+    // console.log(peerlist, peerlist.length);
+    if (peer !== undefined) {
+      // const index = checkuser(peerlist, peer.id);
+      if (peerlist.length === 0) {
+        peer.key = peerlist.length;
+      } else {
+        peer.key = peerlist[peerlist.length - 1].key + 1;
+      }
+      const peer3 = peerlist.filter((element) => {
+        if (element.id === peer.id) {
+          return false;
+        }
+        return true;
+      });
+      console.log("peer3", peer3);
+      setpeerlist(() => [...peer3, peer]);
+      // if (index === -1) {
+      //   setpeerlist((peerlist) => [...peer3, peer]);
+      // } else {
+      //   // let peer3 = peerlist.splice(index, 1);
+
+      //   // console.log("spliced", peer3);
+      //   setpeerlist(() => [...peer3, peer]);
+      // }
+    }
+  }, [peer]);
+
+  useEffect(() => {
+    console.log("peerlist", peerlist, peerlist.length);
+  }, [peerlist]);
 
   // useEffect(() => {
   //   if (peers.length !== 0) {
@@ -147,7 +237,7 @@ function Panel(props) {
                   muted
                 />
               ) : null} */}
-            {peers.map((element) => {
+            {peerlist.map((element) => {
               return <PeerStart data={element} key={element.key} />;
             })}
             {/* </div> */}

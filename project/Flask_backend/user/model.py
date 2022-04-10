@@ -165,12 +165,41 @@ def predict_image(img, model):
     xb = to_device(img.unsqueeze(0), device)
     # Get predictions from model
     yb = model(xb)
+    print('hello')
+    probs = F.softmax(yb, dim=1)
+    return probs[0][0].item()
+    # _, preds = torch.max(probs, dim=1)
+    # print(preds[0].item())
+    # print(probx[0].item())
+    # _, preds = torch(yb)
+    # print(yb[0].np())
     # Pick index with highest probability
-    _, preds  = torch.max(yb, dim=1)
-    print(preds[0].item())
+    # _, preds  = torch.max(yb, dim=1)
+    # print(preds[0].item())
     # Retrieve the class label
     # return train_ds.classes[preds[0].item()]
 
 
 # predict_image(img = None, model = model)
+
+def predict_image2(img, model):
+    script_dir = os.path.dirname(__file__)
+    img = Image.open(script_dir + '/images/' + img)
+    stats = ((0.3628, 0.3512, 0.3454), (0.3005, 0.2979, 0.2959))
+    valid_tfms = tt.Compose([
+                         tt.Resize(size=(64,64)),
+                         tt.ToTensor(),
+                         tt.Normalize(*stats)
+                         ])
+
+    img = valid_tfms(img)
+
+    # Convert to a batch of 1
+    xb = to_device(img.unsqueeze(0), device)
+    # Get predictions from model
+    yb = model(xb)
+    print('hello')
+    probs = F.softmax(yb, dim=1)
+    print(probs)
+    return probs[0][0].item()
 

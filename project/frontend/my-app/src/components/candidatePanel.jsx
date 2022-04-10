@@ -8,6 +8,7 @@ function CandidatePanel(props) {
   const room = JSON.parse(localStorage.getItem("room-info"));
 
   const [me, setMe] = useState("");
+  const [restart, setrestart] = useState(false);
   const [stream, setStream] = useState();
   const myVideo = useRef();
   const [receivingCall, setReceivingCall] = useState(false);
@@ -21,6 +22,51 @@ function CandidatePanel(props) {
   const connectionRef = useRef();
   const firstUpdate = useRef(true);
   const peer = useRef(null);
+  const data2 = JSON.parse(localStorage.getItem("user-info"));
+
+  // useEffect(() => {
+  //   const video = document.createElement("video");
+  //   video.srcObject = myVideo.current;
+  //   const canvas = document.createElement("canvas");
+  //   const context = canvas.getContext("2d");
+  //   canvas.width = 500;
+  //   canvas.height = 500;
+  //   setInterval(function () {
+  //     Draw(myVideo.current, context);
+  //   }, 30000);
+  //   function Draw(video, context) {
+  //     context.drawImage(video, 0, 0, context.width, context.height);
+  //     socket.emit("media-data", canvas.toDataURL("image/jpeg", 1));
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    // const video = document.createElement("video");
+    // video.srcObject = myVideo.current.srcObject;
+
+    const canvas = document.createElement("canvas");
+    // const canvas = document.getElementById("preview");
+    const context = canvas.getContext("2d");
+    canvas.width = 62;
+    canvas.height = 62;
+    context.width = canvas.width;
+    context.height = canvas.height;
+
+    setInterval(() => {
+      const video = document.getElementById("video");
+      Draw(video);
+    }, 30000);
+
+    const Draw = (video) => {
+      context.drawImage(video, 0, 0, context.width, context.height);
+      // const data = canvas.toDataURL("image/jpeg", 1).split(";base64,")[1];
+      const data = canvas.toDataURL("image/jpeg");
+      const data2 = data.split(";base64,")[1];
+      socket.emit("media-data", data2);
+      const imj = document.getElementById("imagex");
+      imj.src = data;
+    };
+  }, []);
 
   // console.log(socket, props);
   // let videoRef = Camera();
@@ -32,7 +78,7 @@ function CandidatePanel(props) {
 
   // useEffect(() => {
   //   let video = document.getElementById("video");
-  //   // video.srcObject = videoRef.current;
+  // video.srcObject = videoRef.current;
   //   let canvas = document.getElementById("preview");
   //   let context = canvas.getContext("2d");
   //   canvas.width = 300;
@@ -60,17 +106,40 @@ function CandidatePanel(props) {
       .then((stream) => {
         setStream(stream);
         myVideo.current.srcObject = stream;
+        connectionRef.current = new Peer({
+          initiator: true,
+          trickle: false,
+          stream: stream,
+        });
+        console.log("hellox");
       });
 
-    socket.on("me", (id) => {
-      console.log(id);
-      setMe(id);
+    // socket.on("me", (id) => {
+    //   console.log(id);
+    //   setMe(id);
+    // });
+
+    // socket.on("get-id", (id) => {
+    //   console.log(id);
+    //   setIdToCall(id);
+    //   // callUser(id);
+    // });
+    socket.on("callAccepted", (signal) => {
+      console.log("recv-2");
+      connectionRef.current.signal(signal);
+      console.log("signal-done");
+      // setCallAccepted(true);
     });
 
-    socket.on("get-id", (id) => {
-      console.log(id);
-      setIdToCall(id);
-      // callUser(id);
+    socket.on("restart", () => {
+      console.log("restart");
+      connectionRef.current.destroy();
+      connectionRef.current = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: myVideo.current.srcObject,
+      });
+      setrestart((restart) => !restart);
     });
   }, []);
 
@@ -79,32 +148,21 @@ function CandidatePanel(props) {
     //   firstUpdate.current = false;
     //   return;
     // }
-
     if (stream !== undefined) {
-      const peer = new Peer({
-        initiator: true,
-        trickle: false,
-        stream: stream,
-      });
-
-      peer.on("signal", (data) => {
+      connectionRef.current.on("signal", (data) => {
         console.log("send-1");
         socket.emit("callUser", {
-          userToCall: idToCall,
+          // userToCall: idToCall,
           signalData: data,
-          from: me,
+          // user_id: data2.user_id,
+          // from: me,
+          // name: `${data2.first_name} ${data2.last_name}`,
         });
-      });
-      socket.on("callAccepted", (signal) => {
-        console.log("recv-2");
-        peer.signal(signal);
-        console.log("signal-done");
-        // setCallAccepted(true);
       });
     }
 
-    connectionRef.current = peer;
-  }, [idToCall, stream]);
+    // connectionRef.current = peer;
+  }, [stream, restart]);
 
   // const callUser = (id) => {
   //   console.log(me);
@@ -154,6 +212,7 @@ function CandidatePanel(props) {
                 <video
                   playsInline
                   muted
+                  id="video"
                   ref={myVideo}
                   autoPlay
                   style={{ width: "300px" }}
@@ -161,7 +220,8 @@ function CandidatePanel(props) {
               )}
             </div>
           </div>
-          {/* <canvas style={{ display: "none" }} id="preview"></canvas> */}
+          <img id="imagex" alt="" />
+          <canvas style={{ display: "none" }} id="preview"></canvas>
         </div>
       </div>
     </div>

@@ -15,17 +15,17 @@ exports.protect2 = async (socket, next) => {
     // console.log(token);
     const decode = jwt.verify(token, process.env.JWT_Secret);
     // console.log("Decoded", decode);
-    user = await User.findById(decode.id);
-    room = await Room.findById(room_id);
-    if (room === null || user === null) {
+    socket.user = await User.findById(decode.id);
+    socket.room = await Room.findById(room_id);
+    if (socket.room === null || socket.user === null) {
       return next(new Error("data not found"));
     }
-    console.log("User", user);
-    console.log("Room", room);
-    if (user.isDeleted === true) {
+    // console.log("User", user);
+    // console.log("Room", room);
+    if (socket.user.isDeleted === true) {
       return next(new Error("User deleted"));
     }
-    if (room.ended === true) {
+    if (socket.room.ended === true) {
       return next(new Error("Exam already ended"));
     }
     next();
