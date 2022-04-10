@@ -18,6 +18,7 @@ import ExamSettings from "./components/exam_settings";
 import Socket from "./components/socket";
 import Panel from "./components/admin_panel";
 import CandidatePanel from "./components/candidatePanel";
+import AdminSettings from "./components/exam_settings2";
 
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -62,7 +63,12 @@ function App() {
             <Route
               path="/userpage/exam-room/:id"
               element={<Panel setLogIn={setLoggedIn} />}
-            />
+            >
+              <Route
+                path="Exam-Settings"
+                element={<AdminSettings setLogIn={setLoggedIn} />}
+              />
+            </Route>
             <Route
               path="/userpage/exam-room/:id/candidate"
               element={<CandidatePanel setLogIn={setLoggedIn} />}
