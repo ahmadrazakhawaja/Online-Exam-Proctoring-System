@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import Peer from "simple-peer";
 import PeerStart from "./PeerStart";
-import SideBar from "./admin_dashboard_sub_comp/SideBar";
+import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
+import SideBar from "./admin_dashboard_sub_comp/SideBar"
+import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 
 function Panel(props) {
   const [socket, setSocket] = useOutletContext();
@@ -245,7 +247,9 @@ function Panel(props) {
         </div>
       </div>
     </div>
-    {/* <SideBar /> */}
+    {/* {<BasicTable />} */}
+    {<Dashboard />}
+    {/* {<SideBar />}  */}
     </div>
   );
 }
