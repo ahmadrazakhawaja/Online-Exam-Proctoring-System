@@ -19,8 +19,8 @@ function Socket(props) {
     });
     setSocket(newSocket);
     // newSocket.emit("chat", "hello");
-    // return () => newSocket.close();
-  }, [setSocket]);
+    return () => newSocket.close();
+  }, []);
   //   if (socket != null) {
   //     socket.on("connect", () => {
   //       setSocket(socket);

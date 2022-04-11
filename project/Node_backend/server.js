@@ -1,4 +1,5 @@
 const express = require("express");
+const FormData = require("form-data");
 
 const socket = require("socket.io");
 const axios = require("axios");
@@ -162,10 +163,17 @@ io.use((socket, next) => protect2(socket, next)).on(
         // socket.to(room._id.toString()).emit("get-id", socket.id);
       } else {
         connectedUser[datax].socket_id = socket.id;
+
         // console.log(connectedUser);
         // socket.to(room._id.toString()).emit("get-id", socket.id);
       }
       socket.to(room._id.toString()).emit("restart");
+    } else {
+      if (datax !== -1) {
+        if (connectedUser[datax] && connectedUser[datax].socket_id !== null) {
+          io.to(connectedUser[datax].socket_id).emit("logging", content);
+        }
+      }
     }
     // else {
     //   // emit client socket id to itself
@@ -235,6 +243,7 @@ io.use((socket, next) => protect2(socket, next)).on(
             "disconnectx",
             user._id.toString()
           );
+          io.to(connectedUser[datax].socket_id).emit("logging", content);
         }
       }
     });
@@ -246,6 +255,80 @@ io.use((socket, next) => protect2(socket, next)).on(
       io.sockets.emit("chat", data);
     });
 
+    socket.on("browser-track", function (data) {
+      datax = checkroom(connectedUser, room._id.toString());
+      if (connectedUser[datax]) {
+        io.to(connectedUser[datax].socket_id).emit(
+          "browser-track",
+          data,
+          user._id.toString()
+        );
+        content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+          user.last_name
+        } browser Tracking: ${data}.\n`;
+
+        writeFile(content, room._id.toString());
+
+        io.to(connectedUser[datax].socket_id).emit("logging", content);
+      }
+    });
+
+    socket.on("audio", async function (data) {
+      console.log(data);
+
+      let config = {
+        header: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const form = new FormData();
+      form.append("audio", data);
+      form.append("text", user._id.toString());
+      console.log(data, form);
+
+      let url = "http://127.0.0.1:4000/PyAudio";
+      // await axios({
+      //   method: "post",
+      //   url: url,
+      //   data: form,
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // })
+      await axios
+        .post(url, form, config)
+        .then(function (response) {
+          // returners = response.data;
+          console.log("response", response.data);
+          datax = checkroom(connectedUser, room._id.toString());
+          if (datax !== -1) {
+            io.to(connectedUser[datax].socket_id).emit(
+              "Audio-response",
+              response.data,
+              user._id.toString()
+            );
+            io.to(connectedUser[datax].socket_id).emit(
+              "Audio-response",
+              response.data,
+              user._id.toString()
+            );
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } Audio Tracking: ${response.data}.\n`;
+            io.to(connectedUser[datax].socket_id).emit(
+              "logging",
+              content,
+              user._id.toString()
+            );
+          }
+          // res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+          // console.log(error, "problem here");
+          console.log("problem with facial detection");
+        });
+    });
     socket.on("media-data", async function (data) {
       // console.log(data);
       // console.log(connectedUser[0].socket_id, connectedUser[0].user_id);
@@ -275,11 +358,19 @@ io.use((socket, next) => protect2(socket, next)).on(
               response.data,
               user._id.toString()
             );
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
+
+            writeFile(content, room._id.toString());
+
+            io.to(connectedUser[datax].socket_id).emit("logging", content);
           }
           // res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
-          console.log(error, "problem here");
+          // console.log(error, "problem here");
+          console.log("problem with facial detection");
         });
 
       // socket.to(connectUser.socket_id).emit("recieve-data", data);

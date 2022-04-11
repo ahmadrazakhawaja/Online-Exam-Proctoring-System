@@ -201,5 +201,5 @@ def predict_image2(img, model):
     print('hello')
     probs = F.softmax(yb, dim=1)
     print(probs)
-    return probs[0][0].item()
+    return probs[0][1].item()
 

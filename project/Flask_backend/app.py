@@ -13,6 +13,7 @@ from mongoengine import *
 from flask import Flask, render_template, url_for, jsonify, make_response, request
 from user.db2 import student
 from user.model import getmodel,predict_image,predict_image2
+from user.audio import upload,checkCompletion,checkQuestion
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
 import boto3
@@ -99,6 +100,50 @@ def hello_worldx():
     print(val)
     os.remove('user/images/'+id)
     return str(val)
+
+
+@app.route("/PyAudio", methods=["GET", "POST"])
+def hello_worldy():
+    # datax = request.form['audio']
+    # print(request.files)
+    # audio = request.files['audio'].stream.read()
+    # print(request.form)
+    audio_dict = request.get_data()
+    # print(audio_dict)
+    new_audio = audio_dict[142:len(audio_dict)]
+    new_audio = new_audio[0:len(new_audio)-56]
+    id = new_audio[len(new_audio)-26:len(new_audio)-2]
+    id = id.decode("utf-8")
+    new_audio = new_audio[0:len(new_audio)-127]
+    print(new_audio)
+    print(id)
+    # print(new)
+    with open('user/audio/' + str(id) + '.m4a', "wb") as file:
+        file.write(new_audio)
+
+    data1 = upload(id + '.m4a')
+    print(data1)
+    data2 = checkCompletion(data1)
+    print(data2)
+    data3 = checkQuestion(data2,'he')
+    print(data3)
+    result = ''
+    print(data3['total_count'])
+
+    if data3['total_count'] == 0:
+        result= 'Not detected'
+    elif data3['total_count'] <= 3:
+        result = 'low'
+    elif data3['total_count'] <= 6:
+        result = 'medium'
+    else:
+        result = 'high'
+    
+    os.remove('user/audio/'+id+'.m4a')
+    # data = upload('Re')
+    # data = checkCompletion(data)
+    # data = checkQuestion(data,'he')
+    return result
     
 
   
