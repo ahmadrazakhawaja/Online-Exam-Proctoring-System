@@ -6,6 +6,7 @@ import PeerStart from "./PeerStart";
 import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
 import SideBar from "./admin_dashboard_sub_comp/SideBar"
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
+import Charts from "./admin_dashboard_sub_comp/Charts";
 
 function Panel(props) {
   const navigate = useNavigate();
@@ -534,6 +535,7 @@ function Panel(props) {
         </div>
       </div>
       {/* <Sidebar/> */}
+      <Charts/>
     </React.Fragment>
   );
 }
