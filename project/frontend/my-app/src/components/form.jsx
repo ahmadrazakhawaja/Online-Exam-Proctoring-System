@@ -83,6 +83,8 @@ export default function Form(props) {
   //   reader.readAsDataURL(picture2[0]);
   // }
 
+ 
+
   // if (props.formSubmit === true) {
   //   document.body.style.opacity = "0.2";
   // } else {
