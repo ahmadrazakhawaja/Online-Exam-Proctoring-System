@@ -25,12 +25,53 @@ export default function UserPage(props) {
   };
 
   const onSubmit = (data, event) => {
-    localStorage.setItem("room-info", JSON.stringify({ _id: data["room-id"] }));
-    navigate(`/userpage/exam-room/${data["room-id"]}/candidate`);
+    const data2 = JSON.parse(localStorage.getItem("user-info"));
+    const myHeaders = new Headers();
+    myHeaders.append("content-Type", "application/json");
+    myHeaders.append("authorization", `Bearer ${data2.token}`);
+    console.log(data);
+    fetch("http://127.0.0.1:5000/roomRoutes/checkRoom", {
+      method: "POST",
+      headers: myHeaders,
+      mode: "cors",
+      body: JSON.stringify({
+        id: data["room-id"],
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((json) => {
+        console.log(json.header.message);
+        if (json.header.code === 1) {
+          localStorage.setItem(
+            "room-info",
+            JSON.stringify({ _id: data["room-id"] })
+          );
+          // localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+          // const room = JSON.parse(localStorage.getItem("room-info"));
+          navigate(`/userpage/Checking/:id`);
+        } else {
+          // if (json.header.message === "User Made") {
+          //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+          //   // props.setLogIn(localStorage.getItem("user-info"));
+          //   // navigate("/login");
+          //   setsubmit(true);
+          // } else {
+          // setsubmit({
+          //   submit: true,
+          //   redirect: false,
+          // });
+          setalert(json.header.message);
+        }
+        // }
+      });
   };
 
   return (
     <div>
+      {alert && <Alert alert={alert} setalert={setalert} />}
       <h1 style={{ textAlign: "center" }}>Welcome {data.first_name}</h1>
       <div className="row mt-5" style={{ width: "100%" }}>
         <div className="col text-center">

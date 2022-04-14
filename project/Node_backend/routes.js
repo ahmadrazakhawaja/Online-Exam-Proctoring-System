@@ -690,21 +690,21 @@ router.put(
         header: { message: "User not found", code: 1 },
       });
     }
-    const checkroll = await User.find({ rollNum: foundUser.rollNum });
-    // console.log(checkroll, "check-1");
-    if (checkroll) {
-      for (var i = 0; i < checkroll.length; i++) {
-        var xyz = checkroll[i].institute_id;
-        // console.log(xyz, "check-2");
-        // var user2 = await Institute.findById(xyz.toString());
-        if (foundUser.institute_id.toString() === xyz.toString()) {
-          // console.log("check-3");
-          return res.status(404).json({
-            header: { message: "Roll No already exists", code: 1 },
-          });
-        }
-      }
-    }
+    // const checkroll = await User.find({ rollNum: foundUser.rollNum });
+    // // console.log(checkroll, "check-1");
+    // if (checkroll) {
+    //   for (var i = 0; i < checkroll.length; i++) {
+    //     var xyz = checkroll[i].institute_id;
+    //     // console.log(xyz, "check-2");
+    //     // var user2 = await Institute.findById(xyz.toString());
+    //     if (foundUser.institute_id.toString() === xyz.toString()) {
+    //       // console.log("check-3");
+    //       return res.status(404).json({
+    //         header: { message: "Roll No already exists", code: 1 },
+    //       });
+    //     }
+    //   }
+    // }
 
     if (req.User.isAdmin || req.User.id === foundUser.id) {
       if (body) {

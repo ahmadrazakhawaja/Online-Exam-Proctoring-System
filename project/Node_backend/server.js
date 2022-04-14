@@ -276,15 +276,29 @@ io.use((socket, next) => protect2(socket, next)).on(
     socket.on("audio", async function (data) {
       console.log(data);
 
-      let config = {
-        header: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
+      // let config = {
+      //   header: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // };
+
+      fs.writeFileSync(
+        `audio_files/${user._id.toString()}.m4a`,
+        data,
+        { flag: "w" },
+        (err) => {
+          console.log(err);
+        }
+      );
 
       const form = new FormData();
-      form.append("audio", data);
+      form.append(
+        "aduio",
+        fs.createReadStream(`audio_files/${user._id.toString()}.m4a`)
+      );
       form.append("text", user._id.toString());
+      const formHeaders = form.getHeaders();
+
       console.log(data, form);
 
       let url = "http://127.0.0.1:4000/PyAudio";
@@ -297,7 +311,11 @@ io.use((socket, next) => protect2(socket, next)).on(
       //   },
       // })
       await axios
-        .post(url, form, config)
+        .post(url, form, {
+          headers: {
+            ...formHeaders,
+          },
+        })
         .then(function (response) {
           // returners = response.data;
           console.log("response", response.data);
@@ -328,6 +346,9 @@ io.use((socket, next) => protect2(socket, next)).on(
           // console.log(error, "problem here");
           console.log("problem with facial detection");
         });
+      fs.rm(`image_files/${user._id.toString()}.m4a`, (err) => {
+        console.log(err);
+      });
     });
     socket.on("media-data", async function (data) {
       // console.log(data);
@@ -339,15 +360,35 @@ io.use((socket, next) => protect2(socket, next)).on(
       //   { flag: "w" },
       //   (err) => {}
       // );
+      // let config = {
+      //   header: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // };
+      fs.writeFileSync(
+        `image_files/${user._id.toString()}.jpg`,
+        data,
+        { flag: "w" },
+        (err) => {
+          console.log(err);
+        }
+      );
+
+      const form = new FormData();
+      form.append(
+        "image",
+        fs.createReadStream(`image_files/${user._id.toString()}.jpg`)
+      );
+      form.append("text", user._id.toString());
+      const formHeaders = form.getHeaders();
+
       let url = "http://127.0.0.1:4000/PyImg";
-      await axios({
-        method: "post",
-        url,
-        data: {
-          image_string: data,
-          id: user._id.toString(),
-        },
-      })
+      await axios
+        .post(url, form, {
+          headers: {
+            ...formHeaders,
+          },
+        })
         .then(function (response) {
           // returners = response.data;
           console.log("response", response.data);
@@ -372,8 +413,109 @@ io.use((socket, next) => protect2(socket, next)).on(
           // console.log(error, "problem here");
           console.log("problem with facial detection");
         });
+      fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
+        console.log(err);
+      });
 
       // socket.to(connectUser.socket_id).emit("recieve-data", data);
+    });
+
+    socket.on("media-verify", async function (data) {
+      // console.log(data);
+      // console.log(connectedUser[0].socket_id, connectedUser[0].user_id);
+      // console.log(data);
+      // fs.writeFile(
+      //   `image_files/${user._id.toString()}.jpeg`,
+      //   data,
+      //   { flag: "w" },
+      //   (err) => {}
+      // );
+      datax = checkroom(connectedUser, room._id.toString());
+      // let config = {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // };
+      fs.writeFileSync(
+        `image_files/${user._id.toString()}.jpg`,
+        data,
+        { flag: "w" },
+        (err) => {
+          console.log(err);
+        }
+      );
+      const form = new FormData();
+      // form.append("image", Buffer.from(data));
+
+      form.append(
+        "image",
+        fs.createReadStream(`image_files/${user._id.toString()}.jpg`)
+      );
+      form.append("text", user._id.toString());
+      console.log(user.profileUrl);
+      for (let i = 0; i < user.profileUrl.length; i++) {
+        form.append(`url${i}`, user.profileUrl[i]);
+      }
+      // const formHeaders = form.getHeaders();
+      // if (user.profileUrl && user.profileUrl.length > 0) {
+      //   form.append("url", JSON.stringify(user.profileUrl));
+      // } else {
+      //   io.to(connectedUser[datax].socket_id).emit("logging", "error");
+      // }
+
+      // console.log(data, form, {
+      //   headers: {
+      //     ...formHeaders,
+      //   },
+      // });
+
+      // form.submit(
+      //   {
+      //     host: "127.0.0.1:4000",
+      //     path: "/PyImg",
+      //     headers: { "Content-Type": "multipart/form-data" },
+      //   },
+      //   function (err, res) {
+      //     // console.log(res.statusCode);
+      //   }
+      // );
+      const formHeaders = form.getHeaders();
+      let url = "http://127.0.0.1:4000/PyImg";
+      await axios
+        .post(url, form, {
+          headers: {
+            ...formHeaders,
+          },
+        })
+        .then(function (response) {
+          // returners = response.data;
+          console.log("response", response.data);
+
+          if (datax !== -1) {
+            io.to(connectedUser[datax].socket_id).emit(
+              "facial-response",
+              response.data,
+              user._id.toString()
+            );
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
+
+            writeFile(content, room._id.toString());
+
+            io.to(connectedUser[datax].socket_id).emit("logging", content);
+          }
+          // res.send(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+          // console.log(error, "problem here");
+          console.log("problem with facial detection");
+        });
+
+      socket.to(connectUser.socket_id).emit("recieve-data", data);
+      fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
+        console.log(err);
+      });
     });
 
     // Handle typing event

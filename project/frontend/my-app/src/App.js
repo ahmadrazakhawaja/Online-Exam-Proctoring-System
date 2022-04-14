@@ -19,6 +19,7 @@ import Socket from "./components/socket";
 import Panel from "./components/admin_panel";
 import CandidatePanel from "./components/candidatePanel";
 import AdminSettings from "./components/exam_settings2";
+import CheckPanel from "./components/checking";
 
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -60,6 +61,10 @@ function App() {
             element={<ExamSettings setLogIn={setLoggedIn} />}
           />
           <Route element={<Socket setLogIn={setLoggedIn} />}>
+            <Route
+              path="/userpage/Checking/:id"
+              element={<CheckPanel setLogIn={setLoggedIn} />}
+            />
             <Route
               path="/userpage/exam-room/:id"
               element={<Panel setLogIn={setLoggedIn} />}

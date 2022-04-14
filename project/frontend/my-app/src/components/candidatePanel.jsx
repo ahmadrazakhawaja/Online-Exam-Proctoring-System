@@ -10,6 +10,7 @@ function CandidatePanel(props) {
   const [restart, setrestart] = useState(false);
   const [stream, setStream] = useState();
   const myVideo = useRef();
+  const canvasRef = useRef();
   // const [receivingCall, setReceivingCall] = useState(false);
   // const [caller, setCaller] = useState("");
   // const [callerSignal, setCallerSignal] = useState();
@@ -97,7 +98,7 @@ function CandidatePanel(props) {
       const audio = await recorder.stop();
       console.log("recorder stopped");
       socket.emit("audio", audio.audioBlob);
-      audio.play();
+      // audio.play();
       console.log("played");
 
       audioInterval = setInterval(async () => {
@@ -107,7 +108,7 @@ function CandidatePanel(props) {
         const audio = await recorder.stop();
         console.log("recorder stopped");
         socket.emit("audio", audio.audioBlob);
-        audio.play();
+        // audio.play();
         console.log("played");
       }, 15000);
     }
@@ -157,6 +158,9 @@ function CandidatePanel(props) {
           stream: stream,
         });
         console.log("hellox");
+      })
+      .catch(function (err) {
+        console.log(err);
       });
 
     const visibleChange = (event) => {
@@ -171,29 +175,36 @@ function CandidatePanel(props) {
 
     document.addEventListener("visibilitychange", visibleChange);
 
-    const canvas = document.createElement("canvas");
     // const canvas = document.getElementById("preview");
-    const context = canvas.getContext("2d");
-    canvas.width = 62;
-    canvas.height = 62;
-    context.width = canvas.width;
-    context.height = canvas.height;
+    // canvas.width = 62;
+    // canvas.height = 62;
+    // context.width = canvas.width;
+    // context.height = canvas.height;
+
+    const context = canvasRef.current.getContext("2d");
+    context.width = 62;
+    context.height = 62;
 
     const imginterval = setInterval(() => {
-      console.log("interval activated");
-      const video = document.getElementById("video");
-      Draw(video);
-    }, 60000);
+      context.drawImage(myVideo.current, 0, 0, context.width, context.height);
+      canvasRef.current.toBlob(
+        (blob) => socket.emit("media-data", blob),
+        "image/jpeg",
+        1
+      );
 
-    const Draw = (video) => {
-      context.drawImage(video, 0, 0, context.width, context.height);
-      // const data = canvas.toDataURL("image/jpeg", 1).split(";base64,")[1];
-      const data = canvas.toDataURL("image/jpeg");
-      const data2 = data.split(";base64,")[1];
-      socket.emit("media-data", data2);
-      const imj = document.getElementById("imagex");
-      imj.src = data;
-    };
+      // context.clearRect(0, 0, context.width, context.width);
+    }, 5000);
+
+    // const Draw = (video) => {
+    //   context.drawImage(video, 0, 0, context.width, context.height);
+    //   // const data = canvas.toDataURL("image/jpeg", 1).split(";base64,")[1];
+    //   const data = canvas.toDataURL("image/jpeg");
+    //   const data2 = data.split(";base64,")[1];
+    //   socket.emit("media-data", data2);
+    //   const imj = document.getElementById("imagex");
+    //   imj.src = data;
+    // };
 
     // socket.on("me", (id) => {
     //   console.log(id);
@@ -329,7 +340,12 @@ function CandidatePanel(props) {
               )}
             </div>
           </div>
-          <img id="imagex" alt="" />
+          <canvas
+            style={{ display: "block" }}
+            ref={canvasRef}
+            width={62}
+            height={62}
+          />
           <canvas style={{ display: "none" }} id="preview"></canvas>
         </div>
       </div>

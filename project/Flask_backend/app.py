@@ -16,9 +16,12 @@ from user.model import getmodel,predict_image,predict_image2
 from user.audio import upload,checkCompletion,checkQuestion
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
+from user.facial_matching import match_faces
 import boto3
 from user.aws_access import get_aws
 import base64
+import urllib.request
+from PIL import Image
 
 # get_aws()
 app = Flask(__name__)
@@ -84,21 +87,74 @@ def get_image():
 @app.route("/PyImg", methods=["GET", "POST"])
 def hello_worldx():
     print("chk1")
-    datax = request.get_json()
+    # datax = request.get_json()
     # print(datax)
-    image_data = datax['image_string']
-    id = datax['id'] + '.jpg'
+    # image_data = datax['image_string']
+    print(request.form)
+    id = request.form['text']
+    image = request.files['image']
+
+    url0 = request.form.get('url0')
+    url1 = request.form.get('url1')
+    url2 = request.form.get('url2')
+    image.save('user/images/'+id+'.jpg')
+    result = []
+
+    if url0:
+        urllib.request.urlretrieve(url0,'user/images/'+id+'-url0.jpg')
+        resultx = match_faces(id+'-url0.jpg',id+'.jpg')
+        result.append(resultx)
+        os.remove('user/images/'+id+'-url0.jpg')
+
+    
+    if url1:
+        urllib.request.urlretrieve(url0,'user/images/'+id+'-url1.jpg')
+        resultx = match_faces(id+'-url1.jpg',id+'.jpg')
+        result.append(resultx)
+        os.remove('user/images/'+id+'-url1.jpg')
+
+    if url2:
+        urllib.request.urlretrieve(url0,'user/images/'+id+'-url2.jpg')
+        resultx = match_faces(id+'-url2.jpg',id+'.jpg')
+        result.append(resultx)
+        os.remove('user/images/'+id+'-url2.jpg')
+    
+
+    print(result)
+    
+
+    
+
+
+    # print()
+    # data = request.form['image']
+    # data = data.encode('ascii')
+   
+    # print(request.form.get('text'))
+    # img_dict = request.get_data()
+    # print(img_dict)
+    # img_dict = img_dict[142:len(img_dict)]
+    # img_dict = img_dict[0:len(img_dict)-56]
+    # id = img_dict[len(img_dict)-26:len(img_dict)-2]
+    # id = id.decode("utf-8")
+    # img_dict = img_dict[0:len(img_dict)-127]
+    # print(img_dict)
+    # print(id)
+    # print(img_dict)
+    # id = datax['id'] + '.jpg'
     # print(image_data)
-    converted_binary = base64.b64decode(image_data)
+    # converted_binary = base64.b64decode(image_data)
     # print(converted_binary)
-    with open('user/images/'+id, "wb") as file:
-        file.write(converted_binary)
+
+
+    # with open('user/images/'+id+'.jpg', "w") as file:
+    #     file.write(image)
 
     
     
-    val = predict_image2(id,model)
+    val = predict_image2(id+'.jpg',model)
     print(val)
-    os.remove('user/images/'+id)
+    os.remove('user/images/'+id+'.jpg')
     return str(val)
 
 
@@ -108,18 +164,21 @@ def hello_worldy():
     # print(request.files)
     # audio = request.files['audio'].stream.read()
     # print(request.form)
-    audio_dict = request.get_data()
+    # audio_dict = request.get_data()
+    id = request.form['text']
+    data = request.form['audio']
+    data.save('user/audio/'+id+'.m4a')
     # print(audio_dict)
-    new_audio = audio_dict[142:len(audio_dict)]
-    new_audio = new_audio[0:len(new_audio)-56]
-    id = new_audio[len(new_audio)-26:len(new_audio)-2]
-    id = id.decode("utf-8")
-    new_audio = new_audio[0:len(new_audio)-127]
-    print(new_audio)
-    print(id)
+    # new_audio = audio_dict[142:len(audio_dict)]
+    # new_audio = new_audio[0:len(new_audio)-56]
+    # id = new_audio[len(new_audio)-26:len(new_audio)-2]
+    # id = id.decode("utf-8")
+    # new_audio = new_audio[0:len(new_audio)-127]
+    # print(new_audio)
+    # print(id)
     # print(new)
-    with open('user/audio/' + str(id) + '.m4a', "wb") as file:
-        file.write(new_audio)
+    # with open('user/audio/' + str(id) + '.m4a', "wb") as file:
+    #     file.write(data)
 
     data1 = upload(id + '.m4a')
     print(data1)
