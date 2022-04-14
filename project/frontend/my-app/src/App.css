@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.form-control:focus{
+  color: #212529;
+    background-color: #fff;
+    border-color: #212529 !important;
+    outline: 0;
+    box-shadow: none !important;
+}
+
+/*.form-select {
+  border-color: #212529 !important;
+  box-shadow: none !important;
+}
+*/
