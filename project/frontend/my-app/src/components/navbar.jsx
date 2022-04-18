@@ -148,6 +148,14 @@ export default function NavBar(props) {
           {navdata()}
         </div>
       </div>
+    </nav>    
+  );
+
+  return (
+    <nav className="navbar bottom bg-dark">
+       style={{
+         marginTop : "50px"
+       }}
     </nav>
   );
 }

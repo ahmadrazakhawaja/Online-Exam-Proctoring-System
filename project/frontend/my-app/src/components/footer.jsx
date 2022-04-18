@@ -1,4 +1,5 @@
 import React from "react";
+import "./footer.css";
 
 export default function Footer(params) {
   return (
@@ -40,7 +41,8 @@ export default function Footer(params) {
         </div>
       </div>
       <footer className="footer"></footer> */}
-      <nav className="navbar fixed-bottom bg-dark">
+      <nav className="navbar fixed-bottom bg-dark"
+       style={{margin: "auto"}}>
         <p
           className="navbar-brand text-center text-white"
           style={{ margin: "0 auto" }}
@@ -48,6 +50,7 @@ export default function Footer(params) {
           © 2022 Copyright
         </p>
       </nav>
+
     </React.Fragment>
   );
 }

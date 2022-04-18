@@ -7,6 +7,7 @@ import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
 import SideBar from "./admin_dashboard_sub_comp/SideBar"
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 import Charts from "./admin_dashboard_sub_comp/Charts";
+import "./admin_panel.css";
 
 function Panel(props) {
   const navigate = useNavigate();
@@ -450,9 +451,10 @@ function Panel(props) {
             <span style={{ display: "block" }}>Room ID: {room._id}</span>
           </div>
         </div>
+<Charts/>
         <div className="row mt-3">
-          <div className="col-3">
             <div className="video-container">
+            <span className="box-title"  style={{color: "white", backgroundColor: "#212529"}}>All students </span>
               {/* <div className="video"> */}
               {/* {callAccepted && !callEnded ? (
                 <video
@@ -474,10 +476,11 @@ function Panel(props) {
                   );
                 }
                 return (
-                  <div key={element.key} style={{ border: "solid" }}>
+                  <div className="col-3">
+                  <div className= "video-card" key={element.key} style={{ border: "solid" }}>
                     <PeerStart data={element} key={element.key} />
                     <div>
-                      <div style={{ textAlign: "center" }}>
+                      <div className = "cheating-info"style={{ textAlign: "center" }}>
                         <span>
                           <b>{element.name}</b>
                         </span>
@@ -502,40 +505,45 @@ function Panel(props) {
                       </div>
                     </div>
                   </div>
+                </div>
                 );
               })}
               {/* </div> */}
             </div>
-          </div>
         </div>
         <div className="row mt-3">
-          <div className="col-12">
-            <div
-              id="examLog"
-              style={{
-                position: "fixed",
-                bottom: "70px",
-                overflow: "scroll",
-                height: "20%",
-                border: "solid",
-                left: "5%",
-                right: "5%",
-                whiteSpace: "break-spaces",
-              }}
-            >
-              <div style={{ textAlign: "center", backgroundColor: "black" }}>
+          <div className="col-12"> 
+          <div id  = "Border"
+               style={{ textAlign: "center", backgroundColor: "#212529" }}>
                 <span style={{ color: "white" }}>
                   <b>Exam Log</b>
                 </span>
-                <hr style={{ marginTop: "2px", marginBottom: "2px" }} />
+                {/* <hr style={{ marginTop: "2px", marginBottom: "2px" }} /> */}
               </div>
+            <div
+              id="examLog"
+              style={{
+                //position: "fixed",
+                marginBottom: "5%",
+                bottom: "70px",
+                overflow: "scroll",
+                overflowX : "hidden",
+                height: "200px",
+                border: "solid",
+                left: "5%",
+                right: "5%",
+                padding : "7px",
+                whiteSpace: "break-spaces",
+              }}
+            >
+              
               {log}
             </div>
           </div>
         </div>
       </div>
+
       {/* <Sidebar/> */}
-      <Charts/>
     </React.Fragment>
   );
 }

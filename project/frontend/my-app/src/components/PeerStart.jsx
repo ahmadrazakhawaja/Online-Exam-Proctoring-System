@@ -36,7 +36,7 @@ function PeerStart(props) {
         playsInline
         ref={userVideo}
         autoPlay={true}
-        style={{ width: "300px" }}
+        style={{ width: "100%", height:"auto" }}
         muted
       />
     </div>
