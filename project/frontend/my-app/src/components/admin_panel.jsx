@@ -468,6 +468,8 @@ function Panel(props) {
                   muted
                 />
               ) : null} */}
+              <div className="row">
+                
               {peerlist.map((element) => {
                 const index = checkuser(tracklist, element.id);
 
@@ -479,8 +481,8 @@ function Panel(props) {
                   );
                 }
                 return (
-                  <div className="col-3">
-                  <div className= "video-card" key={element.key} style={{ border: "solid" }}>
+                  <div className="col-4" key={element.key} >
+                  <div className= "video-card" style={{ border: "solid" }}>
                     <PeerStart data={element} key={element.key} />
                     <div>
                       <div className = "cheating-info"style={{ textAlign: "center" }}>
@@ -508,39 +510,43 @@ function Panel(props) {
                       </div>
                     </div>
                   </div>
-                </div>
+                  </div>
+      
                 );
               })}
+ 
               {/* </div> */}
+              </div>
+            
             </div>
             </div>
             <div className="col-4">
-                      <div class="box">
-                      <div class="chat-room">
-                        <aside class="tengah-side">
+                      <div className="box">
+                      <div className="chat-room">
+                        <aside className="tengah-side">
                             <div className="card-body">
                                 <h3 className="box-title mb-0">Live Transcriptions</h3>
                             </div>
         
-                            <div class="group-rom">
-                    <div class="first-part odd">Jonathan Smith</div>
-                    <div class="second-part">Hello Cendy are you there?</div>
-                    <div class="third-part">12:30</div>
+                            <div className="group-rom">
+                    <div className="first-part odd">Jonathan Smith</div>
+                    <div className="second-part">Hello Cendy are you there?</div>
+                    <div className="third-part">12:30</div>
                 </div>
-                <div class="group-rom">
-                    <div class="first-part">Cendy Andrianto</div>
-                    <div class="second-part">Yoman Smith. Please proceed</div>
-                    <div class="third-part">12:31</div>
+                <div className="group-rom">
+                    <div className="first-part">Cendy Andrianto</div>
+                    <div className="second-part">Yoman Smith. Please proceed</div>
+                    <div className="third-part">12:31</div>
                 </div>
-                <div class="group-rom">
-                    <div class="first-part odd">Jonathan Smith</div>
-                    <div class="second-part">I want to share a file using chatroom</div>
-                    <div class="third-part">12:32</div>
+                <div className="group-rom">
+                    <div className="first-part odd">Jonathan Smith</div>
+                    <div className="second-part">I want to share a file using chatroom</div>
+                    <div className="third-part">12:32</div>
                 </div>
-                <div class="group-rom">
-                    <div class="first-part">Cendy Andrianto</div>
-                    <div class="second-part">oh sure. please send</div>
-                    <div class="third-part">12:32</div>
+                <div className="group-rom">
+                    <div className="first-part">Cendy Andrianto</div>
+                    <div className="second-part">oh sure. please send</div>
+                    <div className="third-part">12:32</div>
                 </div>
                                 </aside>
                                 </div>

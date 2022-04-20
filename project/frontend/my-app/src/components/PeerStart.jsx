@@ -31,6 +31,7 @@ function PeerStart(props) {
   }, []);
 
   return (
+    
     <div className="video">
       <video
         playsInline
