@@ -2,7 +2,8 @@
     -webkit-box-pack: center!important;
     /* -ms-flex-pack: center!important; */
     justify-content: center!important;
-    margin-top : 20px !important;
+    margin : 40px !important;
+    /* margin-bottom : 45px !important; */
 }
 
 .row{

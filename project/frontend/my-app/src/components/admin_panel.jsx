@@ -452,9 +452,12 @@ function Panel(props) {
           </div>
         </div>
 <Charts/>
-        <div className="row mt-3">
+        <div className="row justify-content-center">
+        <div className="col-8">
             <div className="video-container">
-            <span className="box-title"  style={{color: "white", backgroundColor: "#212529"}}>All students </span>
+            <div className="card-body">
+                                <h3 className="box-title mb-0">All Students</h3>
+                            </div>
               {/* <div className="video"> */}
               {/* {callAccepted && !callEnded ? (
                 <video
@@ -510,6 +513,39 @@ function Panel(props) {
               })}
               {/* </div> */}
             </div>
+            </div>
+            <div className="col-4">
+                      <div class="box">
+                      <div class="chat-room">
+                        <aside class="tengah-side">
+                            <div className="card-body">
+                                <h3 className="box-title mb-0">Live Transcriptions</h3>
+                            </div>
+        
+                            <div class="group-rom">
+                    <div class="first-part odd">Jonathan Smith</div>
+                    <div class="second-part">Hello Cendy are you there?</div>
+                    <div class="third-part">12:30</div>
+                </div>
+                <div class="group-rom">
+                    <div class="first-part">Cendy Andrianto</div>
+                    <div class="second-part">Yoman Smith. Please proceed</div>
+                    <div class="third-part">12:31</div>
+                </div>
+                <div class="group-rom">
+                    <div class="first-part odd">Jonathan Smith</div>
+                    <div class="second-part">I want to share a file using chatroom</div>
+                    <div class="third-part">12:32</div>
+                </div>
+                <div class="group-rom">
+                    <div class="first-part">Cendy Andrianto</div>
+                    <div class="second-part">oh sure. please send</div>
+                    <div class="third-part">12:32</div>
+                </div>
+                                </aside>
+                                </div>
+                               </div>
+                              </div>
         </div>
         <div className="row mt-3">
           <div className="col-12"> 
