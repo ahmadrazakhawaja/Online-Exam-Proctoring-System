@@ -48,23 +48,73 @@ export default function ExamSettings(props) {
     return null;
   };
 
+  // const onSubmit = (data, event) => {
+  //   const data2 = JSON.parse(localStorage.getItem("user-info"));
+  //   const myHeaders = new Headers();
+  //   myHeaders.append("content-Type", "application/json");
+  //   myHeaders.append("authorization", `Bearer ${data2.token}`);
+  //   console.log(data);
+  //   fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
+  //     method: "POST",
+  //     headers: myHeaders,
+  //     mode: "cors",
+  //     body: JSON.stringify({
+  //       facialDetection: data["facial-detection"],
+  //       audioDetection: data["audio-detection"],
+  //       browserTracking: data["browser"],
+  //       candidateLimit: data["candidate-limit"],
+  //       // timeLimit: data["time-limit"],
+  //     }),
+  //   })
+  //     .then((res) => {
+  //       console.log(res);
+  //       return res.json();
+  //     })
+  //     .then((json) => {
+  //       console.log(json.header.message);
+  //       if (json.header.message === "Room Created") {
+  //         localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+  //         const room = JSON.parse(localStorage.getItem("room-info"));
+  //         navigate(`/userpage/exam-room/${room._id}`);
+  //       } else {
+  //         // if (json.header.message === "User Made") {
+  //         //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+  //         //   // props.setLogIn(localStorage.getItem("user-info"));
+  //         //   // navigate("/login");
+  //         //   setsubmit(true);
+  //         // } else {
+  //         // setsubmit({
+  //         //   submit: true,
+  //         //   redirect: false,
+  //         // });
+  //         setalert(json.header.message);
+  //       }
+  //       // }
+  //     });
+  // };
+
   const onSubmit = (data, event) => {
+    const formData = new FormData();
+    console.log(data["file-upload"][0]);
+    if (data["file-upload"]) {
+      console.log(data["file-upload"][0]);
+      formData.append("file", data["file-upload"][0]);
+    }
+    formData.append("facialDetection", data["facial-detection"]);
+    formData.append("audioDetection", data["audio-detection"]);
+    formData.append("browserTracking", data["browser"]);
+    formData.append("candidateLimit", data["candidate-limit"]);
+
     const data2 = JSON.parse(localStorage.getItem("user-info"));
     const myHeaders = new Headers();
-    myHeaders.append("content-Type", "application/json");
+    // myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
     fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
-      body: JSON.stringify({
-        facialDetection: data["facial-detection"],
-        audioDetection: data["audio-detection"],
-        browserTracking: data["browser"],
-        candidateLimit: data["candidate-limit"],
-        timeLimit: data["time-limit"],
-      }),
+      body: formData,
     })
       .then((res) => {
         console.log(res);
@@ -97,7 +147,9 @@ export default function ExamSettings(props) {
     <div>
       {alert2()}
       <div className="mt-3">
-        <h1 style={{ textAlign: "center" }}>Exam Settings</h1>
+        <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
+          Exam Settings
+        </h1>
       </div>
       <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
         <div className="container">
@@ -177,6 +229,40 @@ export default function ExamSettings(props) {
               </div>
             </div>
             <div className="col-6 text-center">
+              <h5>Upload Question Paper: </h5>
+              <input
+                type="file"
+                className="form-control-file btn btn-primary btn-sm mb-2"
+                id="file-upload"
+                // onChange={props.uploadfile()}
+                // value={value}
+                // onChange={(event) => onChange(props.element, event)}
+                aria-describedby="Upload Question Paper"
+                placeholder="Upload Question Paper"
+                accept="text/plain application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                // onChange={(e) => props.submitx(e)}
+                {...register("file-upload", {
+                  validate: (value) => {
+                    if (value && value[0]) {
+                      console.log(value[0].size);
+                      if (value[0].size > 2000000) {
+                        return "File size should be less than 2MB.";
+                      }
+                      if (
+                        value[0].type ===
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                        value[0].type === "text/plain"
+                      ) {
+                      } else {
+                        return "File should be txt or Docx type.";
+                      }
+                    }
+                  },
+                })}
+              />
+              {errors["file-upload"] && errors["file-upload"].message}
+            </div>
+            {/* <div className="col-6 text-center">
               <h5>Exam End Time: </h5>
               <div className="mx-auto" style={{ width: "50%" }}>
                 <input
@@ -196,7 +282,7 @@ export default function ExamSettings(props) {
                 />
                 {errors["time-limit"] && errors["time-limit"].message}
               </div>
-            </div>
+            </div> */}
             <div className="row justify-content-center mt-5">
               <input
                 type="submit"

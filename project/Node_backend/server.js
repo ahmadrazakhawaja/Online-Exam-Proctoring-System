@@ -218,6 +218,7 @@ io.use((socket, next) => protect2(socket, next)).on(
     socket.on("disconnect", (reason) => {
       // console.log("disconnect");
       // socket.broadcast.emit("callEnded");
+      let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
       content = `${date} : ${user._id.toString()} : ${user.first_name} ${
         user.last_name
       } disconnected the room.\n`;
@@ -263,6 +264,10 @@ io.use((socket, next) => protect2(socket, next)).on(
           data,
           user._id.toString()
         );
+        let date = new Date()
+          .toISOString()
+          .replace(/T/, " ")
+          .replace(/\..+/, "");
         content = `${date} : ${user._id.toString()} : ${user.first_name} ${
           user.last_name
         } browser Tracking: ${data}.\n`;
@@ -293,10 +298,11 @@ io.use((socket, next) => protect2(socket, next)).on(
 
       const form = new FormData();
       form.append(
-        "aduio",
+        "audio",
         fs.createReadStream(`audio_files/${user._id.toString()}.m4a`)
       );
       form.append("text", user._id.toString());
+      form.append("id", room._id.toString());
       const formHeaders = form.getHeaders();
 
       console.log(data, form);
@@ -331,9 +337,14 @@ io.use((socket, next) => protect2(socket, next)).on(
               response.data,
               user._id.toString()
             );
+            let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Audio Tracking: ${response.data}.\n`;
+            writeFile(content, room._id.toString());
             io.to(connectedUser[datax].socket_id).emit(
               "logging",
               content,
@@ -346,7 +357,7 @@ io.use((socket, next) => protect2(socket, next)).on(
           // console.log(error, "problem here");
           console.log("problem with facial detection");
         });
-      fs.rm(`image_files/${user._id.toString()}.m4a`, (err) => {
+      fs.rm(`audio_files/${user._id.toString()}.m4a`, (err) => {
         console.log(err);
       });
     });
@@ -399,6 +410,10 @@ io.use((socket, next) => protect2(socket, next)).on(
               response.data,
               user._id.toString()
             );
+            let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
@@ -453,6 +468,13 @@ io.use((socket, next) => protect2(socket, next)).on(
       );
       form.append("text", user._id.toString());
       console.log(user.profileUrl);
+      if (user.profileUrl.length === 0) {
+        io.to(socket.id).emit(
+          "media-verified",
+          "Please upload images first for verification.",
+          user._id.toString()
+        );
+      }
       for (let i = 0; i < user.profileUrl.length; i++) {
         form.append(`url${i}`, user.profileUrl[i]);
       }
@@ -480,7 +502,7 @@ io.use((socket, next) => protect2(socket, next)).on(
       //   }
       // );
       const formHeaders = form.getHeaders();
-      let url = "http://127.0.0.1:4000/PyImg";
+      let url = "http://127.0.0.1:4000/PyVerify";
       await axios
         .post(url, form, {
           headers: {
@@ -491,20 +513,12 @@ io.use((socket, next) => protect2(socket, next)).on(
           // returners = response.data;
           console.log("response", response.data);
 
-          if (datax !== -1) {
-            io.to(connectedUser[datax].socket_id).emit(
-              "facial-response",
-              response.data,
-              user._id.toString()
-            );
-            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-              user.last_name
-            } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
+          io.to(socket.id).emit(
+            "media-verified",
+            response.data,
+            user._id.toString()
+          );
 
-            writeFile(content, room._id.toString());
-
-            io.to(connectedUser[datax].socket_id).emit("logging", content);
-          }
           // res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
@@ -512,7 +526,7 @@ io.use((socket, next) => protect2(socket, next)).on(
           console.log("problem with facial detection");
         });
 
-      socket.to(connectUser.socket_id).emit("recieve-data", data);
+      // socket.to(connectUser.socket_id).emit("recieve-data", data);
       fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
         console.log(err);
       });

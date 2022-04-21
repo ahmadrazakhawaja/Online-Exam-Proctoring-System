@@ -4,7 +4,7 @@ import { Outlet } from "react-router";
 import Peer from "simple-peer";
 import PeerStart from "./PeerStart";
 import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
-import SideBar from "./admin_dashboard_sub_comp/SideBar"
+import SideBar from "./admin_dashboard_sub_comp/SideBar";
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 import Charts from "./admin_dashboard_sub_comp/Charts";
 
@@ -449,10 +449,11 @@ function Panel(props) {
             <span>Exam Room</span>
             <span style={{ display: "block" }}>Room ID: {room._id}</span>
           </div>
+          <Charts />
         </div>
-        <div className="row mt-3">
+        <div className="row mt-1">
           <div className="col-3">
-            <div className="video-container">
+            <div className="video-container" style={{ marginBottom: "5%" }}>
               {/* <div className="video"> */}
               {/* {callAccepted && !callEnded ? (
                 <video
@@ -513,6 +514,8 @@ function Panel(props) {
             <div
               id="examLog"
               style={{
+                // marginTop: "5%",
+                // marginBottom: "5%",
                 position: "fixed",
                 bottom: "70px",
                 overflow: "scroll",
@@ -535,7 +538,6 @@ function Panel(props) {
         </div>
       </div>
       {/* <Sidebar/> */}
-      <Charts/>
     </React.Fragment>
   );
 }

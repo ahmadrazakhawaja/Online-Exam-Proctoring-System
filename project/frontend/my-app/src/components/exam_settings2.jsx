@@ -204,7 +204,7 @@ export default function AdminSettings(props) {
               </div>
             </div>
             <div className="col-6 text-center">
-              <h5>Exam End Time: </h5>
+              {/* <h5>Exam End Time: </h5>
               <div className="mx-auto" style={{ width: "50%" }}>
                 <input
                   type="time"
@@ -231,6 +231,7 @@ export default function AdminSettings(props) {
                 style={{ width: "25%", marginBottom: "100px" }}
                 value="Save Settings"
               />
+            </div> */}
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ function CheckPanel(props) {
   const imgdata = useRef();
   const [stream2, setStream] = useState();
   const [alert, setAlert] = useState();
+  const [loading, setloading] = useState(false);
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [verified, setverified] = useState(false);
   const myVideo = useRef();
@@ -36,6 +37,24 @@ function CheckPanel(props) {
         console.log(err);
         setAlert(err.message);
       });
+
+    const checkverification = (data) => {
+      console.log(data);
+      if (data === "True") {
+        navigate("/userpage/exam-room/:id/candidate");
+      } else if (data === "False") {
+        setAlert("Image not verified. please send again.");
+        setloading(false);
+      } else {
+        setAlert(data);
+        setloading(false);
+      }
+    };
+    socket.on("media-verified", checkverification);
+
+    return () => {
+      socket.off("media-verified", checkverification);
+    };
 
     // return () => {
     //   clearInterval(interval);
@@ -77,14 +96,34 @@ function CheckPanel(props) {
 
   const sendImage = () => {
     socket.emit("media-verify", imgdata.current);
+    setloading(true);
   };
 
   return (
     <React.Fragment>
-      <h1>Candidate Verification</h1>
       {alert && <Alert alert={alert} setalert={setAlert} />}
-      <div className="video-container">
-        <div className="video">
+      <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
+        Candidate Verification
+      </h1>
+      <p style={{ textAlign: "center" }}>
+        Please take a photo and send it for Verification. Once verified you will
+        be allowed to enter the Exam Room.
+        <br /> Make sure that your face is clearly visible and the room is well
+        lit.
+      </p>
+      <div
+        className="video-container"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div
+          className="video"
+          // style={{ display: "flex", justifyContent: "center" }}
+        >
           {stream2 && (
             <video
               playsInline
@@ -97,24 +136,34 @@ function CheckPanel(props) {
           )}
         </div>
         {dimension.current.length > 0 ? (
-          <div>
+          <div style={{ textAlign: "center" }}>
             <button
               className="btn btn-primary"
               onClick={isCanvasEmpty ? takeImage : handleClear}
               type="submit"
+              style={{ marginRight: "5px" }}
             >
-              Take Image
+              {isCanvasEmpty ? "Take Image" : "Clear Image"}
             </button>
             <button
               className="btn btn-primary"
               onClick={sendImage}
               type="submit"
             >
-              Send Image
+              Verify
             </button>
             {/* <img id="imagex"></img> */}
+            {loading && (
+              <div
+                className="spinner-border"
+                style={{ display: "block", margin: "0 auto", marginTop: "2%" }}
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            )}
             <canvas
-              style={{ display: "block" }}
+              style={{ display: "block", marginTop: "5px" }}
               ref={canvasRef}
               width={dimension.current[0]}
               height={dimension.current[1]}

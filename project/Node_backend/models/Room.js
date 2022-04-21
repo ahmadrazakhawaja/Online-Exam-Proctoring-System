@@ -31,7 +31,7 @@ const RoomSchema = new Schema({
   },
   timeLimit: {
     type: String,
-    required: true,
+    required: false,
   },
   timeStarted: {
     type: Date,
@@ -41,6 +41,10 @@ const RoomSchema = new Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  textFile: {
+    type: String,
+    required: false,
   },
 });
 

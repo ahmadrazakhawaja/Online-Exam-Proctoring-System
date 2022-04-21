@@ -56,32 +56,42 @@ def checkCompletion(data):
         else:
             time.sleep(6)	
 
-def checkQuestion(data,question_paper):
-    #Question paper file path
 
 
-    file_path = script_dir + '/question_papers/' + 'QuestionPaper.txt'
 
-    # open question paper file
-    # with open("QuestionPaper.txt", "r") as file: 
-    with open(file_path, "r") as file: 
-        newline_breaks=""
-        for line in file: 
-            stripped_line = line.strip()
-            newline_breaks += stripped_line
-            word_search = newline_breaks
-            # print(word_search)
-        
-        
-
+def word_searchx(data,word_search):
     headers = {'authorization': "58e4e7597da8422a8633b70ab1d1b784"}
-    word_search ='hello,testing'
+    # word_search ='hello,testing'
     endpoint_word_search = 'https://api.assemblyai.com/v2/transcript/' + data['id'] + '/word-search?words=' + word_search
 
     response = requests.get(endpoint_word_search,
                             headers=headers)
     print(response.json())
     return response.json()
+
+
+
+
+def checkQuestion(data,question_paper):
+    #Question paper file path
+
+
+    file_path = script_dir + '/question_papers/' + question_paper + '.txt'
+
+    # open question paper file
+    # with open("QuestionPaper.txt", "r") as file: 
+    with open(file_path, "r") as file: 
+        # newline_breaks=""
+        for line in file: 
+            # print(line)
+            return word_searchx(data,line)
+            # stripped_line = line.strip()
+            # newline_breaks += stripped_line
+            # word_search = newline_breaks
+            # print(word_search)
+        
+        
+
 
 
     

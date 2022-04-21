@@ -110,7 +110,7 @@ function CandidatePanel(props) {
         socket.emit("audio", audio.audioBlob);
         // audio.play();
         console.log("played");
-      }, 15000);
+      }, 25000);
     }
   }, [stream]);
 
@@ -188,13 +188,16 @@ function CandidatePanel(props) {
     const imginterval = setInterval(() => {
       context.drawImage(myVideo.current, 0, 0, context.width, context.height);
       canvasRef.current.toBlob(
-        (blob) => socket.emit("media-data", blob),
+        (blob) => {
+          socket.emit("media-data", blob);
+          context.clearRect(0, 0, context.width, context.height);
+        },
         "image/jpeg",
         1
       );
 
       // context.clearRect(0, 0, context.width, context.width);
-    }, 5000);
+    }, 20000);
 
     // const Draw = (video) => {
     //   context.drawImage(video, 0, 0, context.width, context.height);

@@ -15,6 +15,7 @@ from user.db2 import student
 from user.model import getmodel,predict_image,predict_image2
 from user.audio import upload,checkCompletion,checkQuestion
 from passlib.hash import pbkdf2_sha256
+from user.wordGen import create_txt
 from flask_cors import CORS
 from user.facial_matching import match_faces
 import boto3
@@ -84,8 +85,8 @@ def get_image():
 #     # return render_template("hello.html", name=name), 200
 #     return "MicroServices", 200
 
-@app.route("/PyImg", methods=["GET", "POST"])
-def hello_worldx():
+@app.route("/PyVerify", methods=["GET", "POST"])
+def hello_worldz():
     print("chk1")
     # datax = request.get_json()
     # print(datax)
@@ -99,63 +100,80 @@ def hello_worldx():
     url2 = request.form.get('url2')
     image.save('user/images/'+id+'.jpg')
     result = []
+    print(len(result),result, 'initial check')
+    size = (533,300)
 
     if url0:
         urllib.request.urlretrieve(url0,'user/images/'+id+'-url0.jpg')
+        # im = Image.open('user/images/'+id+'-url0.jpg')
+        # im2 = im.resize(size)
+        # im2.show()
+        # im2.save('user/images/'+id+'-url0.jpg')
         resultx = match_faces(id+'-url0.jpg',id+'.jpg')
         result.append(resultx)
         os.remove('user/images/'+id+'-url0.jpg')
 
     
     if url1:
-        urllib.request.urlretrieve(url0,'user/images/'+id+'-url1.jpg')
+        urllib.request.urlretrieve(url1,'user/images/'+id+'-url1.jpg')
+        # im = Image.open('user/images/'+id+'-url0.jpg')
+        # im.resize(size)
         resultx = match_faces(id+'-url1.jpg',id+'.jpg')
         result.append(resultx)
         os.remove('user/images/'+id+'-url1.jpg')
 
     if url2:
-        urllib.request.urlretrieve(url0,'user/images/'+id+'-url2.jpg')
+        urllib.request.urlretrieve(url2,'user/images/'+id+'-url2.jpg')
         resultx = match_faces(id+'-url2.jpg',id+'.jpg')
         result.append(resultx)
         os.remove('user/images/'+id+'-url2.jpg')
     
+    print(len(result),result)
+    count = 0
+    for i in result:
+        if i == True:
+            count = count + 1
 
-    print(result)
+    if count >= 2:
+        return str(True)
+    else:
+        return str(False)
     
 
-    
 
+@app.route("/PyImg", methods=["GET", "POST"])
+def hello_worldx():
+    print("chk1")
+    print(request.form)
+    id = request.form['text']
+    image = request.files['image']
 
-    # print()
-    # data = request.form['image']
-    # data = data.encode('ascii')
-   
-    # print(request.form.get('text'))
-    # img_dict = request.get_data()
-    # print(img_dict)
-    # img_dict = img_dict[142:len(img_dict)]
-    # img_dict = img_dict[0:len(img_dict)-56]
-    # id = img_dict[len(img_dict)-26:len(img_dict)-2]
-    # id = id.decode("utf-8")
-    # img_dict = img_dict[0:len(img_dict)-127]
-    # print(img_dict)
-    # print(id)
-    # print(img_dict)
-    # id = datax['id'] + '.jpg'
-    # print(image_data)
-    # converted_binary = base64.b64decode(image_data)
-    # print(converted_binary)
+    image.save('user/images/'+id+'.jpg')
 
-
-    # with open('user/images/'+id+'.jpg', "w") as file:
-    #     file.write(image)
-
-    
-    
     val = predict_image2(id+'.jpg',model)
     print(val)
     os.remove('user/images/'+id+'.jpg')
     return str(val)
+
+
+
+@app.route("/PyDocument", methods=["GET", "POST"])
+def hello_worlds():
+    print("chk1")
+    print(request.form)
+    id = request.form['room']
+    document = request.files['document']
+    type = request.form['file-type']
+
+    document.save('user/question_papers/'+id+type)
+    create_txt(id,type)
+
+    os.remove('user/question_papers/'+id+type)
+
+
+    
+
+    return str(True)
 
 
 @app.route("/PyAudio", methods=["GET", "POST"])
@@ -166,7 +184,9 @@ def hello_worldy():
     # print(request.form)
     # audio_dict = request.get_data()
     id = request.form['text']
-    data = request.form['audio']
+    data = request.files['audio']
+    room = request.form['id']
+    # print(data)
     data.save('user/audio/'+id+'.m4a')
     # print(audio_dict)
     # new_audio = audio_dict[142:len(audio_dict)]
@@ -184,7 +204,7 @@ def hello_worldy():
     print(data1)
     data2 = checkCompletion(data1)
     print(data2)
-    data3 = checkQuestion(data2,'he')
+    data3 = checkQuestion(data2,room)
     print(data3)
     result = ''
     print(data3['total_count'])
