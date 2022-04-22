@@ -7,6 +7,7 @@ import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
 import SideBar from "./admin_dashboard_sub_comp/SideBar"
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 import Charts from "./admin_dashboard_sub_comp/Charts";
+import VideoCardGrid from "./admin_dashboard_sub_comp/VideoCardGrid";
 import "./admin_panel.css";
 
 function Panel(props) {
@@ -452,6 +453,7 @@ function Panel(props) {
           </div>
         </div>
 <Charts/>
+{/* <VideoCardGrid/> */}
         <div className="row justify-content-center">
         <div className="col-8">
             <div className="video-container">
@@ -468,7 +470,8 @@ function Panel(props) {
                   muted
                 />
               ) : null} */}
-              <div className="row">
+              {/* <div className="row"> */}
+              <div className="grid">
                 
               {peerlist.map((element) => {
                 const index = checkuser(tracklist, element.id);
@@ -481,11 +484,11 @@ function Panel(props) {
                   );
                 }
                 return (
-                  <div className="col-4" key={element.key} >
-                  <div className= "video-card" style={{ border: "solid" }}>
+                  // <div className="grid"  >
+                  <div className= "video-card" key={element.key} style={{ border: "solid" }}>
                     <PeerStart data={element} key={element.key} />
-                    <div>
-                      <div className = "cheating-info"style={{ textAlign: "center" }}>
+                    <div className="cheating-info">
+                      <div className = "name"style={{ textAlign: "center" }}>
                         <span>
                           <b>{element.name}</b>
                         </span>
@@ -510,14 +513,14 @@ function Panel(props) {
                       </div>
                     </div>
                   </div>
-                  </div>
+                  
       
                 );
               })}
  
               {/* </div> */}
-              </div>
-            
+              
+            </div>
             </div>
             </div>
             <div className="col-4">
