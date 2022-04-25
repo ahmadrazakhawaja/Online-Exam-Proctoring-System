@@ -10,25 +10,54 @@ const RoomSchema = new Schema({
     type: Object,
     required: true,
   },
+  // facialDetection: {
+
+  //   type: Boolean,
+  //   required: true,
+  //   default: false,
+  // },
+
   facialDetection: {
-    type: Boolean,
-    required: true,
-    default: false,
+    type: [
+      {
+        type: Boolean,
+        required: false,
+        default: null,
+      },
+    ],
   },
+
   audioDetection: {
-    type: Boolean,
-    required: true,
-    default: false,
+    type: [
+      {
+        type: Boolean,
+        required: false,
+        default: null,
+      },
+    ],
   },
   browserTracking: {
-    type: Boolean,
-    required: true,
-    default: false,
+    type: [
+      {
+        type: Boolean,
+        required: false,
+        default: null,
+      },
+    ],
   },
   candidateLimit: {
-    type: Number,
-    required: true,
+    type: [
+      {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+    ],
   },
+  // candidateLimit: {
+  //   type: Number,
+  //   required: true,
+  // },
   timeLimit: {
     type: String,
     required: false,

@@ -2,6 +2,8 @@
     -webkit-box-pack: center!important;
     /* -ms-flex-pack: center!important; */
     justify-content: center!important;
+    margin : 40px !important;
+    /* margin-bottom : 45px !important; */
 }
 
 .row{
@@ -62,5 +64,9 @@
 }
 
 #sparklinedash3{
+    padding-left : 10px !important ; 
+}
+
+#sparklinedash4{
     padding-left : 10px !important ; 
 }

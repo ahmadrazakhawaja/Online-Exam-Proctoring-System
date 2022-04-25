@@ -45,13 +45,15 @@ export default function UserPage(props) {
       .then((json) => {
         console.log(json.header.message);
         if (json.header.code === 1) {
-          localStorage.setItem(
-            "room-info",
-            JSON.stringify({ _id: data["room-id"] })
-          );
+          localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // const room = JSON.parse(localStorage.getItem("room-info"));
-          navigate(`/userpage/Checking/:id`);
+          // navigate(`/userpage/Checking/:id`);
+          if (json.data.newRoom._id) {
+            navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
+          } else {
+            setalert("room not available");
+          }
         } else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));

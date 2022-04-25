@@ -5,7 +5,7 @@ require("../models/Room.js");
 const User = mongoose.model("users");
 const Room = mongoose.model("Room");
 
-exports.protect2 = async (socket, next) => {
+exports.protect2 = async (socket, next, io) => {
   let token = socket.handshake.auth.token;
   let room_id = socket.handshake.auth.room;
   if (!token) {
@@ -27,6 +27,18 @@ exports.protect2 = async (socket, next) => {
     }
     if (socket.room.ended === true) {
       return next(new Error("Exam already ended"));
+    }
+    socket.join(room_id);
+    console.log(socket.adapter.rooms.get(room_id).size);
+    if (
+      socket.user._id.toString() !== socket.room.adminID.toString() &&
+      socket.adapter.rooms.get(room_id).size &&
+      socket.adapter.rooms.get(room_id).size >
+        socket.room.candidateLimit[socket.room.candidateLimit.length - 1] + 1
+    ) {
+      console.log("xxx");
+      socket.leave(room_id);
+      return next(new Error("Candidate Limit Exceeded"));
     }
     next();
   } catch (err) {

@@ -1,16 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import Peer from "simple-peer";
+import Alert from "./alert";
 
 function CandidatePanel(props) {
   const [socket, setSocket] = useOutletContext();
   const room = JSON.parse(localStorage.getItem("room-info"));
-
+  const user = JSON.parse(localStorage.getItem("user-info"));
+  const navigate = useNavigate();
   // const [me, setMe] = useState("");
   const [restart, setrestart] = useState(false);
   const [stream, setStream] = useState();
+  const [alert, setalert] = useState(false);
   const myVideo = useRef();
   const canvasRef = useRef();
+  const features = useRef({
+    facialDetection: { value: room.facialDetection, interval: null },
+    browserTracking: room.browserTracking,
+    audioDetection: { value: room.audioDetection, interval: null },
+  });
+
+  console.log(features);
+  const [facialDetection, setfacial] = useState(room.facialDetecton);
+  const [browserTracking, setbrowser] = useState(room.browserTracking);
+  const [audioDetection, setaudio] = useState(room.audioDetection);
   // const [receivingCall, setReceivingCall] = useState(false);
   // const [caller, setCaller] = useState("");
   // const [callerSignal, setCallerSignal] = useState();
@@ -84,35 +97,97 @@ function CandidatePanel(props) {
     return new Promise((resolve) => setTimeout(resolve, time));
   };
 
-  let audioInterval = null;
-  ////////
-  useEffect(async () => {
-    // const audioStream = new MediaStream(
-    //   myVideo.current.srcObject.getAudioTracks()
-    // );
-    if (stream !== undefined) {
-      const recorder = await recordAudio();
-      recorder.start();
-      console.log("recorder started");
-      await sleep(5000);
-      const audio = await recorder.stop();
-      console.log("recorder stopped");
-      socket.emit("audio", audio.audioBlob);
-      // audio.play();
-      console.log("played");
+  // let audioInterval = null;
 
-      audioInterval = setInterval(async () => {
-        recorder.start();
-        console.log("recorder started");
-        await sleep(5000);
-        const audio = await recorder.stop();
-        console.log("recorder stopped");
-        socket.emit("audio", audio.audioBlob);
-        // audio.play();
-        console.log("played");
-      }, 25000);
+  ////////
+  useEffect(() => {
+    (async () => {
+      console.log("audio interval firing");
+      // const audioStream = new MediaStream(
+      //   myVideo.current.srcObject.getAudioTracks()
+      // );
+
+      if (features.current.audioDetection.value) {
+        if (stream !== undefined) {
+          const recorder = await recordAudio();
+
+          recorder.start();
+          console.log("recorder started");
+          await sleep(5000);
+          const audio = await recorder.stop();
+          console.log("recorder stopped");
+          socket.emit("audio", audio.audioBlob);
+          // audio.play();
+          console.log("played");
+
+          // startRecord.audioRecord();
+
+          features.current.audioDetection.interval = setInterval(async () => {
+            recorder.start();
+            console.log("recorder started");
+            await sleep(5000);
+            const audio = await recorder.stop();
+            console.log("recorder stopped");
+            socket.emit("audio", audio.audioBlob);
+            // audio.play();
+            console.log("played");
+          }, 25000);
+        }
+      }
+    })();
+
+    return () => {
+      console.log("audio clear interval firing");
+      clearInterval(features.current.audioDetection.interval);
+      features.current.audioDetection.interval = null;
+    };
+  }, [stream, audioDetection]);
+
+  useEffect(() => {
+    console.log("facial detection firing");
+    if (features.current.facialDetection.value) {
+      const context = canvasRef.current.getContext("2d");
+      context.width = 62;
+      context.height = 62;
+
+      features.current.facialDetection.interval = setInterval(() => {
+        context.drawImage(myVideo.current, 0, 0, context.width, context.height);
+        canvasRef.current.toBlob(
+          (blob) => {
+            socket.emit("media-data", blob);
+            context.clearRect(0, 0, context.width, context.height);
+          },
+          "image/jpeg",
+          1
+        );
+
+        // context.clearRect(0, 0, context.width, context.width);
+      }, 20000);
     }
-  }, [stream]);
+    return () => {
+      console.log("facial clear interval firing");
+      clearInterval(features.current.facialDetection.interval);
+      features.current.facialDetection.interval = null;
+    };
+  }, [facialDetection]);
+
+  useEffect(() => {
+    const visibleChange = (event) => {
+      if (document.visibilityState !== "visible") {
+        console.log("tab is inactive");
+        socket.emit("browser-track", "cheating");
+      } else {
+        console.log("tab is active");
+        socket.emit("browser-track", "not cheating");
+      }
+    };
+    if (features.current.browserTracking) {
+      document.addEventListener("visibilitychange", visibleChange);
+    }
+    return () => {
+      document.removeEventListener("visibilitychange", visibleChange);
+    };
+  }, [browserTracking]);
 
   // console.log(socket, props);
   // let videoRef = Camera();
@@ -163,42 +238,50 @@ function CandidatePanel(props) {
         console.log(err);
       });
 
-    const visibleChange = (event) => {
-      if (document.visibilityState !== "visible") {
-        console.log("tab is inactive");
-        socket.emit("browser-track", "cheating");
-      } else {
-        console.log("tab is active");
-        socket.emit("browser-track", "not cheating");
-      }
+    const roomEnd = () => {
+      setalert("Room has been closed by the admin");
+      setTimeout(() => {
+        navigate("/userpage");
+      }, 5000);
     };
+    socket.on("room-end", roomEnd);
+    ////////
+    // const visibleChange = (event) => {
+    //   if (document.visibilityState !== "visible") {
+    //     console.log("tab is inactive");
+    //     socket.emit("browser-track", "cheating");
+    //   } else {
+    //     console.log("tab is active");
+    //     socket.emit("browser-track", "not cheating");
+    //   }
+    // };
 
-    document.addEventListener("visibilitychange", visibleChange);
-
+    // document.addEventListener("visibilitychange", visibleChange);
+    //////////
     // const canvas = document.getElementById("preview");
     // canvas.width = 62;
     // canvas.height = 62;
     // context.width = canvas.width;
     // context.height = canvas.height;
+    ///////
+    // const context = canvasRef.current.getContext("2d");
+    // context.width = 62;
+    // context.height = 62;
 
-    const context = canvasRef.current.getContext("2d");
-    context.width = 62;
-    context.height = 62;
+    // const imginterval = setInterval(() => {
+    //   context.drawImage(myVideo.current, 0, 0, context.width, context.height);
+    //   canvasRef.current.toBlob(
+    //     (blob) => {
+    //       socket.emit("media-data", blob);
+    //       context.clearRect(0, 0, context.width, context.height);
+    //     },
+    //     "image/jpeg",
+    //     1
+    //   );
 
-    const imginterval = setInterval(() => {
-      context.drawImage(myVideo.current, 0, 0, context.width, context.height);
-      canvasRef.current.toBlob(
-        (blob) => {
-          socket.emit("media-data", blob);
-          context.clearRect(0, 0, context.width, context.height);
-        },
-        "image/jpeg",
-        1
-      );
-
-      // context.clearRect(0, 0, context.width, context.width);
-    }, 20000);
-
+    //   // context.clearRect(0, 0, context.width, context.width);
+    // }, 20000);
+    ///////
     // const Draw = (video) => {
     //   context.drawImage(video, 0, 0, context.width, context.height);
     //   // const data = canvas.toDataURL("image/jpeg", 1).split(";base64,")[1];
@@ -234,6 +317,30 @@ function CandidatePanel(props) {
     };
     socket.on("callAccepted", signal);
 
+    const monitor = (facial, audio, browser) => {
+      const room2 = JSON.parse(localStorage.getItem("room-info"));
+      console.log(facial, audio, browser);
+      console.log(features.current.facialDetection, facial);
+      if (features.current.facialDetection.value !== facial) {
+        room2.facialDetection = facial;
+        features.current.facialDetection.value = facial;
+        setfacial(facial);
+      }
+      if (features.current.audioDetection.value !== audio) {
+        room2.audioDetection = audio;
+        features.current.audioDetection.value = audio;
+        setaudio(audio);
+      }
+      if (features.current.browserTracking !== browser) {
+        room2.browserTracking = browser;
+        features.current.browserTracking = browser;
+        setbrowser(browser);
+      }
+      console.log("hello", room2);
+      localStorage.setItem("room-info", JSON.stringify(room2));
+    };
+    socket.on("monitor", monitor);
+
     const restart = () => {
       try {
         console.log("restart");
@@ -250,19 +357,38 @@ function CandidatePanel(props) {
     };
     socket.on("restart", restart);
 
+    const alert2 = (data) => {
+      console.log("alert");
+      setalert(data.message);
+    };
+    socket.on("connect_error", alert2);
     // const destroy = () => {
     //   connectionRef.current.destroy();
     // };
+    const removeUser = (id) => {
+      if(id === user.user_id){
+        setalert("You are removed from the room by admin.");
+      setTimeout(() => {
+        navigate("/userpage");
+      }, 5000);
+      }
+    }
+    
+    socket.on('remove-user',removeUser)
+
     return () => {
       const peer = connectionRef.current;
       peer.destroy();
       connectionRef.current = null;
       socket.off("callAccepted", signal);
       socket.off("restart", restart);
-      clearInterval(imginterval);
-      clearInterval(audioInterval);
+      socket.off("monitor", monitor);
+      socket.off("connect_error", alert2);
+      socket.off("room-end", roomEnd);
+      // clearInterval(features.current.audioDetection.interval);
+      // clearInterval(audioInterval);
       console.log("cleanup");
-      document.removeEventListener("visibilitychange", visibleChange);
+      // document.removeEventListener("visibilitychange", visibleChange);
     };
   }, []);
 
@@ -310,17 +436,19 @@ function CandidatePanel(props) {
   // }, 2000);
 
   return (
-    <div className="container">
-      <div className="row mt-3">
-        <div className="col-4" style={{ textAlign: "center" }}>
-          <span>Exam Room</span>
-          <span style={{ display: "block" }}>Room ID: {room._id}</span>
+    <React.Fragment>
+      {alert ? <Alert alert={alert} setalert={setalert} /> : null}
+      <div className="container">
+        <div className="row mt-3">
+          <div className="col-4" style={{ textAlign: "center" }}>
+            <span>Exam Room</span>
+            <span style={{ display: "block" }}>Room ID: {room._id}</span>
+          </div>
         </div>
-      </div>
-      <div className="row mt-3">
-        <div className="col-3">
-          {/* <canvas style="display:none" id="preview"></canvas> */}
-          {/* <video
+        <div className="row mt-3">
+          <div className="col-3">
+            {/* <canvas style="display:none" id="preview"></canvas> */}
+            {/* <video
             src={videoRef.current}
             ref={videoRef}
             onCanPlay={handleCanPlay}
@@ -329,30 +457,31 @@ function CandidatePanel(props) {
             id="video"
             muted
           /> */}
-          <div className="video-container">
-            <div className="video">
-              {stream && (
-                <video
-                  playsInline
-                  muted
-                  id="video"
-                  ref={myVideo}
-                  autoPlay
-                  style={{ width: "300px" }}
-                />
-              )}
+            <div className="video-container">
+              <div className="video">
+                {stream && (
+                  <video
+                    playsInline
+                    muted
+                    id="video"
+                    ref={myVideo}
+                    autoPlay
+                    style={{ width: "300px" }}
+                  />
+                )}
+              </div>
             </div>
+            <canvas
+              style={{ display: "block" }}
+              ref={canvasRef}
+              width={62}
+              height={62}
+            />
+            <canvas style={{ display: "none" }} id="preview"></canvas>
           </div>
-          <canvas
-            style={{ display: "block" }}
-            ref={canvasRef}
-            width={62}
-            height={62}
-          />
-          <canvas style={{ display: "none" }} id="preview"></canvas>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 

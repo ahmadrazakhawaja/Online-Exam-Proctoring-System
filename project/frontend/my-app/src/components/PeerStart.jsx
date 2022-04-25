@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useMatch } from "react-router-dom";
 import Peer from "simple-peer";
+import { Outlet } from "react-router";
 
 function PeerStart(props) {
   // const connectionRef = useRef();
+  // const { confirmationCode } = useParams();
   const userVideo = useRef();
   const [socket, setSocket] = useOutletContext();
 
@@ -31,15 +33,17 @@ function PeerStart(props) {
   }, []);
 
   return (
+   
     <div className="video">
       <video
         playsInline
         ref={userVideo}
         autoPlay={true}
-        style={{ width: "300px" }}
+        style={{ width: "100%", height:"auto" }}
         muted
       />
     </div>
+   
   );
 }
 

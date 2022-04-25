@@ -20,6 +20,7 @@ import Panel from "./components/admin_panel";
 import CandidatePanel from "./components/candidatePanel";
 import AdminSettings from "./components/exam_settings2";
 import CheckPanel from "./components/checking";
+import CandidatePersonal from "./components/candidatePersonal";
 
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -72,6 +73,10 @@ function App() {
               <Route
                 path="Exam-Settings"
                 element={<AdminSettings setLogIn={setLoggedIn} />}
+              />
+              <Route
+                path=":id"
+                element={<CandidatePersonal setLogIn={setLoggedIn} />}
               />
             </Route>
             <Route

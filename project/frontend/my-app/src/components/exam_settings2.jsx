@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function AdminSettings(props) {
   const room = JSON.parse(localStorage.getItem("room-info"));
+  const [socket, setSocket] = useOutletContext();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      "facial-detection": room.facialDetection,
+      "audio-detection": room.audioDetection,
+      browser: room.browserTracking,
+      "candidate-limit": room.candidateLimit,
+    },
+  });
 
   const [alert, setalert] = useState(null);
+  const [modal, setmodal] = useState(false);
+
+  // const [file, setfile] = useState(room.textFile);
 
   const alerting = () => {
     setalert(null);
@@ -49,62 +60,152 @@ export default function AdminSettings(props) {
     return null;
   };
 
-  //   const onSubmit = (data, event) => {
-  //     const data2 = JSON.parse(localStorage.getItem("user-info"));
-  //     const myHeaders = new Headers();
-  //     myHeaders.append("content-Type", "application/json");
-  //     myHeaders.append("authorization", `Bearer ${data2.token}`);
-  //     console.log(data);
-  //     fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
-  //       method: "POST",
-  //       headers: myHeaders,
-  //       mode: "cors",
-  //       body: JSON.stringify({
-  //         facialDetection: data["facial-detection"],
-  //         audioDetection: data["audio-detection"],
-  //         browserTracking: data["browser"],
-  //         candidateLimit: data["candidate-limit"],
-  //         timeLimit: data["time-limit"],
-  //       }),
-  //     })
-  //       .then((res) => {
-  //         console.log(res);
-  //         return res.json();
-  //       })
-  //       .then((json) => {
-  //         console.log(json.header.message);
-  //         if (json.header.message === "Room Created") {
-  //           localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
-  //           const room = JSON.parse(localStorage.getItem("room-info"));
-  //           navigate(`/userpage/exam-room/${room._id}`);
-  //         } else {
-  //           // if (json.header.message === "User Made") {
-  //           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
-  //           //   // props.setLogIn(localStorage.getItem("user-info"));
-  //           //   // navigate("/login");
-  //           //   setsubmit(true);
-  //           // } else {
-  //           // setsubmit({
-  //           //   submit: true,
-  //           //   redirect: false,
-  //           // });
-  //           setalert(json.header.message);
-  //         }
-  //         // }
-  //       });
-  //   };
+  const onSubmit = (data, event) => {
+    console.log(data);
+    if (data["file-upload"][0]) {
+      data["name"] = data["file-upload"][0].name;
+    }
+    console.log(data);
+    socket.emit("setting", data);
+
+    socket.on("setting-set", (data) => {
+      console.log(data);
+      localStorage.setItem("room-info", JSON.stringify(data));
+      socket.off("setting-set");
+      setalert("settings updated successfully.");
+    });
+    // const data2 = JSON.parse(localStorage.getItem("user-info"));
+    // const myHeaders = new Headers();
+    // myHeaders.append("content-Type", "application/json");
+    // myHeaders.append("authorization", `Bearer ${data2.token}`);
+    // console.log(data);
+    // fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
+    //   method: "POST",
+    //   headers: myHeaders,
+    //   mode: "cors",
+    //   body: JSON.stringify({
+    //     facialDetection: data["facial-detection"],
+    //     audioDetection: data["audio-detection"],
+    //     browserTracking: data["browser"],
+    //     candidateLimit: data["candidate-limit"],
+    //     // timeLimit: data["time-limit"],
+    //   }),
+    // })
+    //   .then((res) => {
+    //     console.log(res);
+    //     return res.json();
+    //   })
+    //   .then((json) => {
+    //     console.log(json.header.message);
+    //     if (json.header.message === "Room Created") {
+    //       localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+    //       const room = JSON.parse(localStorage.getItem("room-info"));
+    //       navigate(`/userpage/exam-room/${room._id}`);
+    //     } else {
+    //       // if (json.header.message === "User Made") {
+    //       //   // localStorage.setItem("user-info", JSON.stringify(json.data));
+    //       //   // props.setLogIn(localStorage.getItem("user-info"));
+    //       //   // navigate("/login");
+    //       //   setsubmit(true);
+    //       // } else {
+    //       // setsubmit({
+    //       //   submit: true,
+    //       //   redirect: false,
+    //       // });
+    //       setalert(json.header.message);
+    //     }
+    //     // }
+    //   });
+  };
 
   const ExamSettings = () => {
     console.log("hello");
     navigate(`/userpage/exam-room/${room._id}`);
   };
 
+  const EndExam = () => {
+    console.log("hello");
+    socket.emit("end-exam");
+    setmodal(false);
+    // navigate(`/userpage/exam-room/${room._id}`);
+  };
+
+  const displayModal = () => {
+    if (modal) {
+      return (
+        <div
+          className="modal fade show"
+          id="exampleModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          model="true"
+          role="dialog"
+          style={{ display: "block", opacity: "1 !important" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  End Exam
+                </h5>
+                {/* <button
+              type="button"
+              className="btn-close"
+              onClick={() => {
+                props.image.element.target.value = null;
+                // props.reset({ pic: "" });
+                props.setimage(false);
+                return false;
+              }}
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button> */}
+              </div>
+              <div className="modal-body">
+                Are you sure you want to End Exam?
+                {/* <img
+              style={{
+                objectFit: "contain",
+                width: "100%",
+              }}
+              src={props.image.image}
+            ></img> */}
+              </div>
+              <div className="modal-footer">
+                <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setmodal(false)}
+                >
+                  No
+                </button>
+                <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={EndExam}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
   return (
-    <div>
+    <React.Fragment>
+      {displayModal()}
       {alert2()}
 
-      <form>
-        <div className="container">
+      <div className="container" style={{ opacity: modal ? "0.2" : "1" }}>
+        <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
           <div className="row mt-3">
             <div
               className="col-4"
@@ -204,38 +305,61 @@ export default function AdminSettings(props) {
               </div>
             </div>
             <div className="col-6 text-center">
-              {/* <h5>Exam End Time: </h5>
-              <div className="mx-auto" style={{ width: "50%" }}>
-                <input
-                  type="time"
-                  className="form-control"
-                  id="time-limit"
-                  // value={value}
-                  // onChange={(event) => onChange(props.element, event)}
-                  aria-describedby="Room-id"
-                  placeholder="Enter Room-id"
-                  {...register("time-limit", {
-                    required: {
-                      value: true,
-                      message: "time limit is Required",
-                    },
-                  })}
-                />
-                {errors["time-limit"] && errors["time-limit"].message}
-              </div>
+              <h5>Upload Question Paper: </h5>
+              <input
+                type="file"
+                className="form-control-file btn btn-primary btn-sm mb-2"
+                id="file-upload"
+                // onChange={props.uploadfile()}
+                // value={value}
+                // onChange={(event) => onChange(props.element, event)}
+                aria-describedby="Upload Question Paper"
+                placeholder="Upload Question Paper"
+                accept="text/plain application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                // onChange={(e) => props.submitx(e)}
+                {...register("file-upload", {
+                  validate: (value) => {
+                    if (value && value[0]) {
+                      console.log(value[0].size);
+                      if (value[0].size > 2000000) {
+                        return "File size should be less than 2MB.";
+                      }
+                      if (
+                        value[0].type ===
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                        value[0].type === "text/plain"
+                      ) {
+                      } else {
+                        return "File should be txt or Docx type.";
+                      }
+                    }
+                  },
+                })}
+              />
+              {errors["file-upload"] && errors["file-upload"].message}
+              <div>{room.textFile}</div>
             </div>
+
             <div className="row justify-content-center mt-5">
               <input
                 type="submit"
                 className="btn btn-primary mt-3"
-                style={{ width: "25%", marginBottom: "100px" }}
+                style={{ width: "25%" }}
                 value="Save Settings"
               />
-            </div> */}
             </div>
           </div>
+        </form>
+        <div className="row justify-content-center mt-5">
+          <button
+            onClick={() => setmodal(true)}
+            className="btn btn-danger mt-3"
+            style={{ width: "25%", marginBottom: "100px" }}
+          >
+            End Exam
+          </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </React.Fragment>
   );
 }

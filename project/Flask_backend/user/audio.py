@@ -80,15 +80,20 @@ def checkQuestion(data,question_paper):
 
     # open question paper file
     # with open("QuestionPaper.txt", "r") as file: 
-    with open(file_path, "r") as file: 
-        # newline_breaks=""
-        for line in file: 
-            # print(line)
-            return word_searchx(data,line)
-            # stripped_line = line.strip()
-            # newline_breaks += stripped_line
-            # word_search = newline_breaks
-            # print(word_search)
+    try:
+        with open(file_path, "r") as file: 
+            # newline_breaks=""
+            for line in file: 
+                # print(line)
+                return word_searchx(data,line)
+                # stripped_line = line.strip()
+                # newline_breaks += stripped_line
+                # word_search = newline_breaks
+                # print(word_search)
+    
+    except OSError as e:
+        return word_searchx(data,'hello,test,question,paper')
+
         
         
 

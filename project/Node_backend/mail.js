@@ -32,6 +32,24 @@ module.exports.sendConfirmationEmail = (
           </div>`,
       })
       .catch((err) => console.log(err));
+  } else if (description === "log_file") {
+    transport
+      .sendMail({
+        host: "smtp.gmail.com",
+        from: process.env.user,
+        to: email,
+        attachments: [
+          {
+            path: `log_files/${confirmationCode}.txt`,
+          },
+        ],
+        subject: `Log File for Exam ${confirmationCode}`,
+        html: `<h1>Log File</h1>
+          <h2>Hello ${name}</h2>
+          <p>Please find the attached Log file for the Exam</p>
+          </div>`,
+      })
+      .catch((err) => console.log(err));
   } else {
     transport
       .sendMail({

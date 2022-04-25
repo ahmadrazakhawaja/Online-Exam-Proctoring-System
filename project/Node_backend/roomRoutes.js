@@ -30,6 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
+  const filename = null;
   if (req.file) {
     if (
       path.extname(req.file.originalname) === ".doc" ||
@@ -46,18 +47,25 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
         },
       });
     }
+    filename = req.file.filename + req.file.originalname;
   }
   // upload.none();
   // upload.single("file");
   // const uid = uuidv4()
   // console.log(uid)
   // console.log("body", req.body);
+  const facial = [req.body.facialDetection];
+  const audio = [req.body.audioDetection];
+  const browser = [req.body.browserTracking];
+  const candidateLimit = [req.body.candidateLimit];
+
   const newRoom = new Room({
     adminID: req.User._id,
-    facialDetection: req.body.facialDetection,
-    audioDetection: req.body.audioDetection,
-    browserTracking: req.body.browserTracking,
-    candidateLimit: req.body.candidateLimit,
+    facialDetection: facial,
+    audioDetection: audio,
+    browserTracking: browser,
+    candidateLimit: candidateLimit,
+    textFile: filename,
   });
 
   if (!newRoom) {
@@ -121,6 +129,18 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
     if (er === true) {
       return;
     }
+    const Room2 = {};
+    (Room2.adminID = req.User._id.toString()),
+      (Room2.facialDetection =
+        newRoom.facialDetection[newRoom.facialDetection.length - 1]);
+    Room2.audioDetection =
+      newRoom.audioDetection[newRoom.audioDetection.length - 1];
+    Room2.browserTracking =
+      newRoom.browserTracking[newRoom.browserTracking.length - 1];
+    Room2.candidateLimit =
+      newRoom.candidateLimit[newRoom.candidateLimit.length - 1];
+    (Room2.textFile = filename), (Room2._id = newRoom._id.toString());
+    console.log(Room2);
     res.status(200).json({
       header: {
         message: "Room Created",
@@ -128,7 +148,7 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
       },
       data: {
         uid: uuidv4(),
-        newRoom,
+        newRoom: Room2,
       },
     });
   }
@@ -187,11 +207,19 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
 
 router.post("/checkRoom", protect, async (req, res) => {
   const room = await Room.findById(req.body.id);
+  const Room2 = {};
+  Room2.facialDetection = room.facialDetection[room.facialDetection.length - 1];
+  Room2.audioDetection = room.audioDetection[room.audioDetection.length - 1];
+  Room2.browserTracking = room.browserTracking[room.browserTracking.length - 1];
+  Room2._id = room._id.toString();
   if (room && room.ended === false) {
     res.status(200).json({
       header: {
         message: "Join Room",
         code: 1,
+      },
+      data: {
+        newRoom: Room2,
       },
     });
   } else {
@@ -199,6 +227,9 @@ router.post("/checkRoom", protect, async (req, res) => {
       header: {
         message: "Room not available",
         code: 0,
+      },
+      data: {
+        newRoom: Room2,
       },
     });
   }

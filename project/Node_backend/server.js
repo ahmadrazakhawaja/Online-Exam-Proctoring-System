@@ -1,6 +1,6 @@
 const express = require("express");
 const FormData = require("form-data");
-
+const mail = require("./mail");
 const socket = require("socket.io");
 const axios = require("axios");
 const fs = require("fs");
@@ -116,7 +116,7 @@ function checkroom(data, room) {
 }
 
 function writeFile(data, room) {
-  fs.writeFile(`log_files/${room}`, content, { flag: "a" }, (err) => {});
+  fs.writeFile(`log_files/${room}.txt`, content, { flag: "a" }, (err) => {});
 }
 
 let io = socket(server, {
@@ -128,7 +128,7 @@ let io = socket(server, {
 const { protect2 } = require("./middleware/auth_socket");
 
 // middleware
-io.use((socket, next) => protect2(socket, next)).on(
+io.use((socket, next) => protect2(socket, next, io)).on(
   "connection",
   async (socket) => {
     console.log("made socket connection", socket.id);
@@ -136,7 +136,7 @@ io.use((socket, next) => protect2(socket, next)).on(
     const user = socket.user;
     const room = socket.room;
     // joined room
-    socket.join(room._id.toString());
+    // socket.join(room._id.toString());
 
     // write into the log_file
     let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
@@ -207,6 +207,7 @@ io.use((socket, next) => protect2(socket, next)).on(
           from: socket.id,
           user_id: user._id.toString(),
           name: `${user.first_name} ${user.last_name}`,
+          rollNum: `${user.rollNum}`
         });
       }
     });
@@ -361,6 +362,107 @@ io.use((socket, next) => protect2(socket, next)).on(
         console.log(err);
       });
     });
+
+    socket.on("setting", (data) => {
+      console.log(data);
+      datax = checkroom(connectedUser, room._id.toString());
+      if (connectedUser[datax].user_id === user._id.toString()) {
+        const Room = room;
+
+        if (
+          data["facial-detection"] !==
+          Room.facialDetection[Room.facialDetection.length - 1]
+        ) {
+          Room.facialDetection.push(data["facial-detection"]);
+        }
+        if (
+          data["audio-detection"] !==
+          Room.audioDetection[Room.audioDetection.length - 1]
+        ) {
+          Room.audioDetection.push(data["audio-detection"]);
+        }
+        if (
+          data["browser"] !==
+          Room.browserTracking[Room.browserTracking.length - 1]
+        ) {
+          Room.browserTracking.push(data["browser"]);
+        }
+        if (
+          parseInt(data["candidate-limit"]) !==
+          parseInt(Room.candidateLimit[Room.candidateLimit.length - 1])
+        ) {
+          Room.candidateLimit.push(data["candidate-limit"]);
+        }
+        if (data["file-upload"][0]) {
+          let fileExt = data["name"].split(".").pop();
+          let filename = data["name"].split(".")[0];
+          console.log(fileExt, filename);
+          console.log(data["file-upload"][0]);
+
+          fs.writeFileSync(
+            `question_papers/${data["name"]}`,
+            data["file-upload"][0],
+            { flag: "w" },
+            (err) => {
+              console.log(err);
+            }
+          );
+
+          const form = new FormData();
+          form.append(
+            "document",
+            fs.createReadStream(`question_papers/${data["name"]}`)
+          );
+          // console.log(path.extname(req.file.originalname));
+          form.append("room", room._id.toString());
+          form.append("file-type", "." + fileExt);
+          const formHeaders = form.getHeaders();
+          const url = "http://127.0.0.1:4000/PyDocument";
+          axios
+            .post(url, form, {
+              headers: {
+                ...formHeaders,
+              },
+            })
+            .then(function (response) {
+              // returners = response.data;
+              console.log("response-document", response.data);
+            })
+            .catch(function (error) {
+              // console.log(error, "problem here");
+              console.log("problem with document upload");
+              er = true;
+            });
+          fs.rm(`question_papers/${data["name"]}`, (err) => {
+            console.log(err);
+          });
+          Room.textFile = data["name"];
+        }
+        console.log(Room);
+        Room.save().then(() => {
+          const Room2 = {};
+        (Room2.adminID = user._id.toString()),
+          (Room2.facialDetection = data["facial-detection"]);
+        Room2.audioDetection = data["audio-detection"];
+        Room2.browserTracking = data["browser"];
+        Room2.candidateLimit = data["candidate-limit"];
+        (Room2.textFile = data["name"] || room.textFile),
+          (Room2._id = room._id.toString());
+
+        io.to(connectedUser[datax].socket_id).emit("setting-set", Room2);
+        socket
+          .to(room._id.toString())
+          .emit(
+            "monitor",
+            data["facial-detection"],
+            data["audio-detection"],
+            data["browser"]
+          );
+        });
+        
+      }
+    });
+
     socket.on("media-data", async function (data) {
       // console.log(data);
       // console.log(connectedUser[0].socket_id, connectedUser[0].user_id);
@@ -530,6 +632,31 @@ io.use((socket, next) => protect2(socket, next)).on(
       fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
         console.log(err);
       });
+    });
+
+    socket.on('remove-client', (id) => {
+      socket.to(room._id.toString()).emit('remove-user',id);
+    });
+
+    socket.on("end-exam", () => {
+      if (user._id.toString() === room.adminID.toString()) {
+        const room2 = room;
+        room2.ended = true;
+        room2.save().then(() => {
+          io.to(room._id.toString()).emit("room-end", true);
+          datax = checkroom(connectedUser, room._id.toString());
+          connectedUser.splice(datax, 1);
+          mail.sendConfirmationEmail(
+            user.first_name,
+            user.email,
+            room._id.toString(),
+            "log_file"
+          );
+          fs.rm(`log_files/${room._id.toString()}.txt`, (err) => {
+            console.log(err);
+          });
+        });
+      }
     });
 
     // Handle typing event

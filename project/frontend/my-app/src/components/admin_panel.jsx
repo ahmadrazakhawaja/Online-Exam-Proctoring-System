@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useOutletContext, useNavigate, useMatch } from "react-router-dom";
+import { useOutletContext, useNavigate, useMatch, useParams } from "react-router-dom";
 import { Outlet } from "react-router";
 import Peer from "simple-peer";
 import PeerStart from "./PeerStart";
@@ -7,6 +7,8 @@ import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
 import SideBar from "./admin_dashboard_sub_comp/SideBar";
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 import Charts from "./admin_dashboard_sub_comp/Charts";
+import "./admin_panel.css";
+import Alert from "./alert";
 
 function Panel(props) {
   const navigate = useNavigate();
@@ -18,6 +20,9 @@ function Panel(props) {
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
+  const [alert, setalert] = useState(false);
+  const [hover, sethover] = useState(false);
+  const [peerTransfer, setTransfer] = useState(false);
   const userVideo = useRef();
   const connectionRef = useRef();
   const peers = useRef([]);
@@ -68,6 +73,7 @@ function Panel(props) {
 
   function checkuser(list, user) {
     let tmp = null;
+    console.log(list.length);
     for (let i = 0; i < list.length; i++) {
       tmp = list[i];
       if (tmp.id === user) {
@@ -85,9 +91,51 @@ function Panel(props) {
       }
       return true;
     });
+    const track3 = tracks.current.filter((element) => {
+      if (element.id === id) {
+        return false;
+      }
+      return true;
+    });
+
+    socket.emit('remove-client',id);
+    
+    peers.current = [...peer3]
+    tracks.current = [...track3];
+    settracklist(() => [...track3]);
     setpeerlist(() => [...peer3]);
-    peers.current = [...peer3];
+    navigate(`/userpage/exam-room/${room._id}`);
+    
   };
+
+  const tagPeer = (id) => {
+    const index = checkuser(tracks.current,id);
+    let track2 = null;
+    if(index !== -1){
+      track2 = tracks.current[index];
+      if(track2.tag){
+        track2 = { ...track2, tag: !track2.tag };
+      }
+      else{
+      track2 = { ...track2, tag: true };
+      }
+    }
+    else{
+      track2 = { id: id, tag: true };
+    }
+    const track3 = tracks.current.filter((element) => {
+      if (element.id === id) {
+        return false;
+      }
+      return true;
+    });
+      settracklist(() => [...track3, track2]);
+    tracks.current = [...track3, track2];
+    
+    
+
+
+  }
 
   useEffect(() => {
     socket.on("disconnectx", (data) => {
@@ -126,6 +174,14 @@ function Panel(props) {
       //   setpeerlist(() => [...peer3, peer2]);
       // }
     });
+
+    const roomEnd = () => {
+      setalert("Room has been closed by the admin");
+      setTimeout(() => {
+        navigate("/userpage");
+      }, 5000);
+    };
+    socket.on("room-end", roomEnd);
 
     socket.on("browser-track", (data, id) => {
       console.log("browser-track", data, id);
@@ -216,6 +272,7 @@ function Panel(props) {
         key: peerlist.length,
         id: data.user_id,
         name: data.name,
+        rollNum: data.rollNum,
         peer: new Peer({
           initiator: false,
           trickle: false,
@@ -251,6 +308,7 @@ function Panel(props) {
       socket.off("facial-response");
       socket.off("logging");
       socket.off("disconnectx");
+      socket.off("room-end", roomEnd);
     };
   }, []);
 
@@ -424,15 +482,43 @@ function Panel(props) {
     navigate(`/userpage/exam-room/${room._id}/Exam-Settings`);
   };
 
+  const userStream = (id) => {
+    // console.log("hello");
+    navigate(`/userpage/exam-room/${room._id}/${id}`);
+
+  };
+
+    const { id } = useParams();
+    let index = 0;
+    let index2 = 0;
+    if(useMatch("/userpage/exam-room/:id/:id")){
+      console.log(id);
+      index = checkuser(peers.current,id);
+      index2 = checkuser(tracks.current,id)
+      console.log(index);
+      console.log(peerlist[index]);
+    }
+  
+
   return (
     <React.Fragment>
-      {useMatch("/userpage/exam-room/:id/Exam-Settings") ? <Outlet /> : null}
+      {alert ? <Alert alert={alert} setalert={setalert} /> : null}
+      {useMatch("/userpage/exam-room/:id/Exam-Settings") ? (
+        <Outlet {...props} context={[socket, setSocket]} />
+      ) : null}
+      {useMatch("/userpage/exam-room/:id/Exam-Settings") ? null : (<Outlet context={[peers.current[index], tracks.current[index2] ,removePeer, tagPeer]} />
+)}
       <div
         className="container"
         style={{
           display: useMatch("/userpage/exam-room/:id/Exam-Settings")
             ? "none"
             : "block",
+            display: useMatch("/userpage/exam-room/:id/:id")
+            ? "none"
+            : "block",
+
+
         }}
       >
         <div className="row mt-3">
@@ -449,13 +535,16 @@ function Panel(props) {
             <span>Exam Room</span>
             <span style={{ display: "block" }}>Room ID: {room._id}</span>
           </div>
-          <Charts />
         </div>
-        <div className="row mt-1">
-          <div className="col-3">
-            <div className="video-container" style={{ marginBottom: "5%" }}>
-              {/* <div className="video"> */}
-              {/* {callAccepted && !callEnded ? (
+        <Charts />
+        <div className="row justify-content-center">
+          <div className="col-12">
+            <div className="video-container">
+              <div className="card-body">
+                <h3 className="box-title mb-0">All Students</h3>
+
+                {/* <div className="video"> */}
+                {/* {callAccepted && !callEnded ? (
                 <video
                   playsInline
                   ref={userVideo}
@@ -464,79 +553,148 @@ function Panel(props) {
                   muted
                 />
               ) : null} */}
-              {peerlist.map((element) => {
-                const index = checkuser(tracklist, element.id);
+                <div className="row">
+                  {peerlist.map((element) => {
+                    const index = checkuser(tracklist, element.id);
 
-                if (index === -1) {
-                  return (
-                    <div key={element.key}>
-                      <PeerStart data={element} key={element.key} />
-                    </div>
-                  );
-                }
-                return (
-                  <div key={element.key} style={{ border: "solid" }}>
-                    <PeerStart data={element} key={element.key} />
-                    <div>
-                      <div style={{ textAlign: "center" }}>
-                        <span>
-                          <b>{element.name}</b>
-                        </span>
+                    if (index === -1) {
+                      return (
+                        <div className="col-4" key={element.key}>
+                          <div
+                            className="video-card"
+                            style={{ border: "solid"}} onClick={() => userStream(element.id)}
+                          >
+                            <PeerStart data={element} key={element.key} />
+                          </div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="col-4" key={element.key}>
+                        <div className="video-card" style={{ border: "solid" }} onClick={() => userStream(element.id)}>
+                          <PeerStart data={element} key={element.key} />
+                          <div>
+                            <div
+                              className="cheating-info"
+                              style={{ textAlign: "center" }}
+                            >
+                              <span>
+                                <b>{element.name}</b>
+                              </span>
+                            </div>
+                            <div>
+                              <span>
+                                Facial detection:{" "}
+                                {tracklist[index].facial &&
+                                  tracklist[index].facial}
+                                %
+                              </span>
+                            </div>
+                            <div>
+                              <span>
+                                Browser Tracking:{" "}
+                                {tracklist[index].browser &&
+                                  tracklist[index].browser}
+                              </span>
+                            </div>
+                            <div>
+                              <span>
+                                Audio Detection:{" "}
+                                {tracklist[index].audio &&
+                                  tracklist[index].audio}
+                              </span>
+                            </div>
+                            <div>
+                              <span>
+                                {tracklist[index].tag ? 'Tagged' : null}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <span>
-                          Facial detection:{" "}
-                          {tracklist[index].facial && tracklist[index].facial}%
-                        </span>
-                      </div>
-                      <div>
-                        <span>
-                          Browser Tracking:{" "}
-                          {tracklist[index].browser && tracklist[index].browser}
-                        </span>
-                      </div>
-                      <div>
-                        <span>
-                          Audio Detection:{" "}
-                          {tracklist[index].audio && tracklist[index].audio}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-              {/* </div> */}
+                    );
+                  })}
+
+                  {/* </div> */}
+                </div>
+              </div>
             </div>
+            {/* <div className="col-4">
+              <div className="box">
+                <div className="chat-room">
+                  <aside className="tengah-side">
+                    <div className="card-body">
+                      <h3 className="box-title mb-0">Live Transcriptions</h3>
+                    </div>
+
+                    <div className="group-rom">
+                      <div className="first-part odd">Jonathan Smith</div>
+                      <div className="second-part">
+                        Hello Cendy are you there?
+                      </div>
+                      <div className="third-part">12:30</div>
+                    </div>
+                    <div className="group-rom">
+                      <div className="first-part">Cendy Andrianto</div>
+                      <div className="second-part">
+                        Yoman Smith. Please proceed
+                      </div>
+                      <div className="third-part">12:31</div>
+                    </div>
+                    <div className="group-rom">
+                      <div className="first-part odd">Jonathan Smith</div>
+                      <div className="second-part">
+                        I want to share a file using chatroom
+                      </div>
+                      <div className="third-part">12:32</div>
+                    </div>
+                    <div className="group-rom">
+                      <div className="first-part">Cendy Andrianto</div>
+                      <div className="second-part">oh sure. please send</div>
+                      <div className="third-part">12:32</div>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </div> */}
           </div>
         </div>
         <div className="row mt-3">
           <div className="col-12">
             <div
+              id="Border"
+              style={{ textAlign: "center", backgroundColor: "#212529" }}
+            >
+              <span style={{ color: "white" }}>
+                <b>Exam Log</b>
+              </span>
+              {/* <hr style={{ marginTop: "2px", marginBottom: "2px" }} /> */}
+            </div>
+            <div
               id="examLog"
               style={{
                 // marginTop: "5%",
                 // marginBottom: "5%",
-                position: "fixed",
+                // position: "fixed",
+                //position: "fixed",
+                marginBottom: "5%",
                 bottom: "70px",
                 overflow: "scroll",
-                height: "20%",
+                overflowX: "hidden",
+                height: "200px",
                 border: "solid",
                 left: "5%",
                 right: "5%",
+                padding: "7px",
                 whiteSpace: "break-spaces",
               }}
             >
-              <div style={{ textAlign: "center", backgroundColor: "black" }}>
-                <span style={{ color: "white" }}>
-                  <b>Exam Log</b>
-                </span>
-                <hr style={{ marginTop: "2px", marginBottom: "2px" }} />
-              </div>
               {log}
             </div>
           </div>
         </div>
       </div>
+
       {/* <Sidebar/> */}
     </React.Fragment>
   );
