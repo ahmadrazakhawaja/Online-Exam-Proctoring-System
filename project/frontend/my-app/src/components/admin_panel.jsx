@@ -7,6 +7,7 @@ import BasicTable from "./admin_dashboard_sub_comp/BasicTable";
 import SideBar from "./admin_dashboard_sub_comp/SideBar";
 import Dashboard from "./admin_dashboard_sub_comp/Dashboard";
 import Charts from "./admin_dashboard_sub_comp/Charts";
+import VideoCardGrid from "./admin_dashboard_sub_comp/VideoCardGrid";
 import "./admin_panel.css";
 import Alert from "./alert";
 
@@ -536,7 +537,11 @@ function Panel(props) {
             <span style={{ display: "block" }}>Room ID: {room._id}</span>
           </div>
         </div>
+
         <Charts />
+
+{/* <VideoCardGrid/> */}
+
         <div className="row justify-content-center">
           <div className="col-12">
             <div className="video-container">

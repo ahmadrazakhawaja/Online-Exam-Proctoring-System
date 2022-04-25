@@ -113,6 +113,7 @@ export default function NavBar(props) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
+      
         <Link
           style={{
             fontWeight: "bold",
@@ -135,6 +136,7 @@ export default function NavBar(props) {
           aria-label="Toggle navigation"
           onClick={() => navsetstate2(!navstate2)}
         >
+          
           <span className="navbar-toggler-icon"></span>
         </button>
         <div
@@ -147,8 +149,11 @@ export default function NavBar(props) {
         >
           {navdata()}
         </div>
+        <img src="/Logo-Blue.png" height="28" alt="CoolBrand"style={{height :71, width:75}} ></img>
       </div>
-    </nav>    
+      
+    </nav>   
+     
   );
 
   return (
