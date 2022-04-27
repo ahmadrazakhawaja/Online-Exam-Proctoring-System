@@ -101,7 +101,7 @@ export default function NavBar(props) {
       );
     } else {
       return (
-        <ul className="navbar-nav">
+        <ul className="nav nav-pills ms-auto">
           {items.map((item) => (
             <NavItem key={item.id} item={item} OnClick={OnClick} />
           ))}
@@ -113,12 +113,12 @@ export default function NavBar(props) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
-      
+      <img src="/Logo-Blue.png" height="28" alt="CoolBrand"style={{height :61, width:65}} ></img>
         <Link
           style={{
             fontWeight: "bold",
             fontFamily: "sans-serif",
-            marginLeft: "20px",
+            marginLeft: "16px",
           }}
           onClick={OnClickHome}
           className="navbar-brand"
@@ -149,7 +149,7 @@ export default function NavBar(props) {
         >
           {navdata()}
         </div>
-        <img src="/Logo-Blue.png" height="28" alt="CoolBrand"style={{height :71, width:75}} ></img>
+        
       </div>
       
     </nav>   

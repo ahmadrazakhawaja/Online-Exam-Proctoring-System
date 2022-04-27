@@ -83,16 +83,51 @@ padding-bottom: 10px !important ;
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    /* padding: 5px; */
+    padding-top: 7px;
 }
 
 .grid {
     display: grid;
     gap: 1px;
     grid-template-columns: repeat(3, 1fr);
+    /* padding: 30px;
+    overflow-x: hidden;
+    overflow-y: scroll; */
   }
   
-  div > div {
-    /* padding: 10px; */
-    /* background-color: #ccc; */
+  /* div > div {
+    padding: 10px;
+    background-color: #ccc;
+  }*/
+   
+
+  .grid-cheating-info{
+    margin-top: 5px;
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid #d3d3d3;
   }
+
+.icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #d3d3d3;
+    padding: 10px;
+}
+
+.info{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #d3d3d3;
+    padding: 2px;
+    border-bottom: 1px solid #d3d3d3;
+    font-weight: bolder;
+}
+
+/* #mic{
+    background-color: red;
+} */

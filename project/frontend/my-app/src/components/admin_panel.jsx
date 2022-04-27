@@ -493,7 +493,31 @@ function Panel(props) {
                           <b>{element.name}</b>
                         </span>
                       </div>
-                      <div>
+                      <div className="grid-cheating-info">
+                        {/* <div className="cheating-values">
+                         <span>
+                         {tracklist[index].browser && tracklist[index].browser}
+                         </span>
+                        </div> */}
+                        <div id="mic-info" className="info">{tracklist[index].audio && tracklist[index].audio}</div>
+                        <div id ="camera-info" className="info">{tracklist[index].facial && tracklist[index].facial}%</div>
+                        <div id = "browser-info" className="info">{tracklist[index].browser && tracklist[index].browser}</div>
+                        <div id="mic" className="icon">
+                        {/* <h3 className="mic-info">high</h3> */}
+                          <img src = "/Microphone.png"
+                          style={{width : 30, height :30}}></img>
+                        </div>
+                        <div id="camera" className="icon">
+                        {/* <h3 className="mic-info">86%</h3> */}
+                          <img src = "/Camera.png"
+                          style={{width : 30, height :30}}></img></div>
+                        <div id="browser" className="icon">
+                        {/* <h3 className="mic-info">yes</h3> */}
+                          <img src = "/Browser.png"
+                          style={{width : 30, height :30}}></img>
+                        </div>
+                      </div>
+                      {/* <div>
                         <span>
                           Facial detection:{" "}
                           {tracklist[index].facial && tracklist[index].facial}%
@@ -510,7 +534,7 @@ function Panel(props) {
                           Audio Detection:{" "}
                           {tracklist[index].audio && tracklist[index].audio}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   
