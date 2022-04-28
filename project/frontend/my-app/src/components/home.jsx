@@ -15,12 +15,12 @@ export default function Home(props) {
 
   return (
     <div className="containersk">
-      <img src="/test.jpg" className="image" alt="home page" />
+      <img src="/test1.jpg" className="image" alt="home page" />
       <div className="overlay">
-        <h1 className="text">Free online Exam Proctoring System</h1>
+        {/* <h1 className="text">Free online Exam Proctoring System</h1>
         <Link to="/login" className="btn btn-danger btn-md m-2">
           Log In
-        </Link>
+        </Link> */}
         <Link to="/signup" className="btn btn-danger btn-md m-2">
           Sign Up
         </Link>
