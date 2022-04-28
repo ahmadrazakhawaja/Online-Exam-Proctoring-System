@@ -21,6 +21,7 @@ export default function AdminSettings(props) {
 
   const [alert, setalert] = useState(null);
   const [modal, setmodal] = useState(false);
+  const [loading, setloading] = useState(false);
 
   // const [file, setfile] = useState(room.textFile);
 
@@ -126,7 +127,8 @@ export default function AdminSettings(props) {
   const EndExam = () => {
     console.log("hello");
     socket.emit("end-exam");
-    setmodal(false);
+    // setmodal(false);
+    setloading(true);
     // navigate(`/userpage/exam-room/${room._id}`);
   };
 
@@ -163,7 +165,7 @@ export default function AdminSettings(props) {
             ></button> */}
               </div>
               <div className="modal-body">
-                Are you sure you want to End Exam?
+                {!loading && 'Are you sure you want to End Exam?'}
                 {/* <img
               style={{
                 objectFit: "contain",
@@ -171,6 +173,15 @@ export default function AdminSettings(props) {
               }}
               src={props.image.image}
             ></img> */}
+            {loading && (
+              <div
+                className="spinner-border"
+                style={{ display: "block", margin: "0 auto", marginTop: "2%" }}
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            )}
               </div>
               <div className="modal-footer">
                 <button

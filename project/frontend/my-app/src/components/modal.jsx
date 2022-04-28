@@ -1,4 +1,8 @@
+
+
+
 export default function Modal(props) {
+
   //   setting_div = document.getElementById("setting");
   //   setting_div.style.opacity = "0.2";
   return (

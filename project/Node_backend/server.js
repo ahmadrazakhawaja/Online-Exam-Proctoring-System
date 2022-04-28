@@ -200,7 +200,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
         `${user.first_name} ${user.last_name}`
       );
       datax = checkroom(connectedUser, room._id.toString());
-
       if (datax !== -1) {
         io.to(connectedUser[datax].socket_id).emit("callUser", {
           signal: data.signalData,
@@ -219,6 +218,9 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     socket.on("disconnect", (reason) => {
       // console.log("disconnect");
       // socket.broadcast.emit("callEnded");
+      
+      
+      if(fs.existsSync(`log_files/${room._id.toString()}.txt`)){
       let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
       content = `${date} : ${user._id.toString()} : ${user.first_name} ${
         user.last_name
@@ -248,6 +250,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           io.to(connectedUser[datax].socket_id).emit("logging", content);
         }
       }
+      }
     });
 
     // console.log(io.sockets.adapter.rooms.get(room._id.toString()).size);
@@ -263,7 +266,8 @@ io.use((socket, next) => protect2(socket, next, io)).on(
         io.to(connectedUser[datax].socket_id).emit(
           "browser-track",
           data,
-          user._id.toString()
+          user._id.toString(),
+          user.first_name+' '+user.last_name
         );
         let date = new Date()
           .toISOString()
@@ -336,7 +340,8 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             io.to(connectedUser[datax].socket_id).emit(
               "Audio-response",
               response.data,
-              user._id.toString()
+              user._id.toString(),
+              user.first_name+' '+user.last_name
             );
             let date = new Date()
               .toISOString()
@@ -446,9 +451,10 @@ io.use((socket, next) => protect2(socket, next, io)).on(
         Room2.audioDetection = data["audio-detection"];
         Room2.browserTracking = data["browser"];
         Room2.candidateLimit = data["candidate-limit"];
+        console.log('file namee check' ,data["name"],room.textFile);
         (Room2.textFile = data["name"] || room.textFile),
           (Room2._id = room._id.toString());
-
+        
         io.to(connectedUser[datax].socket_id).emit("setting-set", Room2);
         socket
           .to(room._id.toString())
@@ -458,6 +464,17 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             data["audio-detection"],
             data["browser"]
           );
+
+          let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } Settings have been changed : facial: ${data["facial-detection"]}, audio:${data["audio-detection"]}, browser:${data["browser"]}.\n`;
+
+            writeFile(content, room._id.toString());
+            io.to(connectedUser[datax].socket_id).emit("logging", content);
         });
         
       }
@@ -510,7 +527,8 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             io.to(connectedUser[datax].socket_id).emit(
               "facial-response",
               response.data,
-              user._id.toString()
+              user._id.toString(),
+              user.first_name+' '+user.last_name
             );
             let date = new Date()
               .toISOString()
@@ -621,6 +639,17 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             user._id.toString()
           );
 
+          let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } user verification : ${response.data}. \n`;
+
+            writeFile(content, room._id.toString());
+            io.to(connectedUser[datax].socket_id).emit("logging", content);
+
           // res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
@@ -632,10 +661,18 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
         console.log(err);
       });
+      
     });
 
-    socket.on('remove-client', (id) => {
+    socket.on('remove-client', (id,name) => {
       socket.to(room._id.toString()).emit('remove-user',id);
+      let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${id} : ${name} has been removed from the room.\n`;
+            writeFile(content,room._id.toString());
+            io.to(socket.id).emit("logging", content);
     });
 
     socket.on("end-exam", () => {
@@ -646,17 +683,65 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           io.to(room._id.toString()).emit("room-end", true);
           datax = checkroom(connectedUser, room._id.toString());
           connectedUser.splice(datax, 1);
+
+          let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+              user.last_name
+            } Room has been ended by Admin.\n`;
+            writeFile(content,room._id.toString());
+            io.to(socket.id).emit("logging", content);
+          
           mail.sendConfirmationEmail(
             user.first_name,
             user.email,
             room._id.toString(),
             "log_file"
-          );
-          fs.rm(`log_files/${room._id.toString()}.txt`, (err) => {
-            console.log(err);
+          )
+
+
+          axios.post('http://127.0.0.1:4000/DeleteDocument',{
+            id: room._id.toString()
           });
+
+            
+
+            
+
+            
+         
+          
+          
         });
+        
+        // .then(() => {
+        //   fs.rmSync(`log_files/${room._id.toString()}.txt`, (err) => {
+        //       console.log(err);
+        //     });
+        // })
       }
+    });
+
+    socket.on('tag-admin', (id,name,data) => {
+      let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${id} : ${name} has been ${data} by the admin.\n`;
+            writeFile(content,room._id.toString());
+            io.to(socket.id).emit("logging", content);
+    });
+
+    socket.on('tag-system', (id,name) => {
+      let date = new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "");
+            content = `${date} : ${id} : ${name} has been tagged by the System.\n`;
+            writeFile(content,room._id.toString());
+            io.to(socket.id).emit("logging", content);
     });
 
     // Handle typing event

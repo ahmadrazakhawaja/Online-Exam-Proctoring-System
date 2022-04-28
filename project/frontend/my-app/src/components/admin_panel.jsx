@@ -23,6 +23,7 @@ function Panel(props) {
   const [callEnded, setCallEnded] = useState(false);
   const [alert, setalert] = useState(false);
   const [hover, sethover] = useState(false);
+  const [length, setlength] = useState(false);
   const [peerTransfer, setTransfer] = useState(false);
   const userVideo = useRef();
   const connectionRef = useRef();
@@ -84,7 +85,7 @@ function Panel(props) {
     return -1;
   }
 
-  const removePeer = (id) => {
+  const removePeer = (id,name) => {
     const peer3 = peers.current.filter((element) => {
       if (element.id === id) {
         element.peer.destroy();
@@ -98,31 +99,43 @@ function Panel(props) {
       }
       return true;
     });
-
-    socket.emit('remove-client',id);
+    setlength(tracks.current.length);
+    if(name){
+    socket.emit('remove-client',id,name);
+    }
     
     peers.current = [...peer3]
     tracks.current = [...track3];
+    setlength(peers.current.length);
     settracklist(() => [...track3]);
     setpeerlist(() => [...peer3]);
     navigate(`/userpage/exam-room/${room._id}`);
     
   };
 
-  const tagPeer = (id) => {
+  const tagPeer = (id,name) => {
     const index = checkuser(tracks.current,id);
     let track2 = null;
     if(index !== -1){
       track2 = tracks.current[index];
       if(track2.tag){
         track2 = { ...track2, tag: !track2.tag };
+        if(track2.tag === false){
+          socket.emit('tag-admin',id,name,'untagged');
+        }
+        else{
+          socket.emit('tag-admin',id,name,'tagged');
+        }
+        
       }
       else{
       track2 = { ...track2, tag: true };
+      socket.emit('tag-admin',id,name,'tagged');
       }
     }
     else{
       track2 = { id: id, tag: true };
+      socket.emit('tag-admin',id,name,'tagged');
     }
     const track3 = tracks.current.filter((element) => {
       if (element.id === id) {
@@ -130,6 +143,8 @@ function Panel(props) {
       }
       return true;
     });
+
+    
       settracklist(() => [...track3, track2]);
     tracks.current = [...track3, track2];
     
@@ -148,14 +163,14 @@ function Panel(props) {
       setlog((log) => log + data + "\n");
     });
 
-    socket.on("facial-response", (data, id) => {
+    socket.on("facial-response", (data, id,name) => {
       // console.log("facial_response", data, id);
       const track2 = {};
       console.log(typeof data);
       track2.facial = parseInt(data * 100);
       track2.id = id;
       console.log(track2);
-      settrack(track2);
+      settrack(track2,name);
       // const index = checkuser(peerlist, id);
       // if (index !== -1) {
       //   // peerlist[index].facialresponse = parseFloat(data);
@@ -178,27 +193,29 @@ function Panel(props) {
 
     const roomEnd = () => {
       setalert("Room has been closed by the admin");
+      
       setTimeout(() => {
         navigate("/userpage");
+        localStorage.removeItem("room-info");
       }, 5000);
     };
     socket.on("room-end", roomEnd);
 
-    socket.on("browser-track", (data, id) => {
+    socket.on("browser-track", (data, id,name) => {
       console.log("browser-track", data, id);
       const track2 = {};
       track2.browser = data;
       track2.id = id;
       console.log(track2);
-      settrack(track2);
+      settrack(track2,name);
 
-      socket.on("Audio-response", (data, id) => {
+      socket.on("Audio-response", (data, id,name) => {
         console.log("audio-response", data, id);
         const track2 = {};
         track2.audio = data;
         track2.id = id;
         console.log(track2);
-        settrack(track2);
+        settrack(track2,name);
       });
 
       // const index = checkuser(peerlist, id);
@@ -304,6 +321,7 @@ function Panel(props) {
       // }
     });
     return () => {
+      console.log('in return');
       socket.off("callUser");
       socket.off("browser-track");
       socket.off("facial-response");
@@ -332,6 +350,7 @@ function Panel(props) {
 
       setpeerlist(() => [...peer3, peer]);
       peers.current = [...peer3, peer];
+      setlength(peers.current.length);
       // if (index === -1) {
       //   setpeerlist((peerlist) => [...peer3, peer]);
       // } else {
@@ -343,25 +362,140 @@ function Panel(props) {
     }
   };
 
-  const settrack = (track) => {
+  const calculateScore = (track,track2) => {
+    const room2 = JSON.parse(localStorage.getItem("room-info"));
+    // let track2 = tracks.current[index];
+    let count = 0;
+
+    let totalScore = 0;
+    if(room2.facialDetection){
+      count = count + 1;
+      if(track.facial){
+        totalScore = totalScore + parseInt(track.facial);
+      }
+      else{
+        if(track2.facial){
+          totalScore = totalScore + parseInt(track2.facial);
+        }
+      }
+    }
+    if(room2.browserTracking){
+      count = count + 1;
+      if(track.browser){
+        if(track.browser === 'cheating'){
+          totalScore = totalScore + 100;
+        }
+      }
+      else{
+        if(track2.browser){
+          if(track2.browser === 'cheating'){
+            totalScore = totalScore + 100;
+          }
+        }
+      }
+    }
+
+    if(room2.audioDetection){
+      count = count + 1;
+      if(track.audioDetection){
+        if(track.audioDetection === 'low'){
+          totalScore = totalScore + 33;
+        }
+        if(track.audioDetection === 'medium'){
+          totalScore = totalScore + 66;
+        }
+        if(track.audioDetection === 'high'){
+          totalScore = totalScore + 100;
+        }
+      }
+      else{
+        if(track2.audioDetection){
+          if(track2.audioDetection === 'low'){
+            totalScore = totalScore + 33;
+          }
+          if(track2.audioDetection === 'medium'){
+            totalScore = totalScore + 66;
+          }
+          if(track2.audioDetection === 'high'){
+            totalScore = totalScore + 100;
+          }
+        }
+      }
+    }
+    const result ={};
+    if(count === 3){
+      if(totalScore > 200){
+        result.score = totalScore;
+        result.tag = true;
+      }
+      else{
+        result.score = totalScore;
+        result.tag = false;
+      }
+    }
+    else if(count === 2){
+      if(totalScore > 150){
+        result.score = totalScore;
+        result.tag = true;
+      }
+      else{
+        result.score = totalScore;
+        result.tag = false;
+      }
+    }
+    else if(count === 1){
+      if(totalScore > 70){
+        result.score = totalScore;
+        result.tag = true;
+      }
+      else{
+        result.score = totalScore;
+        result.tag = false;
+      }
+    }
+    else{
+      result.score = totalScore;
+        result.tag = false;
+    }
+    return result;
+
+    
+  }
+
+  const settrack = (track,name) => {
     if (track !== undefined) {
       const index = checkuser(tracks.current, track.id);
       console.log("tracks", tracks.current);
-
+      
       if (index === -1) {
         let track2 = {
           id: track.id,
+          // tag: Score.tag,
+          // score: Score.score
         };
 
         if (track.browser) {
           track2 = { ...track2, browser: track.browser };
+         
         }
         if (track.facial) {
           track2 = { ...track2, facial: track.facial };
+          
         }
         if (track.audio) {
           track2 = { ...track2, audio: track.audio };
+          
         }
+
+        const Score = calculateScore(track,index);
+
+
+        track2 = { ...track2, score: Score.score, tag: Score.tag  };
+
+        if(Score.tag === true){
+          socket.emit('tag-system',track2.id,name);
+        }
+
 
         settracklist(() => [...tracks.current, track2]);
         tracks.current = [...tracks.current, track2];
@@ -370,12 +504,19 @@ function Panel(props) {
       } else {
         // console.log("browser update", tracklist);
         let track2 = tracks.current[index];
+        const Score = calculateScore(track,track2);
+        track2 = { ...track2, score: Score.score };
 
+        if(!('tag' in track2) || track2.tag === false){
+          track2 = { ...track2, tag: Score.tag };
+          socket.emit('tag-system',track2.id,name);
+        }
         if (track.browser) {
           track2 = { ...track2, browser: track.browser };
         }
         if (track.facial) {
           track2 = { ...track2, facial: track.facial };
+          
         }
 
         if (track.audio) {
@@ -389,6 +530,8 @@ function Panel(props) {
           return true;
         });
 
+        // sortPeer(Score.score,track.id);
+
         // if (peerlist.length === 0) {
         //   peer2.key = peerlist.length;
         // } else {
@@ -400,6 +543,15 @@ function Panel(props) {
       }
     }
   };
+
+  // const sortPeer = (score,id) => {
+  //   tracks.current.sort((a,b) => b.score - a.score);
+
+  //   for(let i = 0; i < peers.current.length ; i++){
+  //     const tmp = peers.current[i];
+      
+  //   }
+  // }
 
   useEffect(() => {
     console.log("peerlist", peerlist, peerlist.length);
@@ -486,16 +638,25 @@ function Panel(props) {
   const userStream = (id) => {
     // console.log("hello");
     navigate(`/userpage/exam-room/${room._id}/${id}`);
-
   };
 
-    const { id } = useParams();
+  const findCheat = () => {
+    let count = 0;
+    for(let i=0; i < tracks.current.length; i++){
+      if(tracks.current[i].tag === true){
+        count ++;
+      }
+    }
+    return count;
+  }
+
+    const { id2 } = useParams();
     let index = 0;
     let index2 = 0;
-    if(useMatch("/userpage/exam-room/:id/:id")){
-      console.log(id);
-      index = checkuser(peers.current,id);
-      index2 = checkuser(tracks.current,id)
+    if(useMatch("/userpage/exam-room/:id/:id2")){
+      console.log(id2);
+      index = checkuser(peers.current,id2);
+      index2 = checkuser(tracks.current,id2)
       console.log(index);
       console.log(peerlist[index]);
     }
@@ -515,7 +676,7 @@ function Panel(props) {
           display: useMatch("/userpage/exam-room/:id/Exam-Settings")
             ? "none"
             : "block",
-            display: useMatch("/userpage/exam-room/:id/:id")
+            display: useMatch("/userpage/exam-room/:id/:id2")
             ? "none"
             : "block",
 
@@ -534,11 +695,11 @@ function Panel(props) {
           </div>
           <div className="col-4" style={{ textAlign: "center" }}>
             <span>Exam Room</span>
-            <span style={{ display: "block" }}>Room ID: {room._id}</span>
+            <span style={{ display: "block" }}>Room ID: {room && room._id}</span>
           </div>
         </div>
 
-        <Charts />
+        <Charts  candidate={length} cheating={findCheat()}/>
 
 {/* <VideoCardGrid/> */}
 
@@ -570,42 +731,52 @@ function Panel(props) {
                             style={{ border: "solid"}} onClick={() => userStream(element.id)}
                           >
                             <PeerStart data={element} key={element.key} />
+                            <div>
+                            <div
+                              className="cheating-info"
+                              style={{ textAlign: "center" }}
+                            >
+                              <span>
+                                <b>{element.name}</b>{' '} <b>{element.rollNum}</b>
+                              </span>
+                            </div>
+                            </div>
                           </div>
                         </div>
                       );
                     }
                     return (
                       <div className="col-4" key={element.key}>
-                        <div className="video-card" style={{ border: "solid" }} onClick={() => userStream(element.id)}>
-                          <PeerStart data={element} key={element.key} />
+                        <div className="video-card" style={{ border: "solid", backgroundColor: tracklist[index].tag ? 'gray' : null }} onClick={() => userStream(element.id)}>
+                          <PeerStart data={element}  key={element.key}/>
                           <div>
                             <div
                               className="cheating-info"
                               style={{ textAlign: "center" }}
                             >
                               <span>
-                                <b>{element.name}</b>
+                              <b>{element.name}</b>{' '} <b>{element.rollNum}</b>
                               </span>
                             </div>
                             <div>
                               <span>
-                                Facial detection:{" "}
-                                {tracklist[index].facial &&
+                              {room.facialDetection && 'Facial detection: '}
+                                {room.facialDetection && tracklist[index].facial &&
                                   tracklist[index].facial}
-                                %
+                                {room.facialDetection && '%'}
                               </span>
                             </div>
                             <div>
                               <span>
-                                Browser Tracking:{" "}
-                                {tracklist[index].browser &&
+                                {room.browserTracking && 'Browser Tracking: '}
+                                {room.browserTracking && tracklist[index].browser &&
                                   tracklist[index].browser}
                               </span>
                             </div>
                             <div>
                               <span>
-                                Audio Detection:{" "}
-                                {tracklist[index].audio &&
+                              {room.audioDetection && 'Audio Detection: '}
+                                { room.audioDetection && tracklist[index].audio &&
                                   tracklist[index].audio}
                               </span>
                             </div>

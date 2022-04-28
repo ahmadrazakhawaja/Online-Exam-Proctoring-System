@@ -176,6 +176,19 @@ def hello_worlds():
     return str(True)
 
 
+@app.route("/DeleteDocument", methods=["GET","POST"])
+def hello_worldccc():
+    print("chk1")
+    data = request.get_json(force=True)
+    print(data)
+    print(data['id'])
+    try:
+        os.remove('user/question_papers/'+data['id']+'.txt')
+    except:
+        print('file not found')
+    return str(True)
+
+
 @app.route("/PyAudio", methods=["GET", "POST"])
 def hello_worldy():
     # datax = request.form['audio']

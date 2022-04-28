@@ -1,5 +1,8 @@
 require("./models/Room.js");
+require("./models/userHistory.js");
+
 const mongoose = require("mongoose");
+const UserHistory = mongoose.model("History");
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -30,7 +33,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
-  const filename = null;
+  let filename = null;
   if (req.file) {
     if (
       path.extname(req.file.originalname) === ".doc" ||
@@ -47,8 +50,9 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
         },
       });
     }
-    filename = req.file.filename + req.file.originalname;
+    filename = req.file.filename;
   }
+  console.log('file',filename);
   // upload.none();
   // upload.single("file");
   // const uid = uuidv4()
@@ -65,7 +69,7 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
     audioDetection: audio,
     browserTracking: browser,
     candidateLimit: candidateLimit,
-    textFile: filename,
+    textFile: (req.file ? req.file.originalname : null),
   });
 
   if (!newRoom) {
@@ -130,6 +134,7 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
       return;
     }
     const Room2 = {};
+
     (Room2.adminID = req.User._id.toString()),
       (Room2.facialDetection =
         newRoom.facialDetection[newRoom.facialDetection.length - 1]);
@@ -139,8 +144,28 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
       newRoom.browserTracking[newRoom.browserTracking.length - 1];
     Room2.candidateLimit =
       newRoom.candidateLimit[newRoom.candidateLimit.length - 1];
-    (Room2.textFile = filename), (Room2._id = newRoom._id.toString());
+    (Room2.textFile = req.file.originalname || null), (Room2._id = newRoom._id.toString());
     console.log(Room2);
+    
+    const checkHistory = await UserHistory.find({
+      UserID: req.User._id,
+      RoomID: newRoom._id
+    });
+    console.log('check admin',checkHistory);
+    if(checkHistory.length === 0){
+      const history = new UserHistory({
+        UserID: req.User._id,
+        RoomID: newRoom._id
+      });
+      try {
+        await history.save()
+      } catch (error) {
+        console.log(error)
+      }
+      console.log( 'history-admin',history);
+    }
+    
+
     res.status(200).json({
       header: {
         message: "Room Created",
@@ -208,10 +233,41 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
 router.post("/checkRoom", protect, async (req, res) => {
   const room = await Room.findById(req.body.id);
   const Room2 = {};
+  
   Room2.facialDetection = room.facialDetection[room.facialDetection.length - 1];
   Room2.audioDetection = room.audioDetection[room.audioDetection.length - 1];
   Room2.browserTracking = room.browserTracking[room.browserTracking.length - 1];
   Room2._id = room._id.toString();
+
+  console.log(room.adminID.toString(),req.User._id.toString() );
+  if(room.adminID.toString() === req.User._id.toString()){
+    Room2.adminID = room.adminID.toString();
+    Room2.textFile = room.textFile;
+    Room2.admin = true;
+  }
+  else{
+    Room2.admin = false;
+  }
+
+  const checkHistory = await UserHistory.find({
+    UserID: req.User._id,
+    RoomID: room._id
+  });
+  console.log('check hisory',checkHistory);
+  if(checkHistory.length === 0){
+    const history = new UserHistory({
+      UserID: req.User._id,
+      RoomID: room._id
+    });
+    try {
+      await history.save()
+    } catch (error) {
+      console.log(error)
+    }
+    console.log( 'history',history);
+  }
+  
+
   if (room && room.ended === false) {
     res.status(200).json({
       header: {
@@ -228,11 +284,52 @@ router.post("/checkRoom", protect, async (req, res) => {
         message: "Room not available",
         code: 0,
       },
-      data: {
-        newRoom: Room2,
-      },
     });
   }
 });
+
+router.get("/gethistory", protect, async (req, res) => {
+  const hist = await UserHistory.find({UserID: req.User._id});
+  const RoomData = [];
+  console.log('history',hist);
+
+  for(let i=hist.length-1; i >= 0 ; i--){
+    const element = hist[i];
+    const roomid = element.RoomID;
+    const checkRoom = await Room.findById(roomid);
+    const RoomObject = {};
+    RoomObject['ended'] = checkRoom.ended;
+    RoomObject['timeStarted'] = checkRoom.timeStarted;
+    RoomObject['roomid'] = checkRoom._id.toString();
+    RoomObject['id'] = hist.length - i;
+    RoomData.push(RoomObject);
+  }
+ 
+
+  
+  
+
+  if (RoomData.length > 0) {
+    res.status(200).json({
+      header: {
+        message: "Data available",
+        code: 1,
+      },
+      data: {
+        RoomData
+      },
+    });
+  } else {
+    res.status(400).json({
+      header: {
+        message: "Data not Available",
+        code: 0,
+      },
+      
+    });
+  }
+});
+
+//room_id  // 
 
 module.exports = router;

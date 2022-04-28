@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
+const fs = require("fs");
 
 // console.log(process.env.user, process.env.password);
 const transport = nodemailer.createTransport({
@@ -48,6 +49,10 @@ module.exports.sendConfirmationEmail = (
           <h2>Hello ${name}</h2>
           <p>Please find the attached Log file for the Exam</p>
           </div>`,
+      }).then(() => {
+        fs.rm(`log_files/${confirmationCode}.txt`, (err) => {
+          console.log(err);
+      });
       })
       .catch((err) => console.log(err));
   } else {

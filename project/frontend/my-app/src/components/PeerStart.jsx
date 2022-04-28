@@ -10,9 +10,11 @@ function PeerStart(props) {
   const [socket, setSocket] = useOutletContext();
 
   useEffect(() => {
+    
     console.log("here in Peer start");
     const peer = props.data.peer;
 
+    
     console.log("recv-1");
     // console.log(props.data.CallerSignal);
     peer.signal(props.data.CallerSignal);
@@ -25,6 +27,8 @@ function PeerStart(props) {
       console.log("send-signal2");
       socket.emit("answerCall", { signal: data, to: props.data.caller });
     });
+  
+  
 
     return () => {
       peer.destroy();

@@ -224,14 +224,15 @@ function CandidatePanel(props) {
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
-        myVideo.current.srcObject = stream;
+      .then((stream2) => {
+        setStream(stream2);
+        myVideo.current.srcObject = stream2;
         connectionRef.current = new Peer({
           initiator: true,
           trickle: false,
-          stream: stream,
+          stream: stream2,
         });
+        
         console.log("hellox");
       })
       .catch(function (err) {
@@ -242,6 +243,7 @@ function CandidatePanel(props) {
       setalert("Room has been closed by the admin");
       setTimeout(() => {
         navigate("/userpage");
+        localStorage.removeItem("room-info");
       }, 5000);
     };
     socket.on("room-end", roomEnd);

@@ -21,6 +21,8 @@ import CandidatePanel from "./components/candidatePanel";
 import AdminSettings from "./components/exam_settings2";
 import CheckPanel from "./components/checking";
 import CandidatePersonal from "./components/candidatePersonal";
+import VerifyAdmin from "./components/verifyAdmin";
+import PageNotFound from "./components/PageNotFound";
 
 import Setting from "./components/settings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -42,6 +44,7 @@ function App() {
             path="/change-password/:confirmationCode"
             element={<ChangePassword />}
           />
+          <Route path="*" element={<PageNotFound/>} />
         </Route>
         <Route element={<ProtectedRoute setLogIn={setLoggedIn} />}>
           <Route element={<UserPage />} path="/userpage" />
@@ -66,6 +69,7 @@ function App() {
               path="/userpage/Checking/:id"
               element={<CheckPanel setLogIn={setLoggedIn} />}
             />
+             <Route element={<VerifyAdmin setLogIn={setLoggedIn} />}>
             <Route
               path="/userpage/exam-room/:id"
               element={<Panel setLogIn={setLoggedIn} />}
@@ -75,15 +79,17 @@ function App() {
                 element={<AdminSettings setLogIn={setLoggedIn} />}
               />
               <Route
-                path=":id"
+                path=":id2"
                 element={<CandidatePersonal setLogIn={setLoggedIn} />}
               />
+            </Route>
             </Route>
             <Route
               path="/userpage/exam-room/:id/candidate"
               element={<CandidatePanel setLogIn={setLoggedIn} />}
             />
           </Route>
+          <Route path="*" element={<PageNotFound/>} />
         </Route>
       </Routes>
       <Footer />

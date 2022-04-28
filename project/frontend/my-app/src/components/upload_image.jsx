@@ -4,6 +4,7 @@ import Form from "./form";
 import Modal from "./modal";
 
 const UploadImage = (props) => {
+  const [modal, setmodal] = useState(false);
   const navigate = useNavigate();
   const elements = [
     {
@@ -66,7 +67,84 @@ const UploadImage = (props) => {
     return null;
   };
 
+  const displayModal = () => {
+    if (modal) {
+      return (
+        <div
+          className="modal fade show"
+          id="exampleModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          model="true"
+          role="dialog"
+          style={{ display: "block", opacity: "1 !important" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                Uploading Images
+                </h5>
+                {/* <button
+              type="button"
+              className="btn-close"
+              onClick={() => {
+                props.image.element.target.value = null;
+                // props.reset({ pic: "" });
+                props.setimage(false);
+                return false;
+              }}
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button> */}
+              </div>
+              <div className="modal-body">
+                {/* <img
+              style={{
+                objectFit: "contain",
+                width: "100%",
+              }}
+              src={props.image.image}
+            ></img> */}
+            
+                <div className="spinner-border"
+                style={{ display: "block", margin: "0 auto", marginTop: "2%" }}
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            
+              </div>
+              <div className="modal-footer">
+                {/* <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setmodal(false)}
+                >
+                  No
+                </button>
+                <button
+                  // onClick={() => props.navigate("/login")}
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={EndExam}
+                >
+                  Yes
+                </button> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const handleSubmit = (data, event) => {
+    setmodal(true);
     const formData = new FormData();
     if (data["Picture 1"]) {
       // console.log(data["Picture 1"][0]);
@@ -116,6 +194,7 @@ const UploadImage = (props) => {
           // });
           setalert(json.header.message);
         }
+        setmodal(false);
         // }
       });
     event.preventDefault();
@@ -128,6 +207,7 @@ const UploadImage = (props) => {
   return (
     <React.Fragment>
       {alert2()}
+      {displayModal()}
       <Form
         elements={elements}
         // onChange={handlechange}
@@ -137,6 +217,7 @@ const UploadImage = (props) => {
         // setformSubmit={setsubmit}
         value="Upload Images"
         // navigate={navigate}
+        opacity={modal ? '0.2':'1'}
       />
     </React.Fragment>
   );

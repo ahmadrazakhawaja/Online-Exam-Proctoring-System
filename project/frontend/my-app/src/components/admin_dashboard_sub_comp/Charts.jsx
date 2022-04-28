@@ -1,7 +1,7 @@
 import React from "react";
 import ".//Charts.css";
 
-export default function Charts(params) {
+export default function Charts(props) {
 return (
     <div className="row justify-content-center">
         <div className="col-4">
@@ -15,7 +15,7 @@ return (
                         <div id= "sparklinedash"><img src = "/Charts.png" width="67" height="30" 
                         style={{display: "inline-block", width : 67, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
-                    <li className="ms-auto"><span className="counter text-success">20</span></li>
+                    <li className="ms-auto"><span className="counter text-success">{props.candidate}</span></li>
                 </ul>
             </div>
         </div>
@@ -30,7 +30,7 @@ return (
                         <div id= "sparklinedash2"><img src = "/Microphone.png" width="67" height="30"
                         style={{display: "inline-block", width : 35, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
-                    <li className="ms-auto"><span className="counter text-purple">0</span></li>
+                    <li className="ms-auto"><span className="counter text-purple">{props.cheating}</span></li>
                 </ul>
             </div>
         </div>
