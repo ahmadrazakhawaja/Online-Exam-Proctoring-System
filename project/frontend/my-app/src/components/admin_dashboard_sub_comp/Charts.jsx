@@ -21,13 +21,13 @@ return (
         </div>
         <div className="col-sm">
             <div className="white-box analytics-info">
-                <h3 className="box-title">Audio Cheating </h3>
+                <h3 className="box-title">Live Cheating Count</h3>
                 <ul className="list-inline two-part d-flex align-items-center mb-0">
                     <li>
                         {/* <div id="sparklinedash2"><canvas width="67" height="30"
                              style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
                         </div> */}
-                        <div id= "sparklinedash2"><img src = "/Microphone.png" width="67" height="30"
+                        <div id= "sparklinedash2"><img src = "/Graph.png" width="67" height="30"
                         style={{display: "inline-block", width : 35, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
                     <li className="ms-auto"><span className="counter text-purple">{props.cheating}</span></li>
@@ -36,28 +36,21 @@ return (
         </div>
         <div className="col-sm">
             <div className="white-box analytics-info">
-                <h3 className="box-title">Facial Cheating </h3>
+                <h3 className="box-title">Class Cheating Rating</h3>
                 <ul className="list-inline two-part d-flex align-items-center mb-0">
                     <li>
-                    <div id= "sparklinedash3"><img src = "/Camera.png" width="67" height="30" 
+                    <div id= "sparklinedash3"><img src = "/Gauge.png" width="67" height="30" 
                         style={{display: "inline-block", width : 35, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
-                    <li className="ms-auto"><span className="counter text-info">0</span></li>
+                    <li className="ms-auto"><span className="counter text-info">High</span></li>
                 </ul>
             </div>
         </div>
         <div className="col-sm">
             <div className="white-box analytics-info">
-                <h3 className="box-title">Browser Cheating</h3>
+                <h3 className="box-title">Last Cheating Candidate</h3>
                 <ul className="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        {/* <div id="sparklinedash"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div> */}
-                        <div id= "sparklinedash4"><img src = "/Browser.png" width="30" height="30" 
-                        style={{display: "inline-block", width : 35 , height :35, verticalAlign : "top"}}></img> </div>
-                    </li>
-                    <li className="ms-auto"><span className="counter text-purple">0</span></li>
+                <li className="mx-auto"><span className="counter text-purple">Ahmad Raza</span></li>
                 </ul>
             </div>
         </div>

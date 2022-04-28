@@ -178,17 +178,17 @@ export default function UserPage(props) {
     <div className="container">
       {alert && <Alert alert={alert} setalert={setalert} />}
       <h1 style={{ textAlign: "center" }}>Welcome {data.first_name}</h1>
-      <div className="row mt-5" style={{ width: "100%" }}>
-        <div className="col text-center">
+      <div className="user-grid" style={{ width: "100%",display : "grid",justifyContent : "center", alignContent :"center" }}>
+        <div id = "create" className=" text-center" style={{marginTop : "10px" }}>
           <button onClick={examset} className="btn btn-primary">
             Create Exam
           </button>
         </div>
-
-        <div className="col text-center">
+        <h4 className="text-center mic-info"style={{marginTop : "10px" }}>OR</h4>
+        <div id = "join" className="text-center" style={{marginTop : "10px" }}>
           <form
             onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
-            style={{ width: "50%", marginLeft: "20%" }}
+            // style={{ width: "20%", marginLeft: "40%" }}
           >
             <div>
               <input
@@ -258,5 +258,6 @@ export default function UserPage(props) {
           </div>
         </div>
     </div>
+   
   );
 }
