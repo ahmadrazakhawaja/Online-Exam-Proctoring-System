@@ -210,11 +210,21 @@ export default function AdminSettings(props) {
     }
   };
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   return (
     <React.Fragment>
       {displayModal()}
       {alert2()}
-
+      <div style={{display: 'flex', overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <div className="container" style={{ opacity: modal ? "0.2" : "1" }}>
         <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
           <div className="row mt-3">
@@ -236,7 +246,7 @@ export default function AdminSettings(props) {
             </div>
             <div className="col-4">
               <div className="mt-3">
-                <h1 style={{ textAlign: "center" }}>Admin Settings</h1>
+                <h1 style={{ textAlign: "center",fontWeight: 'bold' }}>Admin Settings</h1>
               </div>
             </div>
           </div>
@@ -245,6 +255,7 @@ export default function AdminSettings(props) {
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("facial-detection")}
               />
@@ -259,6 +270,7 @@ export default function AdminSettings(props) {
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("audio-detection")}
               />
@@ -273,6 +285,7 @@ export default function AdminSettings(props) {
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("browser")}
               />
@@ -285,16 +298,12 @@ export default function AdminSettings(props) {
             </div>
           </div>
 
-          <div className="row mt-5">
+          <div className="row mt-5" style={{alignItems: 'center'}}>
             <div className="col-6 text-center" style={{ position: "relative" }}>
               <div
                 className="mx-auto mt-auto"
                 style={{
                   width: "50%",
-                  position: "absolute",
-                  left: "0",
-                  right: "0",
-                  bottom: "0",
                 }}
               >
                 <input
@@ -370,6 +379,8 @@ export default function AdminSettings(props) {
             End Exam
           </button>
         </div>
+      </div>
+      </div>
       </div>
     </React.Fragment>
   );

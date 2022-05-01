@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Form from "./form";
 
 const EnterEmail = (props) => {
@@ -52,7 +52,7 @@ const EnterEmail = (props) => {
   };
 
   const handleSubmit = (data, event) => {
-    fetch(`http://127.0.0.1:5000/routes/change-password`, {
+    fetch(process.env.REACT_APP_API_URL+`/routes/change-password`, {
       method: "POST",
       headers: new Headers({ "content-Type": "application/json" }),
       mode: "cors",
@@ -86,9 +86,20 @@ const EnterEmail = (props) => {
   //     verifyuser(confirmationCode);
   //   }
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   return (
     <React.Fragment>
       {alert2()}
+      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <Form
         elements={elements}
         // onChange={handlechange}
@@ -98,6 +109,8 @@ const EnterEmail = (props) => {
         value="Change Password"
         // navigate={navigate}
       />
+      </div>
+      </div>
     </React.Fragment>
   );
 };

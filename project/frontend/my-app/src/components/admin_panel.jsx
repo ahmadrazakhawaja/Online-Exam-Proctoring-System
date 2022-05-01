@@ -23,7 +23,8 @@ function Panel(props) {
   const [callEnded, setCallEnded] = useState(false);
   const [alert, setalert] = useState(false);
   const [hover, sethover] = useState(false);
-  const [length, setlength] = useState(false);
+  const [length, setlength] = useState(0);
+  const [lastCandidate, setlastCandidate] = useState("");
   const [peerTransfer, setTransfer] = useState(false);
   const userVideo = useRef();
   const connectionRef = useRef();
@@ -125,17 +126,20 @@ function Panel(props) {
         }
         else{
           socket.emit('tag-admin',id,name,'tagged');
+          setlastCandidate(name);
         }
         
       }
       else{
       track2 = { ...track2, tag: true };
       socket.emit('tag-admin',id,name,'tagged');
+      setlastCandidate(name);
       }
     }
     else{
       track2 = { id: id, tag: true };
       socket.emit('tag-admin',id,name,'tagged');
+      setlastCandidate(name);
     }
     const track3 = tracks.current.filter((element) => {
       if (element.id === id) {
@@ -493,6 +497,7 @@ function Panel(props) {
         track2 = { ...track2, score: Score.score, tag: Score.tag  };
 
         if(Score.tag === true){
+          setlastCandidate(name);
           socket.emit('tag-system',track2.id,name);
         }
 
@@ -509,6 +514,9 @@ function Panel(props) {
 
         if(!('tag' in track2) || track2.tag === false){
           track2 = { ...track2, tag: Score.tag };
+          if(Score.tag === true){
+            setlastCandidate(name);
+          }
           socket.emit('tag-system',track2.id,name);
         }
         if (track.browser) {
@@ -642,12 +650,39 @@ function Panel(props) {
 
   const findCheat = () => {
     let count = 0;
+    let sum = 0
     for(let i=0; i < tracks.current.length; i++){
+      if(tracks.current[i].score){
+        sum = sum + tracks.current[i].score;
+      }
       if(tracks.current[i].tag === true){
         count ++;
+
       }
     }
-    return count;
+
+    let count2 = 0
+    const room2 = JSON.parse(localStorage.getItem("room-info"));
+
+    if(room2.audioDetection){
+      count2 = count2 + 100;
+    }
+
+    if(room2.browserTracking){
+      count2 = count2 + 100;
+    }
+
+    if(room2.facialDetection){
+      count2 = count2 + 100;
+    }
+
+    let average = 0;
+    if(tracks.current.length !== 0 && sum !== 0){
+      average = sum / tracks.current.length;
+    }
+    
+    console.log(average, sum,tracks.current.length);
+    return [count,average,count2];
   }
 
     const { id2 } = useParams();
@@ -694,12 +729,12 @@ function Panel(props) {
             </button>
           </div>
           <div className="col-4" style={{ textAlign: "center" }}>
-            <span>Exam Room</span>
-            <span style={{ display: "block" }}>Room ID: {room && room._id}</span>
+            <span style={{fontSize: '20px', fontWeight: 'bold'}}>Exam Room</span>
+            <span style={{ display: "block" }}>Room ID: <b>{room && room._id}</b></span>
           </div>
         </div>
 
-        <Charts  candidate={length} cheating={findCheat()}/>
+        <Charts  last={lastCandidate} candidate={length} cheating={findCheat()}/>
 
 {/* <VideoCardGrid/> */}
 
@@ -707,7 +742,7 @@ function Panel(props) {
           <div className="col-12">
             <div className="video-container">
               <div className="card-body">
-                <h3 className="box-title mb-0">All Students</h3>
+                <h3 className="box-title mb-3">All Students</h3>
 
                 {/* <div className="video"> */}
                 {/* {callAccepted && !callEnded ? (
@@ -728,7 +763,7 @@ function Panel(props) {
                         <div className="col-4" key={element.key}>
                           <div
                             className="video-card"
-                            style={{ border: "solid"}} onClick={() => userStream(element.id)}
+                            style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}} onClick={() => userStream(element.id)}
                           >
                             <PeerStart data={element} key={element.key} />
                             <div>
@@ -747,7 +782,7 @@ function Panel(props) {
                     }
                     return (
                       <div className="col-4" key={element.key}>
-                        <div className="video-card" style={{ border: "solid", backgroundColor: tracklist[index].tag ? 'gray' : null }} onClick={() => userStream(element.id)}>
+                        <div className="video-card" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px', backgroundColor: tracklist[index].tag ? 'gray' : null }} onClick={() => userStream(element.id)}>
                           <PeerStart data={element}  key={element.key}/>
                           <div>
                             <div
@@ -758,7 +793,71 @@ function Panel(props) {
                               <b>{element.name}</b>{' '} <b>{element.rollNum}</b>
                               </span>
                             </div>
-                            <div>
+                            <div className="row mt-3" style={{textAlign: 'center'}}>
+                              {room.facialDetection &&
+                              <div className="col">
+                              <div id="camera" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
+
+                                  <img src = "/Camera.png"
+                                  style={{width : 30, height :30}}></img>
+                                  </div>
+                                  <div>
+                              <span>
+                              {room.facialDetection && 'Facial: '}
+                              <div>
+                              <b>
+                                {room.facialDetection && tracklist[index].facial &&
+                                  tracklist[index].facial}
+                                {room.facialDetection && '%'}
+                                </b>
+                                </div>
+                              </span>
+                            </div>
+                                </div>
+                  }
+                  {room.browserTracking && 
+                                <div className="col">
+                              <div id="browser" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
+
+                                  <img src = "/browser.png"
+                                  style={{width : 30, height :30}}></img>
+                                  </div>
+                                  <div>
+                              <span>
+                                {room.browserTracking && 'Browser: '}
+                                <div> 
+                                <b>
+                                {room.browserTracking && tracklist[index].browser &&
+                                  tracklist[index].browser}
+                                  </b>
+                                  </div>
+                              </span>
+                            </div>
+                                </div>
+                  }
+                  {room.audioDetection && 
+                                <div className="col">
+                              <div id="mic" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
+
+                                  <img src = "/Microphone.png"
+                                  style={{width : 30, height :30}}></img>
+                                  </div>
+                                  <div>
+                              <span>
+                              {room.audioDetection && 'Audio: '}
+                              <div> 
+                              <b>
+                              
+                                { room.audioDetection && tracklist[index].audio &&
+                                  tracklist[index].audio}
+                                  </b>
+                                  </div>
+                              </span>
+                            </div>
+                                </div>
+                  }
+                            </div>
+                            {/* <div>
                               <span>
                               {room.facialDetection && 'Facial detection: '}
                                 {room.facialDetection && tracklist[index].facial &&
@@ -779,10 +878,12 @@ function Panel(props) {
                                 { room.audioDetection && tracklist[index].audio &&
                                   tracklist[index].audio}
                               </span>
-                            </div>
-                            <div>
+                            </div> */}
+                            <div style={{textAlign: 'center'}}>
                               <span>
+                                <b>
                                 {tracklist[index].tag ? 'Tagged' : null}
+                                </b>
                               </span>
                             </div>
                           </div>
@@ -858,7 +959,7 @@ function Panel(props) {
                 overflow: "scroll",
                 overflowX: "hidden",
                 height: "200px",
-                border: "solid",
+                boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
                 left: "5%",
                 right: "5%",
                 padding: "7px",

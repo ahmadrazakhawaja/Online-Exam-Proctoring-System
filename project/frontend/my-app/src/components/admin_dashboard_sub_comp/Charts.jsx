@@ -30,7 +30,7 @@ return (
                         <div id= "sparklinedash2"><img src = "/Graph.png" width="67" height="30"
                         style={{display: "inline-block", width : 35, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
-                    <li className="ms-auto"><span className="counter text-purple">{props.cheating}</span></li>
+                    <li className="ms-auto"><span className="counter text-purple">{props.cheating[0]}</span></li>
                 </ul>
             </div>
         </div>
@@ -42,7 +42,7 @@ return (
                     <div id= "sparklinedash3"><img src = "/Gauge.png" width="67" height="30" 
                         style={{display: "inline-block", width : 35, height :35, verticalAlign : "top"}}></img> </div>
                     </li>
-                    <li className="ms-auto"><span className="counter text-info">High</span></li>
+                    <li className="ms-auto"><span className="counter text-info">{props.cheating[1]} / {props.cheating[2]}</span></li>
                 </ul>
             </div>
         </div>
@@ -50,7 +50,7 @@ return (
             <div className="white-box analytics-info">
                 <h3 className="box-title">Last Cheating Candidate</h3>
                 <ul className="list-inline two-part d-flex align-items-center mb-0">
-                <li className="mx-auto"><span className="counter text-purple">Ahmad Raza</span></li>
+                <li className="mx-auto"><span className="counter text-purple">{props.last}</span></li>
                 </ul>
             </div>
         </div>

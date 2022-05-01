@@ -110,7 +110,7 @@ export default function ExamSettings(props) {
     // myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch("http://127.0.0.1:5000/roomRoutes/createRoom", {
+    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/createRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -143,9 +143,20 @@ export default function ExamSettings(props) {
       });
   };
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   return (
     <div>
       {alert2()}
+      <div style={{display: 'flex', overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <div className="mt-3">
         <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
           Exam Settings
@@ -153,11 +164,13 @@ export default function ExamSettings(props) {
       </div>
       <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
         <div className="container">
-          <div className="row mt-5">
-            <div className="form-check form-switch col-4">
+          <div className="row mt-5" >
+            <div className="col-4">
+            <div className="form-check form-switch">
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("facial-detection")}
               />
@@ -167,11 +180,14 @@ export default function ExamSettings(props) {
               >
                 Facial Detection
               </label>
+              </div>
             </div>
+
             <div className="form-check form-switch col-4">
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("audio-detection")}
               />
@@ -186,6 +202,7 @@ export default function ExamSettings(props) {
               <input
                 className="form-check-input"
                 type="checkbox"
+                style={{marginLeft: '4em', marginRight: '1em'}}
                 id="flexSwitchCheckDefault"
                 {...register("browser")}
               />
@@ -198,16 +215,12 @@ export default function ExamSettings(props) {
             </div>
           </div>
 
-          <div className="row mt-5">
+          <div className="row mt-5" style={{alignItems: 'center'}}>
             <div className="col-6 text-center" style={{ position: "relative" }}>
               <div
                 className="mx-auto mt-auto"
                 style={{
                   width: "50%",
-                  position: "absolute",
-                  left: "0",
-                  right: "0",
-                  bottom: "0",
                 }}
               >
                 <input
@@ -294,6 +307,8 @@ export default function ExamSettings(props) {
           </div>
         </div>
       </form>
+    </div>
+    </div>
     </div>
   );
 }

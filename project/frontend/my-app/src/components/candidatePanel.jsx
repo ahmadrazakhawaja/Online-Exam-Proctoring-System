@@ -378,6 +378,9 @@ function CandidatePanel(props) {
     
     socket.on('remove-user',removeUser)
 
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+
     return () => {
       const peer = connectionRef.current;
       peer.destroy();
@@ -387,6 +390,7 @@ function CandidatePanel(props) {
       socket.off("monitor", monitor);
       socket.off("connect_error", alert2);
       socket.off("room-end", roomEnd);
+      document.body.style.backgroundColor = "white";
       // clearInterval(features.current.audioDetection.interval);
       // clearInterval(audioInterval);
       console.log("cleanup");
@@ -442,13 +446,13 @@ function CandidatePanel(props) {
       {alert ? <Alert alert={alert} setalert={setalert} /> : null}
       <div className="container">
         <div className="row mt-3">
-          <div className="col-4" style={{ textAlign: "center" }}>
-            <span>Exam Room</span>
-            <span style={{ display: "block" }}>Room ID: {room._id}</span>
+          <div className="col-12" style={{ textAlign: "center" }}>
+            <span style={{fontSize: '20px', fontWeight: 'bold'}}>Exam Room</span>
+            <span style={{ display: "block" }}>Room ID: <b>{room._id}</b> </span>
           </div>
         </div>
         <div className="row mt-3">
-          <div className="col-3">
+          <div className="col-12" style={{textAlign: 'center'}}>
             {/* <canvas style="display:none" id="preview"></canvas> */}
             {/* <video
             src={videoRef.current}
@@ -459,7 +463,7 @@ function CandidatePanel(props) {
             id="video"
             muted
           /> */}
-            <div className="video-container">
+            <div className="video-container" style={{alignItems: 'center', flexDirection: 'column' ,justifyContent: 'center', backgroundColor: 'white',margin: 'auto' , width: '80%'}}>
               <div className="video">
                 {stream && (
                   <video
@@ -468,10 +472,12 @@ function CandidatePanel(props) {
                     id="video"
                     ref={myVideo}
                     autoPlay
-                    style={{ width: "300px" }}
+                    style={{ maxWidth: "400px" }}
                   />
                 )}
               </div>
+              <div className="mt-3" style={{color: 'red'}}>You are being monitored</div>
+              
             </div>
             <canvas
               style={{ display: "block" }}
@@ -480,6 +486,7 @@ function CandidatePanel(props) {
               height={62}
             />
             <canvas style={{ display: "none" }} id="preview"></canvas>
+            
           </div>
         </div>
       </div>

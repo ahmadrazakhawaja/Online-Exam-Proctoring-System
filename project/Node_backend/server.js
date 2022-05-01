@@ -3,6 +3,8 @@ const FormData = require("form-data");
 const mail = require("./mail");
 const socket = require("socket.io");
 const axios = require("axios");
+const dotenv = require("dotenv");
+dotenv.config();
 const fs = require("fs");
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\Node_backend>
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\frontend\my-app>
@@ -121,7 +123,7 @@ function writeFile(data, room) {
 
 let io = socket(server, {
   cors: {
-    origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
+    origin: [process.env.Frontend_url, process.env.Frontend_ip],
   },
 });
 
@@ -139,7 +141,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     // socket.join(room._id.toString());
 
     // write into the log_file
-    let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+    let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
 
     content = `${date} : ${user._id.toString()} : ${user.first_name} ${
       user.last_name
@@ -221,7 +223,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       
       
       if(fs.existsSync(`log_files/${room._id.toString()}.txt`)){
-      let date = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
       content = `${date} : ${user._id.toString()} : ${user.first_name} ${
         user.last_name
       } disconnected the room.\n`;
@@ -269,10 +271,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           user._id.toString(),
           user.first_name+' '+user.last_name
         );
-        let date = new Date()
-          .toISOString()
-          .replace(/T/, " ")
-          .replace(/\..+/, "");
+        let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
         content = `${date} : ${user._id.toString()} : ${user.first_name} ${
           user.last_name
         } browser Tracking: ${data}.\n`;
@@ -312,7 +311,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
 
       console.log(data, form);
 
-      let url = "http://127.0.0.1:4000/PyAudio";
+      let url = process.env.Flask_url + "/PyAudio";
       // await axios({
       //   method: "post",
       //   url: url,
@@ -343,10 +342,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
               user._id.toString(),
               user.first_name+' '+user.last_name
             );
-            let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+            let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Audio Tracking: ${response.data}.\n`;
@@ -422,7 +418,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           form.append("room", room._id.toString());
           form.append("file-type", "." + fileExt);
           const formHeaders = form.getHeaders();
-          const url = "http://127.0.0.1:4000/PyDocument";
+          const url = process.env.Flask_url + "/PyDocument";
           axios
             .post(url, form, {
               headers: {
@@ -465,10 +461,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             data["browser"]
           );
 
-          let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Settings have been changed : facial: ${data["facial-detection"]}, audio:${data["audio-detection"]}, browser:${data["browser"]}.\n`;
@@ -512,7 +505,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       form.append("text", user._id.toString());
       const formHeaders = form.getHeaders();
 
-      let url = "http://127.0.0.1:4000/PyImg";
+      let url = process.env.Flask_url+"/PyImg";
       await axios
         .post(url, form, {
           headers: {
@@ -530,10 +523,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
               user._id.toString(),
               user.first_name+' '+user.last_name
             );
-            let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+            let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
@@ -622,7 +612,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       //   }
       // );
       const formHeaders = form.getHeaders();
-      let url = "http://127.0.0.1:4000/PyVerify";
+      let url = process.env.Flask_url+"/PyVerify";
       await axios
         .post(url, form, {
           headers: {
@@ -639,10 +629,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             user._id.toString()
           );
 
-          let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } user verification : ${response.data}. \n`;
@@ -666,10 +653,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
 
     socket.on('remove-client', (id,name) => {
       socket.to(room._id.toString()).emit('remove-user',id);
-      let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${id} : ${name} has been removed from the room.\n`;
             writeFile(content,room._id.toString());
             io.to(socket.id).emit("logging", content);
@@ -684,10 +668,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           datax = checkroom(connectedUser, room._id.toString());
           connectedUser.splice(datax, 1);
 
-          let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } Room has been ended by Admin.\n`;
@@ -702,7 +683,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           )
 
 
-          axios.post('http://127.0.0.1:4000/DeleteDocument',{
+          axios.post(process.env.Flask_url + '/DeleteDocument',{
             id: room._id.toString()
           });
 
@@ -725,20 +706,14 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     });
 
     socket.on('tag-admin', (id,name,data) => {
-      let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${id} : ${name} has been ${data} by the admin.\n`;
             writeFile(content,room._id.toString());
             io.to(socket.id).emit("logging", content);
     });
 
     socket.on('tag-system', (id,name) => {
-      let date = new Date()
-              .toISOString()
-              .replace(/T/, " ")
-              .replace(/\..+/, "");
+      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${id} : ${name} has been tagged by the System.\n`;
             writeFile(content,room._id.toString());
             io.to(socket.id).emit("logging", content);
@@ -750,3 +725,5 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     });
   }
 );
+
+// https://ec2-35-172-200-95.compute-1.amazonaws.com:3000

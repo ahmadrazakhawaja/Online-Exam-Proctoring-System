@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-const imageUrl = "http://localhost:5000/test1";
+const imageUrl = process.env.REACT_APP_API_URL+"/test1";
 const imageUrl2 = "C:/Users/Hp/Desktop/demo_image.jpg";
 
 export default function ImgReturner() {

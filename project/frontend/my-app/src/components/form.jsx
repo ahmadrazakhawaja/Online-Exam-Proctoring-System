@@ -129,7 +129,7 @@ export default function Form(props) {
             }}
             // style={imagesubmit ? { opacity: "0.2" } : { opacity: "1" }}
           >
-            <h1 style={{ textAlign: "center" }}>{props.value}</h1>
+            <h1 style={{ textAlign: "center", fontWeight: 'bold' }}>{props.value}</h1>
             <form
               onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
             >

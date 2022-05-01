@@ -42,7 +42,7 @@ export default function Footer(params) {
       </div>
       <footer className="footer"></footer> */}
       <nav className="navbar fixed-bottom bg-dark"
-       style={{margin: "auto"}}>
+       style={{}}>
         <p
           className="navbar-brand text-center text-white"
           style={{ margin: "0 auto" }}

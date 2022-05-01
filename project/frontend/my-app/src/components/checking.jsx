@@ -111,19 +111,10 @@ function CheckPanel(props) {
         <br /> Make sure that your face is clearly visible and the room is well
         lit.
       </p>
-      <div
-        className="video-container"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="video"
-          // style={{ display: "flex", justifyContent: "center" }}
-        >
+        <div className="container">
+          <div className="row mt-5" style={{textAlign: 'center',alignItems: 'center', marginBottom: '100px',boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px' }}>
+            <div className="col-6">
+        <div className="video">
           {stream2 && (
             <video
               playsInline
@@ -162,15 +153,20 @@ function CheckPanel(props) {
                 <span className="visually-hidden">Loading...</span>
               </div>
             )}
-            <canvas
-              style={{ display: "block", marginTop: "5px" }}
+           
+          </div>
+        ) : null}
+          </div>
+          <div className="col-6">
+              {dimension.current.length > 0 ? (<canvas
+              style={{ display: "block", margin: 'auto'}}
               ref={canvasRef}
               width={dimension.current[0]}
               height={dimension.current[1]}
-            />
+            />) : null}
+            </div>
+            </div>
           </div>
-        ) : null}
-      </div>
       {/* {myVideo.current.videoWidth}
       {myVideo.current.videoHeight} */}
     </React.Fragment>

@@ -32,7 +32,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch("http://127.0.0.1:5000/roomRoutes/gethistory", {
+    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/gethistory", {
       method: "GET",
       headers: myHeaders,
       mode: "cors",
@@ -63,7 +63,9 @@ export default function UserPage(props) {
           //   submit: true,
           //   redirect: false,
           // });
+          if('Data not Available' !== json.header.message){
           setalert(json.header.message);
+          }
         }
         // }
       });
@@ -75,7 +77,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch("http://127.0.0.1:5000/roomRoutes/checkRoom", {
+    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/checkRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -99,7 +101,8 @@ export default function UserPage(props) {
               navigate(`/userpage/exam-room/${json.data.newRoom._id}`);
             }
             else{
-              navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
+              navigate(`/userpage/Checking/${json.data.newRoom._id}`);
+              // navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
             }
             
           } else {
@@ -128,7 +131,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch("http://127.0.0.1:5000/roomRoutes/checkRoom", {
+    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/checkRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -146,12 +149,13 @@ export default function UserPage(props) {
           localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // const room = JSON.parse(localStorage.getItem("room-info"));
-          // navigate(`/userpage/Checking/:id`);
+         
           if (json.data.newRoom._id) {
             if(json.data.newRoom.admin === true){
               navigate(`/userpage/exam-room/${json.data.newRoom._id}`);
             }
             else{
+              // navigate(`/userpage/Checking/${json.data.newRoom._id}`);
               navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
             }
           } else {
@@ -177,21 +181,31 @@ export default function UserPage(props) {
   return (
     <div className="container">
       {alert && <Alert alert={alert} setalert={setalert} />}
-      <h1 style={{ textAlign: "center" }}>Welcome {data.first_name}</h1>
-      <div className="user-grid" style={{ width: "100%",display : "grid",justifyContent : "center", alignContent :"center" }}>
+      <div className="row">
+      <h1 style={{ textAlign: "center", fontWeight: 'bold' }}>Welcome {data.first_name}</h1>
+      </div>
+
+      {/* <div className="user-grid" style={{ width: "100%",display : "grid",justifyContent : "center", alignContent :"center" }}> */}
+      <div className="row" style={{alignItems: 'center'}}>
+        <div className="col-6">
+        <img src="user_page-01.svg" style={{ maxHeight: '400px' }} alt="Robot Image" />
+        </div>
+        <div className="col-6">
         <div id = "create" className=" text-center" style={{marginTop : "10px" }}>
-          <button onClick={examset} className="btn btn-primary">
+          <button onClick={examset} className="btn btn-primary" style={{marginBottom: '5%'}}>
             Create Exam
           </button>
         </div>
-        <h4 className="text-center mic-info"style={{marginTop : "10px" }}>OR</h4>
+        <h4 className="text-center mic-info"style={{marginBottom : "5%" }}>OR</h4>
         <div id = "join" className="text-center" style={{marginTop : "10px" }}>
           <form
             onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
             // style={{ width: "20%", marginLeft: "40%" }}
           >
+            
             <div>
               <input
+              style={{width: '50%', margin: 'auto'}}
                 type="text"
                 className="form-control"
                 id="Room-id"
@@ -258,6 +272,6 @@ export default function UserPage(props) {
           </div>
         </div>
     </div>
-   
+   </div>
   );
 }

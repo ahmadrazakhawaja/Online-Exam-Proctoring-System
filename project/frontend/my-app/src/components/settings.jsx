@@ -173,6 +173,7 @@ export default function Setting(props) {
   const logout = () => {
     localStorage.removeItem("user-info");
     props.setLogIn(null);
+    navigate('/');
   };
 
   const displayModal = () => {
@@ -255,7 +256,7 @@ export default function Setting(props) {
   const deleteUser = () => {
     const myHeaders = new Headers();
     myHeaders.append("authorization", `Bearer ${data2.token}`);
-    fetch(`http://127.0.0.1:5000/routes/delete-user`, {
+    fetch(process.env.REACT_APP_API_URL+`/routes/delete-user`, {
       method: "DELETE",
       headers: myHeaders,
       mode: "cors",
@@ -366,7 +367,7 @@ export default function Setting(props) {
     // );
 
     // console.log(formData);
-    fetch(`http://127.0.0.1:5000/routes/profile`, {
+    fetch(process.env.REACT_APP_API_URL+`/routes/profile`, {
       method: "PUT",
       headers: myHeaders,
       mode: "cors",
@@ -400,10 +401,21 @@ export default function Setting(props) {
     event.preventDefault();
   };
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   return (
     <React.Fragment>
       {alert2()}
       {displayModal()}
+      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <Form
         elements={elements}
         default_values={default_value ? default_value : null}
@@ -415,6 +427,8 @@ export default function Setting(props) {
         delete={setmodal}
         value="Save"
       />
+      </div>
+      </div>
     </React.Fragment>
   );
 }

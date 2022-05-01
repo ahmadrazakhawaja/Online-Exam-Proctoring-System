@@ -14,12 +14,19 @@ function Socket(props) {
 
   useEffect(() => {
     if(data3 && data2){
-    const newSocket = io(`http://${window.location.hostname}:5000`, {
+    // const newSocket = io(`http://${window.location.hostname}:5000`, {
+    //   auth: {
+    //     token: data2.token,
+    //     room: data3._id,
+    //   },
+    // });
+    const newSocket = io(process.env.REACT_APP_API_URL, {
       auth: {
         token: data2.token,
         room: data3._id,
       },
     });
+    // process.env.REACT_APP_API_URL
   
     setSocket(newSocket);
   

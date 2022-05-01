@@ -92,11 +92,21 @@ export default function CandidatePersonal(props) {
         return null;
       }
     };
+    
+    useEffect(() => {
+      document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
   
+      return () => {
+        document.body.style.backgroundColor = "white";
+      };
+  
+    },[])
 
         return(
           <React.Fragment>
             {displayModal()}
+            <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
           <div className="container" style={{ opacity: modal ? "0.2" : "1" }}>
             <div className="row mt-3">
           <div className="col-4">
@@ -111,7 +121,7 @@ export default function CandidatePersonal(props) {
           <div className="col-4" style={{ textAlign: "center" }}>
             <span>{peer.name}</span>
             <span style={{ display: "block" }}>Roll Number: {peer.rollNum}</span>
-            <span style={{ display: "block" }}>{track && track.tag ? 'tagged' : null}</span>
+            <span style={{ display: "block",fontWeight: 'bold' }}>{track && track.tag ? 'tagged' : null}</span>
           </div>
         </div>
         <div className="row mt-3">
@@ -127,27 +137,27 @@ export default function CandidatePersonal(props) {
           </div>
           </div>
         </div>
-        <div className="row mt-3">
-          <div className="col-4">
+        <div className="row mt-3" style={{ textAlign: "center" }}>
+          <div className="col-4" >
           <div className="facial">
           <span>Facial Detection</span>
-          <span style={{ display: "block" }}>{track && track.facial ? track.facial : null}</span>
+          <span style={{ display: "block", fontWeight: 'bold' }}>{track && track.facial ? track.facial : null}</span>
           </div>
           </div>
           <div className="col-4">
           <div className="facial">
           <span>Audio Detection</span>
-          <span style={{ display: "block" }}>{track && track.audio ? track.audio : null}</span>
+          <span style={{ display: "block",fontWeight: 'bold' }}>{track && track.audio ? track.audio : null}</span>
           </div>
           </div>
           <div className="col-4">
           <div className="facial">
           <span>Browser</span>
-          <span style={{ display: "block" }}>{track && track.browser ? track.browser : null}</span>
+          <span style={{ display: "block",fontWeight: 'bold' }}>{track && track.browser ? track.browser : null}</span>
           </div>
           </div>
         </div>
-        <div className="row mt-3">
+        <div className="row mt-5 mb-3" style={{ textAlign: "center" }}>
         <div className="col-6">
         <button
               className="btn btn-primary"
@@ -166,6 +176,8 @@ export default function CandidatePersonal(props) {
           </div>
           </div>
            
+          </div>
+          </div>
           </div>
           </React.Fragment>
         );

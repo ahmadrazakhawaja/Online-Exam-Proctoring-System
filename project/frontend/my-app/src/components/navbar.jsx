@@ -113,7 +113,7 @@ export default function NavBar(props) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
-      <img src="/Logo-Blue.png" height="28" alt="CoolBrand"style={{height :61, width:65}} ></img>
+      <img src="/logo2-01.svg" height="28" alt="CoolBrand"style={{height :61, width:65}} ></img>
         <Link
           style={{
             fontWeight: "bold",

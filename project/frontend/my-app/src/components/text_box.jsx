@@ -13,8 +13,8 @@ export default function TextBox(props) {
       return (
         <React.Fragment>
           {props.element.description && <div>{props.element.description}</div>}
-          <div className="row">
-            <div className="col">
+          <div className="row g-0">
+            <div className="col-12">
               <div>
                 <label htmlFor={id}>{text}</label>
               </div>
@@ -50,7 +50,9 @@ export default function TextBox(props) {
 
               {props.errors[text] && props.errors[text].message}
             </div>
-            <div className="col">
+            </div>
+            <div className="row g-0">
+            <div className="col-12">
               <div>
                 <label htmlFor={id}>{props.element.text2}</label>
               </div>
@@ -87,7 +89,9 @@ export default function TextBox(props) {
               {props.errors[props.element.text2] &&
                 props.errors[props.element.text2].message}
             </div>
-          </div>
+            </div>
+          <div className="row g-0">
+            <div className="col-12">
           <div>
             <label htmlFor={id}>{props.element.text3}</label>
           </div>
@@ -123,6 +127,9 @@ export default function TextBox(props) {
 
           {props.errors[props.element.text3] &&
             props.errors[props.element.text3].message}
+            
+             </div>
+             </div>
         </React.Fragment>
       );
     } else if (type === "form-select") {
@@ -150,8 +157,8 @@ export default function TextBox(props) {
     }
     if (text === "First Name") {
       return (
-        <div className="row">
-          <div className="col">
+        <div className="row g-0">
+          <div className="col" style={{marginRight: '5px'}}>
             <label htmlFor={id}>
               {text}
               {props.element.verification.required ? "*" : null}
@@ -169,7 +176,7 @@ export default function TextBox(props) {
             {props.errors[text] && props.errors[text].message}
             {props.element.description}
           </div>
-          <div className="col">
+          <div className="col" style={{marginLeft: '5px'}}>
             <label htmlFor={props.element.id2}>
               {props.element.text2}
               {props.element.verification2.required ? "*" : null}

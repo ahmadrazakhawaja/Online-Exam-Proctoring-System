@@ -96,9 +96,18 @@ export default function LogIn(props) {
     return null;
   };
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   const handleSubmit = (data, event) => {
     console.log(data);
-    fetch("http://localhost:5000/routes/login", {
+    fetch(process.env.REACT_APP_API_URL+"/routes/login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       mode: "cors",
@@ -127,12 +136,17 @@ export default function LogIn(props) {
   return (
     <React.Fragment>
       {alert2()}
-      <Form
-        elements={elements}
-        // onChange={handlechange}
-        onSubmit={handleSubmit}
-        value="Log In"
-      />
+      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '60%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
+       
+        <Form
+          elements={elements}
+          // onChange={handlechange}
+          onSubmit={handleSubmit}
+          value="Log In"
+        />
+      </div>
+      </div>
     </React.Fragment>
   );
 }

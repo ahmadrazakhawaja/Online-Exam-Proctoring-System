@@ -12,7 +12,7 @@ const Welcome = (props) => {
     const myHeaders = new Headers();
     myHeaders.append("authorization", `Bearer ${confirmationCode}`);
     // myHeaders.append("content-Type", "application/json");
-    fetch("http://127.0.0.1:5000/routes/api/auth/confirm", {
+    fetch(process.env.REACT_APP_API_URL+"/routes/api/auth/confirm", {
       method: "GET",
       mode: "cors",
       headers: myHeaders,

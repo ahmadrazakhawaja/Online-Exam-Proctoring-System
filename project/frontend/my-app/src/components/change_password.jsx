@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useLocation, matchPath } from "react-router";
 import Form from "./form";
@@ -91,7 +91,7 @@ const ChangePassword = (props) => {
       const myHeaders = new Headers();
       myHeaders.append("authorization", `Bearer ${confirmationCode}`);
       myHeaders.append("content-Type", "application/json");
-      fetch("http://127.0.0.1:5000/routes/api/auth/change-password", {
+      fetch(process.env.REACT_APP_API_URL+"/routes/api/auth/change-password", {
         method: "POST",
         headers: myHeaders,
         mode: "cors",
@@ -126,9 +126,20 @@ const ChangePassword = (props) => {
   //     verifyuser(confirmationCode);
   //   }
 
+  useEffect(() => {
+    document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
+
+    return () => {
+      document.body.style.backgroundColor = "white";
+    };
+
+  },[])
+
   return (
     <React.Fragment>
       {alert2()}
+      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <Form
         elements={elements}
         // onChange={handlechange}
@@ -138,6 +149,8 @@ const ChangePassword = (props) => {
         value="Change Password"
         // navigate={navigate}
       />
+      </div>
+      </div>
     </React.Fragment>
   );
 };

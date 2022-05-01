@@ -15,6 +15,8 @@ const FormData = require("form-data");
 const axios = require("axios");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
+const dotenv = require("dotenv");
+dotenv.config();
 // uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
 
 const storage = multer.diskStorage({
@@ -110,7 +112,7 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
       form.append("room", newRoom._id.toString());
       form.append("file-type", path.extname(req.file.originalname));
       const formHeaders = form.getHeaders();
-      const url = "http://127.0.0.1:4000/PyDocument";
+      const url = process.env.Flask_url + "/PyDocument";
       await axios
         .post(url, form, {
           headers: {
@@ -144,7 +146,7 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
       newRoom.browserTracking[newRoom.browserTracking.length - 1];
     Room2.candidateLimit =
       newRoom.candidateLimit[newRoom.candidateLimit.length - 1];
-    (Room2.textFile = req.file.originalname || null), (Room2._id = newRoom._id.toString());
+    (Room2.textFile = req.file ? req.file.originalname : null), (Room2._id = newRoom._id.toString());
     console.log(Room2);
     
     const checkHistory = await UserHistory.find({
@@ -231,7 +233,28 @@ router.post("/createRoom", protect, upload.single("file"), async (req, res) => {
 // });
 
 router.post("/checkRoom", protect, async (req, res) => {
+
+  
+
   const room = await Room.findById(req.body.id);
+
+  if(room && room.ended === false && room.adminID.toString() !== req.User._id.toString() && req.User.rollNum === null){
+    return res.status(400).json({
+      header: {
+        message: "Roll Number not found. Please save Roll Number in settings first. ",
+        code: 0,
+      },
+    });
+  }
+  if(room && room.ended === false && room.adminID.toString() !== req.User._id.toString() && req.User.profileUrl.length === 0){
+    return res.status(400).json({
+      header: {
+        message: "Images not Found. Please first upload images in settings.",
+        code: 0,
+      },
+    });
+  }
+
   const Room2 = {};
   
   Room2.facialDetection = room.facialDetection[room.facialDetection.length - 1];
@@ -243,6 +266,7 @@ router.post("/checkRoom", protect, async (req, res) => {
   if(room.adminID.toString() === req.User._id.toString()){
     Room2.adminID = room.adminID.toString();
     Room2.textFile = room.textFile;
+    Room2.candidateLimit = room.candidateLimit[room.candidateLimit.length - 1];
     Room2.admin = true;
   }
   else{
@@ -266,6 +290,7 @@ router.post("/checkRoom", protect, async (req, res) => {
     }
     console.log( 'history',history);
   }
+  
   
 
   if (room && room.ended === false) {

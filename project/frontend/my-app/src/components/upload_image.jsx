@@ -160,7 +160,7 @@ const UploadImage = (props) => {
     const myHeaders = new Headers();
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     setalert("It may take a few seconds to upload the images.");
-    fetch("http://127.0.0.1:5000/routes/profile", {
+    fetch(process.env.REACT_APP_API_URL+"/routes/profile", {
       method: "PUT",
       headers: myHeaders,
       mode: "cors",
@@ -208,6 +208,8 @@ const UploadImage = (props) => {
     <React.Fragment>
       {alert2()}
       {displayModal()}
+      <div style={{display: 'flex', overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
+        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
       <Form
         elements={elements}
         // onChange={handlechange}
@@ -219,6 +221,8 @@ const UploadImage = (props) => {
         // navigate={navigate}
         opacity={modal ? '0.2':'1'}
       />
+    </div>
+    </div>
     </React.Fragment>
   );
 };
