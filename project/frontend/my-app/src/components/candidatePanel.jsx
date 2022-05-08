@@ -131,7 +131,7 @@ function CandidatePanel(props) {
             socket.emit("audio", audio.audioBlob);
             // audio.play();
             console.log("played");
-          }, 25000);
+          }, 12000);
         }
       }
     })();
@@ -162,7 +162,7 @@ function CandidatePanel(props) {
         );
 
         // context.clearRect(0, 0, context.width, context.width);
-      }, 20000);
+      }, 5000);
     }
     return () => {
       console.log("facial clear interval firing");
@@ -230,6 +230,27 @@ function CandidatePanel(props) {
         connectionRef.current = new Peer({
           initiator: true,
           trickle: false,
+          config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }, 
+          {
+            url: 'turn:54.227.23.157:3478',
+            credential: 'test123',
+            username: 'test',
+          },
+          { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    {
+      url: 'turn:turn.bistri.com:80',
+      credential: 'homeo',
+      username: 'homeo',
+    },
+    {
+      url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+      credential: 'webrtc',
+      username: 'webrtc',
+    }] },
           stream: stream2,
         });
         
@@ -350,6 +371,27 @@ function CandidatePanel(props) {
         connectionRef.current = new Peer({
           initiator: true,
           trickle: false,
+          config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }, 
+          {
+            url: 'turn:54.227.23.157:3478',
+            credential: 'test123',
+            username: 'test',
+          },
+          { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    {
+      url: 'turn:turn.bistri.com:80',
+      credential: 'homeo',
+      username: 'homeo',
+    },
+    {
+      url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+      credential: 'webrtc',
+      username: 'webrtc',
+    }] },
           stream: myVideo.current.srcObject,
         });
         setrestart((restart) => !restart);

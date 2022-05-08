@@ -273,7 +273,7 @@ router.post("/checkRoom", protect, async (req, res) => {
     Room2.admin = false;
   }
 
-  const checkHistory = await UserHistory.find({
+  let checkHistory = await UserHistory.find({
     UserID: req.User._id,
     RoomID: room._id
   });
@@ -284,11 +284,37 @@ router.post("/checkRoom", protect, async (req, res) => {
       RoomID: room._id
     });
     try {
-      await history.save()
+      checkHistory =  await history.save();
     } catch (error) {
       console.log(error)
     }
-    console.log( 'history',history);
+    console.log( 'history',checkHistory);
+
+    if (room && room.ended === false && room.adminID.toString() !== req.User._id.toString()) {
+      return res.status(200).json({
+        header: {
+          message: "Join Room",
+          code: 2,
+        },
+        data: {
+          newRoom: Room2,
+        },
+      });
+    }
+
+  }
+  else{
+    if (room && room.ended === false && room.adminID.toString() !== req.User._id.toString() && checkHistory[0].Verified === false) {
+      return res.status(200).json({
+        header: {
+          message: "Join Room",
+          code: 2,
+        },
+        data: {
+          newRoom: Room2,
+        },
+      });
+    }
   }
   
   

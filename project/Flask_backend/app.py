@@ -6,23 +6,15 @@
 
 # from os import name
 import os
-import copy
-import json
 from pyexpat import model
-from mongoengine import *
-from flask import Flask, render_template, url_for, jsonify, make_response, request
-from user.db2 import student
-from user.model import getmodel,predict_image,predict_image2
+from flask import Flask, render_template, request
+from user.model import getmodel,predict_image2
 from user.audio import upload,checkCompletion,checkQuestion
-from passlib.hash import pbkdf2_sha256
 from user.wordGen import create_txt
 from flask_cors import CORS
 from user.facial_matching import match_faces
-import boto3
-from user.aws_access import get_aws
-import base64
 import urllib.request
-from PIL import Image
+from waitress import serve
 
 # get_aws()
 app = Flask(__name__)
@@ -87,106 +79,119 @@ def get_image():
 
 @app.route("/PyVerify", methods=["GET", "POST"])
 def hello_worldz():
-    print("chk1")
-    # datax = request.get_json()
-    # print(datax)
-    # image_data = datax['image_string']
-    print(request.form)
-    id = request.form['text']
-    image = request.files['image']
+    try:
+        print("chk1")
+        # datax = request.get_json()
+        # print(datax)
+        # image_data = datax['image_string']
+        print(request.form)
+        id = request.form['text']
+        image = request.files['image']
 
-    url0 = request.form.get('url0')
-    url1 = request.form.get('url1')
-    url2 = request.form.get('url2')
-    image.save('user/images/'+id+'.jpg')
-    result = []
-    print(len(result),result, 'initial check')
-    size = (533,300)
+        url0 = request.form.get('url0')
+        url1 = request.form.get('url1')
+        url2 = request.form.get('url2')
+        image.save('user/images/'+id+'.jpg')
+        result = []
+        print(len(result),result, 'initial check')
+        size = (533,300)
 
-    if url0:
-        urllib.request.urlretrieve(url0,'user/images/'+id+'-url0.jpg')
-        # im = Image.open('user/images/'+id+'-url0.jpg')
-        # im2 = im.resize(size)
-        # im2.show()
-        # im2.save('user/images/'+id+'-url0.jpg')
-        resultx = match_faces(id+'-url0.jpg',id+'.jpg')
-        result.append(resultx)
-        os.remove('user/images/'+id+'-url0.jpg')
+        if url0:
+            urllib.request.urlretrieve(url0,'user/images/'+id+'-url0.jpg')
+            # im = Image.open('user/images/'+id+'-url0.jpg')
+            # im2 = im.resize(size)
+            # im2.show()
+            # im2.save('user/images/'+id+'-url0.jpg')
+            resultx = match_faces(id+'-url0.jpg',id+'.jpg')
+            result.append(resultx)
+            os.remove('user/images/'+id+'-url0.jpg')
 
-    
-    if url1:
-        urllib.request.urlretrieve(url1,'user/images/'+id+'-url1.jpg')
-        # im = Image.open('user/images/'+id+'-url0.jpg')
-        # im.resize(size)
-        resultx = match_faces(id+'-url1.jpg',id+'.jpg')
-        result.append(resultx)
-        os.remove('user/images/'+id+'-url1.jpg')
+        
+        if url1:
+            urllib.request.urlretrieve(url1,'user/images/'+id+'-url1.jpg')
+            # im = Image.open('user/images/'+id+'-url0.jpg')
+            # im.resize(size)
+            resultx = match_faces(id+'-url1.jpg',id+'.jpg')
+            result.append(resultx)
+            os.remove('user/images/'+id+'-url1.jpg')
 
-    if url2:
-        urllib.request.urlretrieve(url2,'user/images/'+id+'-url2.jpg')
-        resultx = match_faces(id+'-url2.jpg',id+'.jpg')
-        result.append(resultx)
-        os.remove('user/images/'+id+'-url2.jpg')
-    
-    print(len(result),result)
-    count = 0
-    for i in result:
-        if i == True:
-            count = count + 1
+        if url2:
+            urllib.request.urlretrieve(url2,'user/images/'+id+'-url2.jpg')
+            resultx = match_faces(id+'-url2.jpg',id+'.jpg')
+            result.append(resultx)
+            os.remove('user/images/'+id+'-url2.jpg')
+        
+        print(len(result),result)
+        count = 0
+        for i in result:
+            if i == True:
+                count = count + 1
 
-    if count >= 2:
-        return str(True)
-    else:
+        if count >= 2:
+            return str(True)
+        else:
+            return str(False)
+
+    except:
         return str(False)
     
 
 
 @app.route("/PyImg", methods=["GET", "POST"])
 def hello_worldx():
-    print("chk1")
-    print(request.form)
-    id = request.form['text']
-    image = request.files['image']
+    try:
+        print("chk1")
+        print(request.form)
+        id = request.form['text']
+        image = request.files['image']
 
-    image.save('user/images/'+id+'.jpg')
+        image.save('user/images/'+id+'.jpg')
 
-    val = predict_image2(id+'.jpg',model)
-    print(val)
-    os.remove('user/images/'+id+'.jpg')
-    return str(val)
+        val = predict_image2(id+'.jpg',model)
+        print(val)
+        os.remove('user/images/'+id+'.jpg')
+        return str(val), 200
+
+    except:
+        return str(False)
 
 
 
 @app.route("/PyDocument", methods=["GET", "POST"])
 def hello_worlds():
-    print("chk1")
-    print(request.form)
-    id = request.form['room']
-    document = request.files['document']
-    type = request.form['file-type']
+    try:
+        print("chk1")
+        print(request.form)
+        id = request.form['room']
+        document = request.files['document']
+        type = request.form['file-type']
+        
+        document.save('user/question_papers/'+id+type)
+        create_txt(id,type)
+
+        os.remove('user/question_papers/'+id+type)
+
+
     
-    document.save('user/question_papers/'+id+type)
-    create_txt(id,type)
 
-    os.remove('user/question_papers/'+id+type)
+        return str(True), 200
 
-
-    
-
-    return str(True)
+    except:
+        return str(False)
 
 
 @app.route("/DeleteDocument", methods=["GET","POST"])
 def hello_worldccc():
-    print("chk1")
-    data = request.get_json(force=True)
-    print(data)
-    print(data['id'])
     try:
+        print("chk1")
+        data = request.get_json(force=True)
+        print(data)
+        print(data['id'])
         os.remove('user/question_papers/'+data['id']+'.txt')
+        return str(True), 200
     except:
         print('file not found')
-    return str(True)
+        return str(False),200
 
 
 @app.route("/PyAudio", methods=["GET", "POST"])
@@ -196,48 +201,55 @@ def hello_worldy():
     # audio = request.files['audio'].stream.read()
     # print(request.form)
     # audio_dict = request.get_data()
-    id = request.form['text']
-    data = request.files['audio']
-    room = request.form['id']
-    # print(data)
-    data.save('user/audio/'+id+'.m4a')
-    # print(audio_dict)
-    # new_audio = audio_dict[142:len(audio_dict)]
-    # new_audio = new_audio[0:len(new_audio)-56]
-    # id = new_audio[len(new_audio)-26:len(new_audio)-2]
-    # id = id.decode("utf-8")
-    # new_audio = new_audio[0:len(new_audio)-127]
-    # print(new_audio)
-    # print(id)
-    # print(new)
-    # with open('user/audio/' + str(id) + '.m4a', "wb") as file:
-    #     file.write(data)
+    try:
+        id = request.form['text']
+        data = request.files['audio']
+        room = request.form['id']
+        # print(data)
+        data.save('user/audio/'+id+'.m4a')
+        # print(audio_dict)
+        # new_audio = audio_dict[142:len(audio_dict)]
+        # new_audio = new_audio[0:len(new_audio)-56]
+        # id = new_audio[len(new_audio)-26:len(new_audio)-2]
+        # id = id.decode("utf-8")
+        # new_audio = new_audio[0:len(new_audio)-127]
+        # print(new_audio)
+        # print(id)
+        # print(new)
+        # with open('user/audio/' + str(id) + '.m4a', "wb") as file:
+        #     file.write(data)
 
-    data1 = upload(id + '.m4a')
-    print(data1)
-    data2 = checkCompletion(data1)
-    print(data2)
-    data3 = checkQuestion(data2,room)
-    print(data3)
-    result = ''
-    print(data3['total_count'])
+        data1 = upload(id + '.m4a')
+        print(data1)
+        data2 = checkCompletion(data1)
+        print(data2)
+        data3 = checkQuestion(data2,room)
+        print(data3)
+        result = ''
+        print(data3['total_count'])
 
-    if data3['total_count'] == 0:
-        result= 'Not detected'
-    elif data3['total_count'] <= 3:
-        result = 'low'
-    elif data3['total_count'] <= 6:
-        result = 'medium'
-    else:
-        result = 'high'
+        if data3['total_count'] == 0:
+            result= 'Not detected'
+        elif data3['total_count'] <= 3:
+            result = 'low'
+        elif data3['total_count'] <= 6:
+            result = 'medium'
+        else:
+            result = 'high'
+        
+        os.remove('user/audio/'+id+'.m4a')
+        # data = upload('Re')
+        # data = checkCompletion(data)
+        # data = checkQuestion(data,'he')
+        return result
+
+    except:
+        return str(False)
     
-    os.remove('user/audio/'+id+'.m4a')
-    # data = upload('Re')
-    # data = checkCompletion(data)
-    # data = checkQuestion(data,'he')
-    return result
-    
-
+if __name__ == "__main__":
+    #app.run(host='0.0.0.0')
+    #We now use this syntax to server our app. 
+    serve(app, host='0.0.0.0', port=4000)
   
 
 # @app.route("/printDB", methods=["GET"])

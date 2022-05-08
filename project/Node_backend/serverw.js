@@ -1,5 +1,3 @@
-require("./models/userHistory.js");
-
 const express = require("express");
 const FormData = require("form-data");
 const mail = require("./mail");
@@ -8,8 +6,6 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
-const mongoose = require("mongoose");
-const UserHistory = mongoose.model("History");
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\Node_backend>
 // C:\Users\Hp\Desktop\Years\FYP\Fyp_group\Fyp_project\fyp_project\project\frontend\my-app>
 const app = express();
@@ -136,6 +132,8 @@ let io = socket(server, {
     origin: [process.env.Frontend_url, process.env.Frontend_ip],
   },
 });
+
+// let io = socket(server);
 
 const { protect2 } = require("./middleware/auth_socket");
 
@@ -341,7 +339,11 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           console.log("response", response.data);
           datax = checkroom(connectedUser, room._id.toString());
           if (datax !== -1) {
-            if(response.data !== 'False'){
+            io.to(connectedUser[datax].socket_id).emit(
+              "Audio-response",
+              response.data,
+              user._id.toString()
+            );
             io.to(connectedUser[datax].socket_id).emit(
               "Audio-response",
               response.data,
@@ -359,7 +361,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
               user._id.toString()
             );
           }
-        }
           // res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
@@ -524,7 +525,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           console.log("response", response.data);
           datax = checkroom(connectedUser, room._id.toString());
           if (datax !== -1) {
-            if(response.data !== 'False'){
             io.to(connectedUser[datax].socket_id).emit(
               "facial-response",
               response.data,
@@ -539,8 +539,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             writeFile(content, room._id.toString());
 
             io.to(connectedUser[datax].socket_id).emit("logging", content);
-
-          }
           }
           // res.send(JSON.stringify(response.data));
         })
@@ -571,14 +569,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       //     "Content-Type": "multipart/form-data",
       //   },
       // };
-      if(data === null){
-        io.to(socket.id).emit(
-          "media-verified",
-          'Image Not recieved',
-          user._id.toString()
-        );
-        return;
-      }
       fs.writeFileSync(
         `image_files/${user._id.toString()}.jpg`,
         data,
@@ -644,9 +634,9 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           io.to(socket.id).emit(
             "media-verified",
             response.data,
-            room._id.toString()
+            user._id.toString()
           );
-            if(response.data === 'True'){
+
           let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
@@ -654,21 +644,6 @@ io.use((socket, next) => protect2(socket, next, io)).on(
 
             writeFile(content, room._id.toString());
             io.to(connectedUser[datax].socket_id).emit("logging", content);
-
-            UserHistory.findOne({
-              UserID: user._id.toString(),
-              RoomID: room._id.toString()
-            }).then((history) => {
-              console.log(history);
-              history.Verified = true;
-              history.save();
-            })
-          }
-            
-
-            
-            
-
 
           // res.send(JSON.stringify(response.data));
         })

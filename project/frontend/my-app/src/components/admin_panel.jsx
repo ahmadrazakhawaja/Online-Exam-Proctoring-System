@@ -212,6 +212,7 @@ function Panel(props) {
       track2.id = id;
       console.log(track2);
       settrack(track2,name);
+    });
 
       socket.on("Audio-response", (data, id,name) => {
         console.log("audio-response", data, id);
@@ -264,7 +265,7 @@ function Panel(props) {
 
       //   setpeerlist(() => [...peer3, peer2]);
       // }
-    });
+    
 
     socket.on("callUser", (data) => {
       console.log("recv-calluser");
@@ -298,6 +299,27 @@ function Panel(props) {
         peer: new Peer({
           initiator: false,
           trickle: false,
+          config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }, 
+          {
+            url: 'turn:54.227.23.157:3478',
+            credential: 'test123',
+            username: 'test',
+          },
+          { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    {
+      url: 'turn:turn.bistri.com:80',
+      credential: 'homeo',
+      username: 'homeo',
+    },
+    {
+      url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+      credential: 'webrtc',
+      username: 'webrtc',
+    }] },
         }),
         caller: data.from,
         CallerSignal: data.signal,
@@ -516,8 +538,9 @@ function Panel(props) {
           track2 = { ...track2, tag: Score.tag };
           if(Score.tag === true){
             setlastCandidate(name);
+            socket.emit('tag-system',track2.id,name);
           }
-          socket.emit('tag-system',track2.id,name);
+          
         }
         if (track.browser) {
           track2 = { ...track2, browser: track.browser };
@@ -682,7 +705,7 @@ function Panel(props) {
     }
     
     console.log(average, sum,tracks.current.length);
-    return [count,average,count2];
+    return [count,Math.round(average),count2];
   }
 
     const { id2 } = useParams();
@@ -817,9 +840,9 @@ function Panel(props) {
                   }
                   {room.browserTracking && 
                                 <div className="col">
-                              <div id="browser" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
+                              <div id="Browser" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
 
-                                  <img src = "/browser.png"
+                                  <img src = "/Browser.png"
                                   style={{width : 30, height :30}}></img>
                                   </div>
                                   <div>
@@ -839,7 +862,7 @@ function Panel(props) {
                                 <div className="col">
                               <div id="mic" className="icon" style={{borderTop: '2px solid black',borderBottom: '2px solid black',paddingTop: '4%',paddingBottom: '4%'}}>
 
-                                  <img src = "/Microphone.png"
+                                  <img src = "/microphone.png"
                                   style={{width : 30, height :30}}></img>
                                   </div>
                                   <div>

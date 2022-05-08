@@ -39,6 +39,7 @@
 .btn {
   border-radius: 15px !important;
   padding: 0.375rem 3.75rem !important;
+  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px, rgb(0 0 0 / 30%) 0px 30px 60px -30px, rgb(10 37 64 / 35%) 0px -2px 6px 0px inset;
 }
 
 hr {

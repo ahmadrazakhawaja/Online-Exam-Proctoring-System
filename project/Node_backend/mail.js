@@ -29,7 +29,7 @@ module.exports.sendConfirmationEmail = (
         html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
           <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-          <a href=http://localhost:3000/confirm/${confirmationCode}> Click here</a>
+          <a href=${process.env.Frontend_url}/confirm/${confirmationCode}> Click here</a>
           </div>`,
       })
       .catch((err) => console.log(err));
@@ -65,7 +65,7 @@ module.exports.sendConfirmationEmail = (
         html: `<h1>Change Password</h1>
           <h2>Hello ${name}</h2>
           <p>In order to change your password please click on the following link.</p>
-          <a href=http://localhost:3000/change-password/${confirmationCode}> Click here</a>
+          <a href=${process.env.Frontend_url}/change-password/${confirmationCode}> Click here</a>
           </div>`,
       })
       .catch((err) => console.log(err));

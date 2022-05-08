@@ -38,10 +38,10 @@ function CheckPanel(props) {
         setAlert(err.message);
       });
 
-    const checkverification = (data) => {
+    const checkverification = (data,id) => {
       console.log(data);
       if (data === "True") {
-        navigate("/userpage/exam-room/:id/candidate");
+        navigate(`/userpage/exam-room/${id}/candidate`);
       } else if (data === "False") {
         setAlert("Image not verified. please send again.");
         setloading(false);

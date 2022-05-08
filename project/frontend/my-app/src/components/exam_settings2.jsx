@@ -364,7 +364,7 @@ export default function AdminSettings(props) {
               <input
                 type="submit"
                 className="btn btn-primary mt-3"
-                style={{ width: "25%" }}
+                style={{ width: "250px" }}
                 value="Save Settings"
               />
             </div>
@@ -374,7 +374,7 @@ export default function AdminSettings(props) {
           <button
             onClick={() => setmodal(true)}
             className="btn btn-danger mt-3"
-            style={{ width: "25%", marginBottom: "100px" }}
+            style={{ width: "250px", marginBottom: "100px" }}
           >
             End Exam
           </button>

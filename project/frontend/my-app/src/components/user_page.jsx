@@ -101,14 +101,19 @@ export default function UserPage(props) {
               navigate(`/userpage/exam-room/${json.data.newRoom._id}`);
             }
             else{
-              navigate(`/userpage/Checking/${json.data.newRoom._id}`);
+              navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
               // navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
             }
             
           } else {
             setalert("room not available");
           }
-        } else {
+        }
+        else if(json.header.code === 2){
+          localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+          navigate(`/userpage/Checking/${json.data.newRoom._id}`);
+        }
+         else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
           //   // props.setLogIn(localStorage.getItem("user-info"));
@@ -161,7 +166,12 @@ export default function UserPage(props) {
           } else {
             setalert("room not available");
           }
-        } else {
+        }
+        else if(json.header.code === 2){
+          localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
+          navigate(`/userpage/Checking/${json.data.newRoom._id}`);
+        }
+         else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
           //   // props.setLogIn(localStorage.getItem("user-info"));
