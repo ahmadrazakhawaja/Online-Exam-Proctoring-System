@@ -101,19 +101,13 @@ padding-bottom: 10px !important ;
     overflow-y: scroll; */
   }
   
-
-  div > div {
-    /* padding: 10px; */
-    /* background-color: #ccc; */
-  }
-
   /* div > div {
     padding: 10px; 
     background-color: #F6F6F7;
   } */
    
 
-  /* .grid-cheating-info{
+  .grid-cheating-info{
     margin-top: 5px;
     display: grid;
     gap: 1px;
@@ -137,9 +131,8 @@ padding-bottom: 10px !important ;
     padding: 2px;
     border-bottom: 1px solid #d3d3d3;
     font-weight: bolder;
-} */
+}
 
 /* #mic{
     background-color: red;
 } */
-
