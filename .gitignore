@@ -7,7 +7,7 @@ project/.DS_Store
 project/frontend/my-app/node_modules
 project/Node_backend/node_modules
 .env
-project/Node_backend/image_files
+# project/Node_backend/image_files
 project/Flask_backend/user/aws_access.py
 project/Flask_backend/user/db.py
 project/Flask_backend/user/db2.py
