@@ -46,6 +46,12 @@ Make sure you have installed:
    Show all dependencies
    `pip freeze`
 
+   Create a requirements.txt file with all dependencies
+   `pip freeze > requirements.txt`
+
+   Install all dependencies
+   `pip install -r requirements.txt`
+
 6. **Activate Node backend**:<br>
    go to Node_backend folder (Need to have Node.js installed on device)
    `cd project/Node_backend`
