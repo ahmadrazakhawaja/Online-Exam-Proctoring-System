@@ -230,30 +230,35 @@ function CandidatePanel(props) {
         connectionRef.current = new Peer({
           initiator: true,
           trickle: false,
-          config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }, 
-          {
-            url: 'turn:54.227.23.157:3478',
-            credential: 'test123',
-            username: 'test',
+          config: {
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
+              {
+                url: "turn:3.90.56.99:3478",
+                credential: "test123",
+                username: "test",
+              },
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:stun1.l.google.com:19302" },
+              { urls: "stun:stun2.l.google.com:19302" },
+              { urls: "stun:stun3.l.google.com:19302" },
+              { urls: "stun:stun4.l.google.com:19302" },
+              {
+                url: "turn:turn.bistri.com:80",
+                credential: "homeo",
+                username: "homeo",
+              },
+              {
+                url: "turn:turn.anyfirewall.com:443?transport=tcp",
+                credential: "webrtc",
+                username: "webrtc",
+              },
+            ],
           },
-          { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stun4.l.google.com:19302' },
-    {
-      url: 'turn:turn.bistri.com:80',
-      credential: 'homeo',
-      username: 'homeo',
-    },
-    {
-      url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-      credential: 'webrtc',
-      username: 'webrtc',
-    }] },
           stream: stream2,
         });
-        
+
         console.log("hellox");
       })
       .catch(function (err) {
@@ -371,27 +376,32 @@ function CandidatePanel(props) {
         connectionRef.current = new Peer({
           initiator: true,
           trickle: false,
-          config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }, 
-          {
-            url: 'turn:54.227.23.157:3478',
-            credential: 'test123',
-            username: 'test',
+          config: {
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
+              {
+                url: "turn:3.90.56.99:3478",
+                credential: "test123",
+                username: "test",
+              },
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:stun1.l.google.com:19302" },
+              { urls: "stun:stun2.l.google.com:19302" },
+              { urls: "stun:stun3.l.google.com:19302" },
+              { urls: "stun:stun4.l.google.com:19302" },
+              {
+                url: "turn:turn.bistri.com:80",
+                credential: "homeo",
+                username: "homeo",
+              },
+              {
+                url: "turn:turn.anyfirewall.com:443?transport=tcp",
+                credential: "webrtc",
+                username: "webrtc",
+              },
+            ],
           },
-          { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stun4.l.google.com:19302' },
-    {
-      url: 'turn:turn.bistri.com:80',
-      credential: 'homeo',
-      username: 'homeo',
-    },
-    {
-      url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-      credential: 'webrtc',
-      username: 'webrtc',
-    }] },
           stream: myVideo.current.srcObject,
         });
         setrestart((restart) => !restart);
@@ -410,18 +420,17 @@ function CandidatePanel(props) {
     //   connectionRef.current.destroy();
     // };
     const removeUser = (id) => {
-      if(id === user.user_id){
+      if (id === user.user_id) {
         setalert("You are removed from the room by admin.");
-      setTimeout(() => {
-        navigate("/userpage");
-      }, 5000);
+        setTimeout(() => {
+          navigate("/userpage");
+        }, 5000);
       }
-    }
-    
-    socket.on('remove-user',removeUser)
+    };
+
+    socket.on("remove-user", removeUser);
 
     document.body.style.backgroundColor = "hsl(210, 12%, 90%)";
-
 
     return () => {
       const peer = connectionRef.current;
@@ -489,12 +498,16 @@ function CandidatePanel(props) {
       <div className="container">
         <div className="row mt-3">
           <div className="col-12" style={{ textAlign: "center" }}>
-            <span style={{fontSize: '20px', fontWeight: 'bold'}}>Exam Room</span>
-            <span style={{ display: "block" }}>Room ID: <b>{room._id}</b> </span>
+            <span style={{ fontSize: "20px", fontWeight: "bold" }}>
+              Exam Room
+            </span>
+            <span style={{ display: "block" }}>
+              Room ID: <b>{room._id}</b>{" "}
+            </span>
           </div>
         </div>
         <div className="row mt-3">
-          <div className="col-12" style={{textAlign: 'center'}}>
+          <div className="col-12" style={{ textAlign: "center" }}>
             {/* <canvas style="display:none" id="preview"></canvas> */}
             {/* <video
             src={videoRef.current}
@@ -505,7 +518,17 @@ function CandidatePanel(props) {
             id="video"
             muted
           /> */}
-            <div className="video-container" style={{alignItems: 'center', flexDirection: 'column' ,justifyContent: 'center', backgroundColor: 'white',margin: 'auto' , width: '80%'}}>
+            <div
+              className="video-container"
+              style={{
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                backgroundColor: "white",
+                margin: "auto",
+                width: "80%",
+              }}
+            >
               <div className="video">
                 {stream && (
                   <video
@@ -518,8 +541,9 @@ function CandidatePanel(props) {
                   />
                 )}
               </div>
-              <div className="mt-3" style={{color: 'red'}}>You are being monitored</div>
-              
+              <div className="mt-3" style={{ color: "red" }}>
+                You are being monitored
+              </div>
             </div>
             <canvas
               style={{ display: "block" }}
@@ -528,7 +552,6 @@ function CandidatePanel(props) {
               height={62}
             />
             <canvas style={{ display: "none" }} id="preview"></canvas>
-            
           </div>
         </div>
       </div>

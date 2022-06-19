@@ -32,7 +32,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/gethistory", {
+    fetch(process.env.REACT_APP_API_URL + "/roomRoutes/gethistory", {
       method: "GET",
       headers: myHeaders,
       mode: "cors",
@@ -44,14 +44,13 @@ export default function UserPage(props) {
       .then((json) => {
         console.log(json.header.message);
         if (json.header.code === 1) {
-          if(json.data.RoomData){
-          console.log(json.data.RoomData);
-          sethistory(json.data.RoomData);
+          if (json.data.RoomData) {
+            console.log(json.data.RoomData);
+            sethistory(json.data.RoomData);
           }
           // localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // const room = JSON.parse(localStorage.getItem("room-info"));
           // navigate(`/userpage/Checking/:id`);
-          
         } else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
@@ -63,13 +62,13 @@ export default function UserPage(props) {
           //   submit: true,
           //   redirect: false,
           // });
-          if('Data not Available' !== json.header.message){
-          setalert(json.header.message);
+          if ("Data not Available" !== json.header.message) {
+            setalert(json.header.message);
           }
         }
         // }
       });
-  }, [])
+  }, []);
 
   const onSubmit = (data, event) => {
     const data2 = JSON.parse(localStorage.getItem("user-info"));
@@ -77,7 +76,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/checkRoom", {
+    fetch(process.env.REACT_APP_API_URL + "/roomRoutes/checkRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -97,23 +96,21 @@ export default function UserPage(props) {
           // const room = JSON.parse(localStorage.getItem("room-info"));
           // navigate(`/userpage/Checking/:id`);
           if (json.data.newRoom._id) {
-            if(json.data.newRoom.admin === true){
+            if (json.data.newRoom.admin === true) {
               navigate(`/userpage/exam-room/${json.data.newRoom._id}`);
-            }
-            else{
-              navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
+            } else {
+              navigate(
+                `/userpage/exam-room/${json.data.newRoom._id}/candidate`
+              );
               // navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
             }
-            
           } else {
             setalert("room not available");
           }
-        }
-        else if(json.header.code === 2){
+        } else if (json.header.code === 2) {
           localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           navigate(`/userpage/Checking/${json.data.newRoom._id}`);
-        }
-         else {
+        } else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
           //   // props.setLogIn(localStorage.getItem("user-info"));
@@ -136,7 +133,7 @@ export default function UserPage(props) {
     myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/checkRoom", {
+    fetch(process.env.REACT_APP_API_URL + "/roomRoutes/checkRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -154,24 +151,23 @@ export default function UserPage(props) {
           localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           // const room = JSON.parse(localStorage.getItem("room-info"));
-         
+
           if (json.data.newRoom._id) {
-            if(json.data.newRoom.admin === true){
+            if (json.data.newRoom.admin === true) {
               navigate(`/userpage/exam-room/${json.data.newRoom._id}`);
-            }
-            else{
+            } else {
               // navigate(`/userpage/Checking/${json.data.newRoom._id}`);
-              navigate(`/userpage/exam-room/${json.data.newRoom._id}/candidate`);
+              navigate(
+                `/userpage/exam-room/${json.data.newRoom._id}/candidate`
+              );
             }
           } else {
             setalert("room not available");
           }
-        }
-        else if(json.header.code === 2){
+        } else if (json.header.code === 2) {
           localStorage.setItem("room-info", JSON.stringify(json.data.newRoom));
           navigate(`/userpage/Checking/${json.data.newRoom._id}`);
-        }
-         else {
+        } else {
           // if (json.header.message === "User Made") {
           //   // localStorage.setItem("user-info", JSON.stringify(json.data));
           //   // props.setLogIn(localStorage.getItem("user-info"));
@@ -192,96 +188,116 @@ export default function UserPage(props) {
     <div className="container">
       {alert && <Alert alert={alert} setalert={setalert} />}
       <div className="row">
-      <h1 style={{ textAlign: "center", fontWeight: 'bold' }}>Welcome {data.first_name}</h1>
+        <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
+          Welcome {data.first_name}
+        </h1>
       </div>
 
       {/* <div className="user-grid" style={{ width: "100%",display : "grid",justifyContent : "center", alignContent :"center" }}> */}
-      <div className="row" style={{alignItems: 'center'}}>
+      <div className="row" style={{ alignItems: "center" }}>
         <div className="col-6">
-        <img src="user_page-01.svg" style={{ maxHeight: '400px' }} alt="Robot Image" />
+          <img
+            src="user_page-01.svg"
+            style={{ maxHeight: "400px" }}
+            alt="Robot Image"
+          />
         </div>
         <div className="col-6">
-        <div id = "create" className=" text-center" style={{marginTop : "10px" }}>
-          <button onClick={examset} className="btn btn-primary" style={{marginBottom: '5%'}}>
-            Create Exam
-          </button>
-        </div>
-        <h4 className="text-center mic-info"style={{marginBottom : "5%" }}>OR</h4>
-        <div id = "join" className="text-center" style={{marginTop : "10px" }}>
-          <form
-            onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
-            // style={{ width: "20%", marginLeft: "40%" }}
+          <div
+            id="create"
+            className="text-center"
+            style={{ marginTop: "10px" }}
           >
-            
-            <div>
-              <input
-              style={{width: '50%', margin: 'auto'}}
-                type="text"
-                className="form-control"
-                id="Room-id"
-                // value={value}
-                // onChange={(event) => onChange(props.element, event)}
-                aria-describedby="Room-id"
-                placeholder="Enter Room-id"
-                {...register("room-id", {
-                  required: {
-                    value: true,
-                    message: "Room ID is required",
-                  },
-                  minLength: {
-                    value: 24,
-                    message: "Length should be of 24 digits",
-                  },
-                  maxLength: {
-                    value: 24,
-                    message: "Length should be of 24 digits",
-                  },
-                })}
-              />
-              {errors["room-id"] && errors["room-id"].message}
-            </div>
-            <input
-              type="submit"
-              className="btn btn-primary mt-3"
-              // style={{ margin: "0 auto", marginBottom: "100px" }}
-              value="Join Exam"
-            />
-          </form>
-        </div>
-        
-      </div>
-      <div className="row mt-5">
-          <div className="col-12">
-            <h2><b>User History</b></h2>
-          <table className="table" style={{ marginBottom: '100px' }}>
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">id</th>
-                <th scope="col">Time Started</th>
-                <th scope="col">Ended</th>
-              </tr>
-            </thead>
-            <tbody>
-            {userHistory.map((element) => (
+            <button
+              onClick={examset}
+              className="btn btn-primary"
+              style={{ marginBottom: "5%" }}
+            >
+              Create Exam
+            </button>
+          </div>
+          <h4 className="text-center mic-info" style={{ marginBottom: "5%" }}>
+            OR
+          </h4>
+          <div id="join" className="text-center" style={{ marginTop: "10px" }}>
+            <form
+              onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
+              // style={{ width: "20%", marginLeft: "40%" }}
+            >
+              <div>
+                <input
+                  style={{ width: "50%", margin: "auto" }}
+                  type="text"
+                  className="form-control formy"
+                  id="Room-id"
+                  // value={value}
+                  // onChange={(event) => onChange(props.element, event)}
+                  aria-describedby="Room-id"
+                  placeholder="Enter Room-id"
+                  {...register("room-id", {
+                    required: {
+                      value: true,
+                      message: "Room ID is required",
+                    },
+                    minLength: {
+                      value: 24,
+                      message: "Length should be of 24 digits",
+                    },
+                    maxLength: {
+                      value: 24,
+                      message: "Length should be of 24 digits",
+                    },
+                  })}
+                />
+                {errors["room-id"] && errors["room-id"].message}
+              </div>
 
-              <tr key={element.id} id="hov" onClick={!element.ended ? () => JoinRoom(element.roomid) : null}>
-                <th scope="row">{element.id}</th>
-                <td>{element.roomid}</td>
-                <td>{element.timeStarted
-                .replace(/T/, " ")
-                .replace(/\..+/, "")}</td>
-                <td>{element.ended.toString()}</td>
-              </tr>
-              
-                
-
-             ) )}
-             </tbody>
-</table>
+              <button className="btn btn-primary mt-3" type="submit">
+                Join Exam
+              </button>
+            </form>
           </div>
         </div>
+        <div className="row mt-5">
+          <div className="col-12">
+            <h2>
+              <b>User History</b>
+            </h2>
+            <div className="table-responsive">
+              <table className="table" style={{ marginBottom: "100px" }}>
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">id</th>
+                    <th scope="col">Time Started</th>
+                    <th scope="col">Ended</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userHistory.map((element) => (
+                    <tr
+                      key={element.id}
+                      id="hov"
+                      onClick={
+                        !element.ended ? () => JoinRoom(element.roomid) : null
+                      }
+                    >
+                      <th scope="row">{element.id}</th>
+                      <td>{element.roomid}</td>
+                      <td>
+                        {element.timeStarted
+                          .replace(/T/, " ")
+                          .replace(/\..+/, "")}
+                      </td>
+                      <td>{element.ended.toString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-   </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Form from "./form";
 import Modal from "./modal";
@@ -53,7 +53,7 @@ const ChangePassword2 = (props) => {
 
   const logout = () => {
     props.setLogIn(null);
-    navigate('/');
+    navigate("/");
   };
 
   const displayModal = () => {
@@ -158,7 +158,7 @@ const ChangePassword2 = (props) => {
     const myHeaders = new Headers();
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     myHeaders.append("content-Type", "application/json");
-    fetch(process.env.REACT_APP_API_URL+"/routes/profile", {
+    fetch(process.env.REACT_APP_API_URL + "/routes/profile", {
       method: "PUT",
       headers: myHeaders,
       mode: "cors",
@@ -202,26 +202,45 @@ const ChangePassword2 = (props) => {
     return () => {
       document.body.style.backgroundColor = "white";
     };
-
-  },[])
+  }, []);
 
   return (
     <React.Fragment>
       {alert2()}
       {displayModal()}
-      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
-        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
-      <Form
-        elements={elements}
-        // onChange={handlechange}
-        onSubmit={handleSubmit}
-        opacity={modal ? "0.2" : "1"}
-        // formSubmit={formsubmit}
-        // setformSubmit={setsubmit}
-        value="Change Password"
-        // navigate={navigate}
-      />
-      </div>
+      <div
+        style={{
+          display: "flex",
+          overflow: "scroll",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <div
+          className="formy"
+          style={{
+            marginBottom: "100px",
+            width: "80%",
+            backgroundColor: "white",
+            borderRadius: "15px",
+            boxShadow:
+              "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          }}
+        >
+          <Form
+            elements={elements}
+            // onChange={handlechange}
+            onSubmit={handleSubmit}
+            opacity={modal ? "0.2" : "1"}
+            // formSubmit={formsubmit}
+            // setformSubmit={setsubmit}
+            value="Change Password"
+            // navigate={navigate}
+          />
+        </div>
       </div>
     </React.Fragment>
   );

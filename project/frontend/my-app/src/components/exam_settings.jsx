@@ -110,7 +110,7 @@ export default function ExamSettings(props) {
     // myHeaders.append("content-Type", "application/json");
     myHeaders.append("authorization", `Bearer ${data2.token}`);
     console.log(data);
-    fetch(process.env.REACT_APP_API_URL+"/roomRoutes/createRoom", {
+    fetch(process.env.REACT_APP_API_URL + "/roomRoutes/createRoom", {
       method: "POST",
       headers: myHeaders,
       mode: "cors",
@@ -149,133 +149,159 @@ export default function ExamSettings(props) {
     return () => {
       document.body.style.backgroundColor = "white";
     };
-
-  },[])
+  }, []);
 
   return (
     <div>
       {alert2()}
-      <div style={{display: 'flex', overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
-        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
-      <div className="mt-3">
-        <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
-          Exam Settings
-        </h1>
-      </div>
-      <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
-        <div className="container">
-          <div className="row mt-5" >
-            <div className="col-4">
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                style={{marginLeft: '4em', marginRight: '1em'}}
-                id="flexSwitchCheckDefault"
-                {...register("facial-detection")}
-              />
-              <label
-                className="form-check-label"
-                htmlFor="flexSwitchCheckDefault"
-              >
-                Facial Detection
-              </label>
-              </div>
-            </div>
-
-            <div className="form-check form-switch col-4">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                style={{marginLeft: '4em', marginRight: '1em'}}
-                id="flexSwitchCheckDefault"
-                {...register("audio-detection")}
-              />
-              <label
-                className="form-check-label"
-                htmlFor="flexSwitchCheckDefault"
-              >
-                Audio Detection
-              </label>
-            </div>
-            <div className="form-check form-switch col-4">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                style={{marginLeft: '4em', marginRight: '1em'}}
-                id="flexSwitchCheckDefault"
-                {...register("browser")}
-              />
-              <label
-                className="form-check-label"
-                htmlFor="flexSwitchCheckDefault"
-              >
-                Browser Tracking
-              </label>
-            </div>
+      <div
+        style={{
+          display: "flex",
+          overflow: "scroll",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <div
+          className="formy"
+          style={{
+            marginBottom: "100px",
+            width: "80%",
+            backgroundColor: "white",
+            borderRadius: "15px",
+            boxShadow:
+              "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          }}
+        >
+          <div className="mt-3">
+            <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
+              Exam Settings
+            </h1>
           </div>
-
-          <div className="row mt-5" style={{alignItems: 'center'}}>
-            <div className="col-6 text-center" style={{ position: "relative" }}>
-              <div
-                className="mx-auto mt-auto"
-                style={{
-                  width: "50%",
-                }}
-              >
-                <input
-                  type="number"
-                  className="form-control"
-                  id="candidate-limit"
-                  // value={value}
-                  // onChange={(event) => onChange(props.element, event)}
-                  aria-describedby="Room-id"
-                  placeholder="Enter candidate limit"
-                  {...register("candidate-limit", {
-                    required: {
-                      value: true,
-                      message: "candidate limit is Required",
-                    },
-                  })}
-                />
-                {errors["candidate-limit"] && errors["candidate-limit"].message}
+          <form onSubmit={handleSubmit((data, event) => onSubmit(data, event))}>
+            <div className="container">
+              <div className="row mt-5">
+                <div className="col-4">
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input formz"
+                      type="checkbox"
+                      style={{ marginLeft: "4em", marginRight: "1em" }}
+                      id="flexSwitchCheckDefault"
+                      {...register("facial-detection")}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexSwitchCheckDefault"
+                    >
+                      Facial Detection
+                    </label>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input formz"
+                      type="checkbox"
+                      style={{ marginLeft: "4em", marginRight: "1em" }}
+                      id="flexSwitchCheckDefault"
+                      {...register("audio-detection")}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexSwitchCheckDefault"
+                    >
+                      Audio Detection
+                    </label>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input formz"
+                      type="checkbox"
+                      style={{ marginLeft: "4em", marginRight: "1em" }}
+                      id="flexSwitchCheckDefault"
+                      {...register("browser")}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexSwitchCheckDefault"
+                    >
+                      Browser Tracking
+                    </label>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="col-6 text-center">
-              <h5>Upload Question Paper: </h5>
-              <input
-                type="file"
-                className="form-control-file btn btn-primary btn-sm mb-2"
-                id="file-upload"
-                // onChange={props.uploadfile()}
-                // value={value}
-                // onChange={(event) => onChange(props.element, event)}
-                aria-describedby="Upload Question Paper"
-                placeholder="Upload Question Paper"
-                accept="text/plain application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                // onChange={(e) => props.submitx(e)}
-                {...register("file-upload", {
-                  validate: (value) => {
-                    if (value && value[0]) {
-                      console.log(value[0].size);
-                      if (value[0].size > 2000000) {
-                        return "File size should be less than 2MB.";
-                      }
-                      if (
-                        value[0].type ===
-                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                        value[0].type === "text/plain"
-                      ) {
-                      } else {
-                        return "File should be txt or Docx type.";
-                      }
-                    }
-                  },
-                })}
-              />
-              {errors["file-upload"] && errors["file-upload"].message}
-            </div>
-            {/* <div className="col-6 text-center">
+
+              <div className="row mt-5" style={{ alignItems: "center" }}>
+                <div
+                  className="col-6 text-center"
+                  style={{ position: "relative" }}
+                >
+                  <div
+                    className="mx-auto mt-auto formy"
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="candidate-limit"
+                      // value={value}
+                      // onChange={(event) => onChange(props.element, event)}
+                      aria-describedby="Room-id"
+                      placeholder="Enter candidate limit"
+                      {...register("candidate-limit", {
+                        required: {
+                          value: true,
+                          message: "candidate limit is Required",
+                        },
+                      })}
+                    />
+                    {errors["candidate-limit"] &&
+                      errors["candidate-limit"].message}
+                  </div>
+                </div>
+                <div className="col-6 text-center">
+                  <h5>Upload Question Paper: </h5>
+                  <input
+                    type="file"
+                    className="form-control-file btn btn-primary btn-sm mb-2"
+                    id="file-upload"
+                    // onChange={props.uploadfile()}
+                    // value={value}
+                    // onChange={(event) => onChange(props.element, event)}
+                    aria-describedby="Upload Question Paper"
+                    placeholder="Upload Question Paper"
+                    accept="text/plain application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    // onChange={(e) => props.submitx(e)}
+                    {...register("file-upload", {
+                      validate: (value) => {
+                        if (value && value[0]) {
+                          console.log(value[0].size);
+                          if (value[0].size > 2000000) {
+                            return "File size should be less than 2MB.";
+                          }
+                          if (
+                            value[0].type ===
+                              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                            value[0].type === "text/plain"
+                          ) {
+                          } else {
+                            return "File should be txt or Docx type.";
+                          }
+                        }
+                      },
+                    })}
+                  />
+                  {errors["file-upload"] && errors["file-upload"].message}
+                </div>
+                {/* <div className="col-6 text-center">
               <h5>Exam End Time: </h5>
               <div className="mx-auto" style={{ width: "50%" }}>
                 <input
@@ -296,19 +322,30 @@ export default function ExamSettings(props) {
                 {errors["time-limit"] && errors["time-limit"].message}
               </div>
             </div> */}
-            <div className="row justify-content-center mt-5">
-              <input
-                type="submit"
-                className="btn btn-primary mt-3"
-                style={{ width: "25%", marginBottom: "100px" }}
-                value="Create Exam"
-              />
+                <div className="row justify-content-center mt-5">
+                  {/* <input
+                    type="submit"
+                    className="btn btn-primary mt-3"
+                    style={{ width: "25%", marginBottom: "100px" }}
+                    value="Create Exam"
+                  /> */}
+
+                  <button
+                    className="btn btn-primary mt-3 formy"
+                    type="submit"
+                    style={{
+                      width: "25%",
+                      marginBottom: "100px",
+                    }}
+                  >
+                    Create Exam
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
-    </div>
+      </div>
     </div>
   );
 }

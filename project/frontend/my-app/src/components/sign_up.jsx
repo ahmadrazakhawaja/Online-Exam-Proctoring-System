@@ -8,7 +8,7 @@ export default function SignUp(props) {
   // const [formsubmit, setsubmit] = useState(false);
 
   const getInstitutes = () => {
-    fetch(process.env.REACT_APP_API_URL+"/routes/ListInstitutes", {
+    fetch(process.env.REACT_APP_API_URL + "/routes/ListInstitutes", {
       method: "GET",
       mode: "cors",
     })
@@ -346,8 +346,7 @@ export default function SignUp(props) {
     return () => {
       document.body.style.backgroundColor = "white";
     };
-
-  },[])
+  }, []);
 
   // useEffect(() => {
   //   if (localStorage.getItem("user-info")) {
@@ -368,7 +367,7 @@ export default function SignUp(props) {
   const handleSubmit = (data, event) => {
     console.log(data);
     console.log(data["Email Address"]);
-    fetch(process.env.REACT_APP_API_URL+"/routes/adduser", {
+    fetch(process.env.REACT_APP_API_URL + "/routes/adduser", {
       method: "POST",
       headers: new Headers({ "content-Type": "application/json" }),
       mode: "cors",
@@ -406,18 +405,38 @@ export default function SignUp(props) {
   return (
     <React.Fragment>
       {alert2()}
-      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
-        <div style={{ marginBottom: '100px', width: '60%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
-      <Form
-        elements={elements}
-        // onChange={handlechange}
-        onSubmit={handleSubmit}
-        // formSubmit={formsubmit}
-        // setformSubmit={setsubmit}
-        value="Sign Up"
-        navigate={navigate}
-      />
-      </div>
+      <div
+        style={{
+          display: "flex",
+          overflow: "scroll",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <div
+          className="formy"
+          style={{
+            marginBottom: "100px",
+            width: "60%",
+            backgroundColor: "white",
+            borderRadius: "15px",
+            boxShadow:
+              "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          }}
+        >
+          <Form
+            elements={elements}
+            // onChange={handlechange}
+            onSubmit={handleSubmit}
+            // formSubmit={formsubmit}
+            // setformSubmit={setsubmit}
+            value="Sign Up"
+            navigate={navigate}
+          />
+        </div>
       </div>
     </React.Fragment>
   );

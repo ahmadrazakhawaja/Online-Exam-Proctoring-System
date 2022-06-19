@@ -83,8 +83,6 @@ export default function Form(props) {
   //   reader.readAsDataURL(picture2[0]);
   // }
 
- 
-
   // if (props.formSubmit === true) {
   //   document.body.style.opacity = "0.2";
   // } else {
@@ -120,6 +118,7 @@ export default function Form(props) {
       <React.Fragment>
         <div>
           <div
+            className="formx"
             style={{
               width: "50%",
               margin: "0 auto",
@@ -129,7 +128,9 @@ export default function Form(props) {
             }}
             // style={imagesubmit ? { opacity: "0.2" } : { opacity: "1" }}
           >
-            <h1 style={{ textAlign: "center", fontWeight: 'bold' }}>{props.value}</h1>
+            <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
+              {props.value}
+            </h1>
             <form
               onSubmit={handleSubmit((data, event) => onSubmit(data, event))}
             >
@@ -196,11 +197,9 @@ export default function Form(props) {
                   textAlign: "center",
                 }}
               >
-                <input
-                  className="btn btn-danger btn-md m-2"
-                  type="submit"
-                  value={props.value === "Change Password" ? "OK" : props.value}
-                />
+                <button className="btn btn-danger btn-md m-2" type="submit">
+                  {props.value === "Change Password" ? "OK" : props.value}
+                </button>
               </div>
               {/* {props.image && (
                 <img
@@ -260,6 +259,7 @@ export default function Form(props) {
           <div className="row">
             <div className="col" style={{ width: "100%" }}>
               <div
+                className="formx"
                 style={{
                   // width: "50%",
                   marginLeft: "10%",
@@ -337,11 +337,9 @@ export default function Form(props) {
                       textAlign: "center",
                     }}
                   >
-                    <input
-                      className="btn btn-danger btn-md m-2"
-                      type="submit"
-                      value={props.value}
-                    />
+                    <button className="btn btn-danger btn-md m-2" type="submit">
+                      {props.value}
+                    </button>
                   </div>
                 </form>
               </div>

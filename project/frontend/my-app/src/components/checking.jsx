@@ -38,7 +38,7 @@ function CheckPanel(props) {
         setAlert(err.message);
       });
 
-    const checkverification = (data,id) => {
+    const checkverification = (data, id) => {
       console.log(data);
       if (data === "True") {
         navigate(`/userpage/exam-room/${id}/candidate`);
@@ -90,7 +90,9 @@ function CheckPanel(props) {
   function handleClear() {
     const context = canvasRef.current.getContext("2d");
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    imgdata.current = null;
     setIsCanvasEmpty(true);
+
     // onClear();
   }
 
@@ -111,62 +113,76 @@ function CheckPanel(props) {
         <br /> Make sure that your face is clearly visible and the room is well
         lit.
       </p>
-        <div className="container">
-          <div className="row mt-5" style={{textAlign: 'center',alignItems: 'center', marginBottom: '100px',boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px' }}>
-            <div className="col-6">
-        <div className="video">
-          {stream2 && (
-            <video
-              playsInline
-              muted
-              id="video"
-              ref={myVideo}
-              autoPlay
-              style={{ width: "300px" }}
-            />
-          )}
-        </div>
-        {dimension.current.length > 0 ? (
-          <div style={{ textAlign: "center" }}>
-            <button
-              className="btn btn-primary"
-              onClick={isCanvasEmpty ? takeImage : handleClear}
-              type="submit"
-              style={{ marginRight: "5px" }}
-            >
-              {isCanvasEmpty ? "Take Image" : "Clear Image"}
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={sendImage}
-              type="submit"
-            >
-              Verify
-            </button>
-            {/* <img id="imagex"></img> */}
-            {loading && (
-              <div
-                className="spinner-border"
-                style={{ display: "block", margin: "0 auto", marginTop: "2%" }}
-                role="status"
-              >
-                <span className="visually-hidden">Loading...</span>
+      <div className="container">
+        <div
+          className="row mt-5"
+          style={{
+            textAlign: "center",
+            alignItems: "center",
+            marginBottom: "100px",
+            boxShadow:
+              "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          }}
+        >
+          <div className="col-6">
+            <div className="video">
+              {stream2 && (
+                <video
+                  playsInline
+                  muted
+                  id="video"
+                  ref={myVideo}
+                  autoPlay
+                  style={{ width: "300px" }}
+                />
+              )}
+            </div>
+            {dimension.current.length > 0 ? (
+              <div style={{ textAlign: "center" }}>
+                <button
+                  className="btn btn-primary"
+                  onClick={isCanvasEmpty ? takeImage : handleClear}
+                  type="submit"
+                  style={{ marginRight: "5px" }}
+                >
+                  {isCanvasEmpty ? "Take Image" : "Clear Image"}
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={sendImage}
+                  type="submit"
+                >
+                  Verify
+                </button>
+                {/* <img id="imagex"></img> */}
+                {loading && (
+                  <div
+                    className="spinner-border"
+                    style={{
+                      display: "block",
+                      margin: "0 auto",
+                      marginTop: "2%",
+                    }}
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                )}
               </div>
-            )}
-           
-          </div>
-        ) : null}
+            ) : null}
           </div>
           <div className="col-6">
-              {dimension.current.length > 0 ? (<canvas
-              style={{ display: "block", margin: 'auto'}}
-              ref={canvasRef}
-              width={dimension.current[0]}
-              height={dimension.current[1]}
-            />) : null}
-            </div>
-            </div>
+            {dimension.current.length > 0 ? (
+              <canvas
+                style={{ display: "block", margin: "auto" }}
+                ref={canvasRef}
+                width={dimension.current[0]}
+                height={dimension.current[1]}
+              />
+            ) : null}
           </div>
+        </div>
+      </div>
       {/* {myVideo.current.videoWidth}
       {myVideo.current.videoHeight} */}
     </React.Fragment>

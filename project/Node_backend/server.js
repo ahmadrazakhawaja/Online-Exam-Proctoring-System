@@ -18,7 +18,7 @@ const app = express();
 // store its path in database which flask can then access.
 
 // Store Images in S3 bucket () save img link in database and then flask will use that to access img
-const path = require('path');
+const path = require("path");
 app.use(express.json());
 // const port = 5000
 let port = process.env.PORT;
@@ -97,10 +97,10 @@ app.get("/image/:imgName", async (req, res) => {
   res.status(200).json({ msg: "Working", returners });
 });
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, "build")));
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.get("/", (req, res) => {
@@ -151,7 +151,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     // socket.join(room._id.toString());
 
     // write into the log_file
-    let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
+    let date = new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" });
 
     content = `${date} : ${user._id.toString()} : ${user.first_name} ${
       user.last_name
@@ -218,7 +218,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           from: socket.id,
           user_id: user._id.toString(),
           name: `${user.first_name} ${user.last_name}`,
-          rollNum: `${user.rollNum}`
+          rollNum: `${user.rollNum}`,
         });
       }
     });
@@ -230,38 +230,39 @@ io.use((socket, next) => protect2(socket, next, io)).on(
     socket.on("disconnect", (reason) => {
       // console.log("disconnect");
       // socket.broadcast.emit("callEnded");
-      
-      
-      if(fs.existsSync(`log_files/${room._id.toString()}.txt`)){
-      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-      content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-        user.last_name
-      } disconnected the room.\n`;
 
-      writeFile(content, room._id.toString());
+      if (fs.existsSync(`log_files/${room._id.toString()}.txt`)) {
+        let date = new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Karachi",
+        });
+        content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+          user.last_name
+        } disconnected the room.\n`;
 
-      datax = checkroom(connectedUser, room._id.toString());
-      console.log(
-        "disconnect",
-        reason,
-        user._id.toString(),
-        room.adminID.toString(),
-        socket.id
-      );
-      if (user._id.toString() === room.adminID.toString()) {
-        console.log("enter null");
-        // console.log(connectedUser);
-        connectedUser.splice(datax, 1);
-        // console.log(connectedUser);
-      } else {
-        if (connectedUser[datax] && connectedUser[datax].socket_id !== null) {
-          io.to(connectedUser[datax].socket_id).emit(
-            "disconnectx",
-            user._id.toString()
-          );
-          io.to(connectedUser[datax].socket_id).emit("logging", content);
+        writeFile(content, room._id.toString());
+
+        datax = checkroom(connectedUser, room._id.toString());
+        console.log(
+          "disconnect",
+          reason,
+          user._id.toString(),
+          room.adminID.toString(),
+          socket.id
+        );
+        if (user._id.toString() === room.adminID.toString()) {
+          console.log("enter null");
+          // console.log(connectedUser);
+          connectedUser.splice(datax, 1);
+          // console.log(connectedUser);
+        } else {
+          if (connectedUser[datax] && connectedUser[datax].socket_id !== null) {
+            io.to(connectedUser[datax].socket_id).emit(
+              "disconnectx",
+              user._id.toString()
+            );
+            io.to(connectedUser[datax].socket_id).emit("logging", content);
+          }
         }
-      }
       }
     });
 
@@ -279,9 +280,11 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           "browser-track",
           data,
           user._id.toString(),
-          user.first_name+' '+user.last_name
+          user.first_name + " " + user.last_name
         );
-        let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
+        let date = new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Karachi",
+        });
         content = `${date} : ${user._id.toString()} : ${user.first_name} ${
           user.last_name
         } browser Tracking: ${data}.\n`;
@@ -341,25 +344,27 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           console.log("response", response.data);
           datax = checkroom(connectedUser, room._id.toString());
           if (datax !== -1) {
-            if(response.data !== 'False'){
-            io.to(connectedUser[datax].socket_id).emit(
-              "Audio-response",
-              response.data,
-              user._id.toString(),
-              user.first_name+' '+user.last_name
-            );
-            let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-              user.last_name
-            } Audio Tracking: ${response.data}.\n`;
-            writeFile(content, room._id.toString());
-            io.to(connectedUser[datax].socket_id).emit(
-              "logging",
-              content,
-              user._id.toString()
-            );
+            if (response.data !== "False") {
+              io.to(connectedUser[datax].socket_id).emit(
+                "Audio-response",
+                response.data,
+                user._id.toString(),
+                user.first_name + " " + user.last_name
+              );
+              let date = new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Karachi",
+              });
+              content = `${date} : ${user._id.toString()} : ${
+                user.first_name
+              } ${user.last_name} Audio Tracking: ${response.data}.\n`;
+              writeFile(content, room._id.toString());
+              io.to(connectedUser[datax].socket_id).emit(
+                "logging",
+                content,
+                user._id.toString()
+              );
+            }
           }
-        }
           // res.send(JSON.stringify(response.data));
         })
         .catch(function (error) {
@@ -449,34 +454,37 @@ io.use((socket, next) => protect2(socket, next, io)).on(
         console.log(Room);
         Room.save().then(() => {
           const Room2 = {};
-        (Room2.adminID = user._id.toString()),
-          (Room2.facialDetection = data["facial-detection"]);
-        Room2.audioDetection = data["audio-detection"];
-        Room2.browserTracking = data["browser"];
-        Room2.candidateLimit = data["candidate-limit"];
-        console.log('file namee check' ,data["name"],room.textFile);
-        (Room2.textFile = data["name"] || room.textFile),
-          (Room2._id = room._id.toString());
-        
-        io.to(connectedUser[datax].socket_id).emit("setting-set", Room2);
-        socket
-          .to(room._id.toString())
-          .emit(
-            "monitor",
-            data["facial-detection"],
-            data["audio-detection"],
-            data["browser"]
-          );
+          (Room2.adminID = user._id.toString()),
+            (Room2.facialDetection = data["facial-detection"]);
+          Room2.audioDetection = data["audio-detection"];
+          Room2.browserTracking = data["browser"];
+          Room2.candidateLimit = data["candidate-limit"];
+          console.log("file namee check", data["name"], room.textFile);
+          (Room2.textFile = data["name"] || room.textFile),
+            (Room2._id = room._id.toString());
 
-          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-              user.last_name
-            } Settings have been changed : facial: ${data["facial-detection"]}, audio:${data["audio-detection"]}, browser:${data["browser"]}.\n`;
+          io.to(connectedUser[datax].socket_id).emit("setting-set", Room2);
+          socket
+            .to(room._id.toString())
+            .emit(
+              "monitor",
+              data["facial-detection"],
+              data["audio-detection"],
+              data["browser"]
+            );
 
-            writeFile(content, room._id.toString());
-            io.to(connectedUser[datax].socket_id).emit("logging", content);
+          let date = new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Karachi",
+          });
+          content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+            user.last_name
+          } Settings have been changed : facial: ${
+            data["facial-detection"]
+          }, audio:${data["audio-detection"]}, browser:${data["browser"]}.\n`;
+
+          writeFile(content, room._id.toString());
+          io.to(connectedUser[datax].socket_id).emit("logging", content);
         });
-        
       }
     });
 
@@ -512,7 +520,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       form.append("text", user._id.toString());
       const formHeaders = form.getHeaders();
 
-      let url = process.env.Flask_url+"/PyImg";
+      let url = process.env.Flask_url + "/PyImg";
       await axios
         .post(url, form, {
           headers: {
@@ -524,23 +532,26 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           console.log("response", response.data);
           datax = checkroom(connectedUser, room._id.toString());
           if (datax !== -1) {
-            if(response.data !== 'False'){
-            io.to(connectedUser[datax].socket_id).emit(
-              "facial-response",
-              response.data,
-              user._id.toString(),
-              user.first_name+' '+user.last_name
-            );
-            let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-              user.last_name
-            } Facial Tracking: ${parseInt(response.data * 100)}%.\n`;
+            if (response.data !== "False") {
+              io.to(connectedUser[datax].socket_id).emit(
+                "facial-response",
+                response.data,
+                user._id.toString(),
+                user.first_name + " " + user.last_name
+              );
+              let date = new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Karachi",
+              });
+              content = `${date} : ${user._id.toString()} : ${
+                user.first_name
+              } ${user.last_name} Facial Tracking: ${parseInt(
+                response.data * 100
+              )}%.\n`;
 
-            writeFile(content, room._id.toString());
+              writeFile(content, room._id.toString());
 
-            io.to(connectedUser[datax].socket_id).emit("logging", content);
-
-          }
+              io.to(connectedUser[datax].socket_id).emit("logging", content);
+            }
           }
           // res.send(JSON.stringify(response.data));
         })
@@ -571,10 +582,11 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       //     "Content-Type": "multipart/form-data",
       //   },
       // };
-      if(data === null){
+      console.log('media verifying',data);
+      if (data === null) {
         io.to(socket.id).emit(
           "media-verified",
-          'Image Not recieved',
+          "Image Not recieved",
           user._id.toString()
         );
         return;
@@ -630,7 +642,7 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       //   }
       // );
       const formHeaders = form.getHeaders();
-      let url = process.env.Flask_url+"/PyVerify";
+      let url = process.env.Flask_url + "/PyVerify";
       await axios
         .post(url, form, {
           headers: {
@@ -646,8 +658,10 @@ io.use((socket, next) => protect2(socket, next, io)).on(
             response.data,
             room._id.toString()
           );
-            if(response.data === 'True'){
-          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
+          if (response.data === "True") {
+            let date = new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Karachi",
+            });
             content = `${date} : ${user._id.toString()} : ${user.first_name} ${
               user.last_name
             } user verification : ${response.data}. \n`;
@@ -657,18 +671,13 @@ io.use((socket, next) => protect2(socket, next, io)).on(
 
             UserHistory.findOne({
               UserID: user._id.toString(),
-              RoomID: room._id.toString()
+              RoomID: room._id.toString(),
             }).then((history) => {
               console.log(history);
               history.Verified = true;
               history.save();
-            })
+            });
           }
-            
-
-            
-            
-
 
           // res.send(JSON.stringify(response.data));
         })
@@ -681,15 +690,16 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       fs.rm(`image_files/${user._id.toString()}.jpg`, (err) => {
         console.log(err);
       });
-      
     });
 
-    socket.on('remove-client', (id,name) => {
-      socket.to(room._id.toString()).emit('remove-user',id);
-      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${id} : ${name} has been removed from the room.\n`;
-            writeFile(content,room._id.toString());
-            io.to(socket.id).emit("logging", content);
+    socket.on("remove-client", (id, name) => {
+      socket.to(room._id.toString()).emit("remove-user", id);
+      let date = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Karachi",
+      });
+      content = `${date} : ${id} : ${name} has been removed from the room.\n`;
+      writeFile(content, room._id.toString());
+      io.to(socket.id).emit("logging", content);
     });
 
     socket.on("end-exam", () => {
@@ -701,40 +711,34 @@ io.use((socket, next) => protect2(socket, next, io)).on(
           datax = checkroom(connectedUser, room._id.toString());
           connectedUser.splice(datax, 1);
 
-          let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${user._id.toString()} : ${user.first_name} ${
-              user.last_name
-            } Room has been ended by Admin.\n`;
-            writeFile(content,room._id.toString());
-            io.to(socket.id).emit("logging", content);
-          
+          let date = new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Karachi",
+          });
+          content = `${date} : ${user._id.toString()} : ${user.first_name} ${
+            user.last_name
+          } Room has been ended by Admin.\n`;
+          writeFile(content, room._id.toString());
+          io.to(socket.id).emit("logging", content);
+
           mail.sendConfirmationEmail(
             user.first_name,
             user.email,
             room._id.toString(),
             "log_file"
-          )
+          );
 
-
-          axios.post(process.env.Flask_url + '/DeleteDocument',{
-            id: room._id.toString()
-          }).then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-
-            
-
-            
-
-            
-         
-          
-          
+          axios
+            .post(process.env.Flask_url + "/DeleteDocument", {
+              id: room._id.toString(),
+            })
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
-        
+
         // .then(() => {
         //   fs.rmSync(`log_files/${room._id.toString()}.txt`, (err) => {
         //       console.log(err);
@@ -743,18 +747,22 @@ io.use((socket, next) => protect2(socket, next, io)).on(
       }
     });
 
-    socket.on('tag-admin', (id,name,data) => {
-      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${id} : ${name} has been ${data} by the admin.\n`;
-            writeFile(content,room._id.toString());
-            io.to(socket.id).emit("logging", content);
+    socket.on("tag-admin", (id, name, data) => {
+      let date = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Karachi",
+      });
+      content = `${date} : ${id} : ${name} has been ${data} by the admin.\n`;
+      writeFile(content, room._id.toString());
+      io.to(socket.id).emit("logging", content);
     });
 
-    socket.on('tag-system', (id,name) => {
-      let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-            content = `${date} : ${id} : ${name} has been tagged by the System.\n`;
-            writeFile(content,room._id.toString());
-            io.to(socket.id).emit("logging", content);
+    socket.on("tag-system", (id, name) => {
+      let date = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Karachi",
+      });
+      content = `${date} : ${id} : ${name} has been tagged by the System.\n`;
+      writeFile(content, room._id.toString());
+      io.to(socket.id).emit("logging", content);
     });
 
     // Handle typing event

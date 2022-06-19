@@ -16,7 +16,7 @@
 .overlay {
   position: absolute;
   background: rgb(0, 0, 0);
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   color: #f1f1f1;
   bottom: 30%;
   width: 80%;
@@ -39,7 +39,9 @@
 .btn {
   border-radius: 15px !important;
   padding: 0.375rem 3.75rem !important;
-  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px, rgb(0 0 0 / 30%) 0px 30px 60px -30px, rgb(10 37 64 / 35%) 0px -2px 6px 0px inset;
+  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px,
+    rgb(0 0 0 / 30%) 0px 30px 60px -30px,
+    rgb(10 37 64 / 35%) 0px -2px 6px 0px inset;
 }
 
 hr {
@@ -56,3 +58,26 @@ hr {
 .dropdown-menu-dark {
   left: -68px;
 }
+
+@media (min-width: 320px) and (max-width: 575px) {
+  .formx {
+    width: 90% !important;
+  }
+  /* div {
+    width: 100%;
+  } */
+
+  .formy {
+    width: 100% !important;
+  }
+
+  .formz {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* table {
+  width: 100%;
+  table-layout: fixed;
+} */

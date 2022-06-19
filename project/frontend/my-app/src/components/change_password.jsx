@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useLocation, matchPath } from "react-router";
 import Form from "./form";
@@ -91,14 +91,17 @@ const ChangePassword = (props) => {
       const myHeaders = new Headers();
       myHeaders.append("authorization", `Bearer ${confirmationCode}`);
       myHeaders.append("content-Type", "application/json");
-      fetch(process.env.REACT_APP_API_URL+"/routes/api/auth/change-password", {
-        method: "POST",
-        headers: myHeaders,
-        mode: "cors",
-        body: JSON.stringify({
-          password: data.Password,
-        }),
-      })
+      fetch(
+        process.env.REACT_APP_API_URL + "/routes/api/auth/change-password",
+        {
+          method: "POST",
+          headers: myHeaders,
+          mode: "cors",
+          body: JSON.stringify({
+            password: data.Password,
+          }),
+        }
+      )
         .then((res) => {
           console.log(res);
           return res.json();
@@ -132,24 +135,43 @@ const ChangePassword = (props) => {
     return () => {
       document.body.style.backgroundColor = "white";
     };
-
-  },[])
+  }, []);
 
   return (
     <React.Fragment>
       {alert2()}
-      <div style={{display: 'flex',overflow: 'scroll',flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%'}}>
-        <div style={{ marginBottom: '100px', width: '80%' ,backgroundColor: 'white', borderRadius: '15px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>
-      <Form
-        elements={elements}
-        // onChange={handlechange}
-        onSubmit={handleSubmit}
-        // formSubmit={formsubmit}
-        // setformSubmit={setsubmit}
-        value="Change Password"
-        // navigate={navigate}
-      />
-      </div>
+      <div
+        style={{
+          display: "flex",
+          overflow: "scroll",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <div
+          className="formy"
+          style={{
+            marginBottom: "100px",
+            width: "80%",
+            backgroundColor: "white",
+            borderRadius: "15px",
+            boxShadow:
+              "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          }}
+        >
+          <Form
+            elements={elements}
+            // onChange={handlechange}
+            onSubmit={handleSubmit}
+            // formSubmit={formsubmit}
+            // setformSubmit={setsubmit}
+            value="Change Password"
+            // navigate={navigate}
+          />
+        </div>
       </div>
     </React.Fragment>
   );
