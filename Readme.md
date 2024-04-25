@@ -1,9 +1,15 @@
 # Online Exam Proctoring System
 
+## Project Description:
+The project will help solve a current global problem faced by many institutions and teachers to assess students fairly in an online setting. The proctoring system is expected to have facial monitoring, audio monitoring, and browser tracking features. The teachers will be provided with an interface to control the features, and the students will also be provided with a separate interface to monitor them during the assessment. This project will be built on the technologies of Computer vision, Machine Learning, and Web development. Apart from this, different open source and commercial solutions have been researched for their features and pricing and it was evaluated that the commercial solutions offered some limited features along with a heavy price tag. In the end project timeline, work division and the costing of this project have been discussed. The work division is divided equally among three members for seven months. After the completion of the coding and testing of the project, it will be deployed on Amazon Web Services.
+
 ## Technologies used:
 
-1. Python Flask Backend
-2. React js Frontend
+1. Node js Backend ( Communicating directly with frontend)
+2. Python Flask Backend ( for deploying Machine learning Model and setting API's for getting model result)
+3. React js Frontend
+
+The Node.js Backend Communicates directly with the front end, whereas the Flask Backend is used for deploying the ML model and exposing the APIs for getting model results.
 
 ## How to Run the Application
 
