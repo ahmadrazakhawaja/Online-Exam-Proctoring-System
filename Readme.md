@@ -5,8 +5,8 @@ The project will help solve a current global problem faced by many institutions 
 
 ## Technologies used:
 
-1. Node js Backend ( Communicating directly with frontend)
-2. Python Flask Backend ( for deploying Machine learning Model and setting API's for getting model result)
+1. Node js Backend
+2. Python Flask Backend
 3. React js Frontend
 
 The Node.js Backend Communicates directly with the front end, whereas the Flask Backend is used for deploying the ML model and exposing the APIs for getting model results.
