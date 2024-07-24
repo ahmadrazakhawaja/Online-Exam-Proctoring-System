@@ -1,7 +1,7 @@
 # Online Exam Proctoring System
 
 ## Project Description:
-The project will help solve a current global problem faced by many institutions and teachers to assess students fairly in an online setting. The proctoring system is expected to have facial monitoring, audio monitoring, and browser tracking features. The teachers will be provided with an interface to control the features, and the students will also be provided with a separate interface to monitor them during the assessment. This project will be built on the technologies of Computer vision, Machine Learning, and Web development. After the completion of the coding and testing of the project, it is deployed on Amazon Web Services.
+This project is part of our bachelor final year project. The project will help solve a current global problem faced by many institutions and teachers to assess students fairly in an online setting. The proctoring system is expected to have facial monitoring, audio monitoring, and browser tracking features. The teachers will be provided with an interface to control the features, and the students will also be provided with a separate interface to monitor them during the assessment. This project will be built on the technologies of Computer vision, Machine Learning, and Web development. After the completion of the coding and testing of the project, it is deployed on Amazon Web Services.
 
 ## Technologies used:
 
